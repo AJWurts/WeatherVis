@@ -1,0 +1,156 @@
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-array.v2.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+<svg id='vis'></svg>
+<script>
+  var width = 750
+  var height = 750
+  var svg = d3.select('body').select('#vis')
+    .attr('width', width)
+    .attr('height', height)
+
+  const compass = [
+    {
+      dir: 0,
+      label: 'N'
+    },
+    {
+      dir: 30,
+      label: '3',
+    },
+    {
+      dir: 60,
+      label: '6'
+    },
+    {
+      dir: 90,
+      label: 'E'
+    },
+    {
+      dir: 120,
+      label: '12'
+    },
+    {
+      dir: 150,
+      label: '15'
+    },
+    {
+      dir: 180,
+      label: "S"
+    },
+    {
+      dir: 210,
+      label: '21'
+    },
+    {
+      dir: 240,
+      label: '24'
+    },
+    {
+      dir: 270,
+      label: "W"
+    },
+    {
+      dir: 300,
+      label: '30'
+    },
+    {
+      dir: 330,
+      label: '33'
+    },
+  ]
+
+  const runwayHeadings = [
+    {
+      heading: 290,
+      length: 7011
+    },
+    {
+      heading: 230,
+      length: 5107
+    }
+  ]
+  
+  const maxRwyLen = d3.max(runwayHeadings, x => x.length)
+
+  var radScale = d3.scaleLinear()
+    .domain([0, 5150])
+    .range([0, 100])
+
+
+  var calcY = function (direction, count, numberOfPoints) {
+    var angle = (direction / 10) * (2 * Math.PI / numberOfPoints) - (Math.PI / 2);
+
+    let y = Math.sin(angle) * radScale(count);
+
+    return y;
+  }
+
+  let calcX = (direction, count, numberOfPoints) => {
+    var angle = (direction / 10) * (2 * Math.PI / numberOfPoints) - (Math.PI / 2);
+
+    let x = Math.cos(angle) * radScale(count);
+
+    return x;
+  }
+
+  // var lineFunction = line()
+  //   .x(function (p) { return 200 + calcX(p.dir, p.cnt, 36) })
+  //   .y(function (p) { return 200 + calcY(p.dir, p.cnt, 36) })
+
+  svg.selectAll('refLines')
+    .data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+    .enter()
+    .append('circle')
+    .attr('cx', 200)
+    .attr('cy', 200)
+    .attr('stroke', '#00000000')
+    .attr('r', d => d)
+    .attr('fill', 'none')
+
+  // svg.append('path')
+  //   .datum(data)
+  //   .attr('d', lineFunction)
+  //   .attr('style', 'stroke: none; fill: ' + this.props.fill || '#00000044' + '; stroke-width:3')
+
+  d3.csv('http://localhost:8000/2018_wind_dir.csv')
+    .then(data => {
+      svg.selectAll("lines")
+        .data(data)
+        .enter()
+        .append('line')
+        .attr('x1', 200)
+        .attr('y1', 200)
+        .attr('x2', d => 200 + calcX(d.dir, d.cnt, 36))
+        .attr('y2', d => 200 + calcY(d.dir, d.cnt, 36))
+        .attr('stroke', 'black')
+        .attr('stroke-width', '2')
+
+
+      svg.selectAll('label')
+        .data(compass)
+        .enter()
+        .append('text')
+        .attr('x', d => 200 + calcX(d.dir, 5600, 36) - 6)
+        .attr('y', d => 200 + calcY(d.dir, 5600, 36) + 6)
+        .text(d => d.label)
+    })
+
+  showRunways(runwayHeadings);
+  function showRunways(headings) {
+    for (let i = 0; i < headings.length; i++) {
+      let heading = headings[i].heading;
+      let scaledLength = (headings[i].length / maxRwyLen) * 5100;
+      let oppHeading = (headings[i].heading + 180) % 360;
+      svg.append("line")
+        .attr('x1', 200 + calcX(heading, scaledLength, 36))
+        .attr('y1', 200 + calcY(heading, scaledLength, 36))
+        .attr('x2', 200 + calcX(oppHeading, scaledLength, 36))
+        .attr('y2', 200 + calcY(oppHeading, scaledLength, 36))
+        .attr('stroke', '#00000088')
+        .attr('stroke-width', '8')
+    }
+  }
+
+</script>
