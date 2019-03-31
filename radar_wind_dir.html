@@ -71,32 +71,20 @@
       length: 5107
     }
   ]
-  
+
   const maxRwyLen = d3.max(runwayHeadings, x => x.length)
 
   var radScale = d3.scaleLinear()
-    .domain([0, 5150])
+    // .domain([0, 5150])
     .range([0, width / 3])
-  
+
   var spdScale = d3.scaleLinear()
     .range([0.3, 1])
 
 
-  var calcY = function (direction, count, numberOfPoints) {
-    var angle = (direction / 10) * (2 * Math.PI / numberOfPoints) - (Math.PI / 2);
+  var calcY;
 
-    let y = Math.sin(angle) * radScale(count);
-
-    return y;
-  }
-
-  let calcX = (direction, count, numberOfPoints) => {
-    var angle = (direction / 10) * (2 * Math.PI / numberOfPoints) - (Math.PI / 2);
-
-    let x = Math.cos(angle) * radScale(count);
-
-    return x;
-  }
+  var calcX;
 
   // var lineFunction = line()
   //   .x(function (p) { return 200 + calcX(p.dir, p.cnt, 36) })
@@ -117,11 +105,32 @@
   //   .attr('d', lineFunction)
   //   .attr('style', 'stroke: none; fill: ' + this.props.fill || '#00000044' + '; stroke-width:3')
 
-  d3.csv('http://localhost:8000/2018_wind_dirspd.csv')
+  d3.csv('http://localhost:8000/2018_wind_daytime_dirspd.csv')
     .then(data => {
       let maxSpeed = d3.max(data, x => x.sknt)
       let minSpeed = d3.min(data, x => x.sknt)
       spdScale.domain([minSpeed, maxSpeed]);
+      
+      let maxCount = d3.max(data, x => x.cnt / 1);
+      console.log(maxCount);
+      radScale.domain([0, maxCount])
+
+      calcY = function (direction, count, numberOfPoints) {
+        var angle = (direction / 10) * (2 * Math.PI / numberOfPoints) - (Math.PI / 2);
+
+        let y = Math.sin(angle) * radScale(count);
+
+        return y;
+      }
+      calcX = (direction, count, numberOfPoints) => {
+        var angle = (direction / 10) * (2 * Math.PI / numberOfPoints) - (Math.PI / 2);
+
+        let x = Math.cos(angle) * radScale(count);
+
+        return x;
+      }
+
+      
       svg.selectAll("lines")
         .data(data)
         .enter()
@@ -138,16 +147,18 @@
         .data(compass)
         .enter()
         .append('text')
-        .attr('x', d => width / 2 + calcX(d.dir, 5600, 36) - 6)
-        .attr('y', d => width / 2 + calcY(d.dir, 5600, 36) + 6)
+        .attr('x', d => width / 2 + calcX(d.dir, maxCount, 36) - 6)
+        .attr('y', d => width / 2 + calcY(d.dir, maxCount, 36) + 6)
         .text(d => d.label)
+
+      showRunways(runwayHeadings, maxCount);
     })
 
-  showRunways(runwayHeadings);
-  function showRunways(headings) {
+
+  function showRunways(headings, maxCount) {
     for (let i = 0; i < headings.length; i++) {
       let heading = headings[i].heading;
-      let scaledLength = (headings[i].length / maxRwyLen) * 5100;
+      let scaledLength = (headings[i].length / maxRwyLen) * maxCount;
       let oppHeading = (headings[i].heading + 180) % 360;
       svg.append("line")
         .attr('x1', width / 2 + calcX(heading, scaledLength, 36))
