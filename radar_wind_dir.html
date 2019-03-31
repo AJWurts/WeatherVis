@@ -76,7 +76,10 @@
 
   var radScale = d3.scaleLinear()
     .domain([0, 5150])
-    .range([0, 100])
+    .range([0, width / 3])
+  
+  var spdScale = d3.scaleLinear()
+    .range([0.3, 1])
 
 
   var calcY = function (direction, count, numberOfPoints) {
@@ -103,8 +106,8 @@
     .data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
     .enter()
     .append('circle')
-    .attr('cx', 200)
-    .attr('cy', 200)
+    .attr('cx', width / 2)
+    .attr('cy', width / 2)
     .attr('stroke', '#00000000')
     .attr('r', d => d)
     .attr('fill', 'none')
@@ -114,26 +117,29 @@
   //   .attr('d', lineFunction)
   //   .attr('style', 'stroke: none; fill: ' + this.props.fill || '#00000044' + '; stroke-width:3')
 
-  d3.csv('http://localhost:8000/2018_wind_dir.csv')
+  d3.csv('http://localhost:8000/2018_wind_dirspd.csv')
     .then(data => {
+      let maxSpeed = d3.max(data, x => x.sknt)
+      let minSpeed = d3.min(data, x => x.sknt)
+      spdScale.domain([minSpeed, maxSpeed]);
       svg.selectAll("lines")
         .data(data)
         .enter()
         .append('line')
-        .attr('x1', 200)
-        .attr('y1', 200)
-        .attr('x2', d => 200 + calcX(d.dir, d.cnt, 36))
-        .attr('y2', d => 200 + calcY(d.dir, d.cnt, 36))
-        .attr('stroke', 'black')
-        .attr('stroke-width', '2')
+        .attr('x1', width / 2)
+        .attr('y1', width / 2)
+        .attr('x2', d => width / 2 + calcX(d.dir, d.cnt, 36))
+        .attr('y2', d => width / 2 + calcY(d.dir, d.cnt, 36))
+        .attr('stroke', d => d3.interpolateGnBu(spdScale(d.sknt)))
+        .attr('stroke-width', '3')
 
 
       svg.selectAll('label')
         .data(compass)
         .enter()
         .append('text')
-        .attr('x', d => 200 + calcX(d.dir, 5600, 36) - 6)
-        .attr('y', d => 200 + calcY(d.dir, 5600, 36) + 6)
+        .attr('x', d => width / 2 + calcX(d.dir, 5600, 36) - 6)
+        .attr('y', d => width / 2 + calcY(d.dir, 5600, 36) + 6)
         .text(d => d.label)
     })
 
@@ -144,12 +150,12 @@
       let scaledLength = (headings[i].length / maxRwyLen) * 5100;
       let oppHeading = (headings[i].heading + 180) % 360;
       svg.append("line")
-        .attr('x1', 200 + calcX(heading, scaledLength, 36))
-        .attr('y1', 200 + calcY(heading, scaledLength, 36))
-        .attr('x2', 200 + calcX(oppHeading, scaledLength, 36))
-        .attr('y2', 200 + calcY(oppHeading, scaledLength, 36))
+        .attr('x1', width / 2 + calcX(heading, scaledLength, 36))
+        .attr('y1', width / 2 + calcY(heading, scaledLength, 36))
+        .attr('x2', width / 2 + calcX(oppHeading, scaledLength, 36))
+        .attr('y2', width / 2 + calcY(oppHeading, scaledLength, 36))
         .attr('stroke', '#00000088')
-        .attr('stroke-width', '8')
+        .attr('stroke-width', '15')
     }
   }
 
