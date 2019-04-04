@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import HistoricalWind from './graphs/HistoricalWind.jsx';
+import axios from 'axios';
+import Wind from './onemetar/wind.jsx';
 import Visibility from './onemetar/visibility';
-import Cloud from './onemetar/cloud.jsx';
+import CloudLayersVis from './onemetar/CloudLayersVis';
 import *  as d3 from 'd3';
 import './App.css';
 
@@ -18,26 +18,59 @@ class App extends Component {
 
   componentWillMount() {
     d3.csv('http://localhost:8000/2018_wind_daytime_dirspd.csv')
-    .then(data => {
-      this.setState({
-        data: data
-      })
-    })
-
-    d3.csv("http://localhost:8000/9metar.csv")
       .then(data => {
         this.setState({
-          metars: data
+          data: data
+        })
+      })
+
+    d3.csv("http://localhost:8000/9metar.csv?pear=1")
+      .then(data => {
+        this.setState({
+          metars: data,
+          metar: data[0]
         });
+      })
+      this.refresh();
+     this.refreshInterval = setInterval(this.refresh, 60000)
+  }
+
+  refresh = () => {
+    axios.get("https://www.aviationweather.gov/metar/data?ids=KBED&format=raw&hours=0&taf=on&layout=on")
+      .then(result => {
+        console.log(result);
       })
   }
 
+  handleMouseOver = (metar) => {
+    this.setState({
+      metar: metar
+    })
+  }
+
   render() {
+    var { metars, metar } = this.state;
+    if (metars.length === 0 ) {
+      return null;
+    }
+
     return (
-      <div className="App">
-        <Cloud metar={this.state.metars[0]} />
-        <HistoricalWind  data={this.state.data} />
-        <Visibility vis={5} />
+      <div>
+        <div className="App">
+          <CloudLayersVis metar={metar} />
+          <div>
+            <Wind metar={metar} width={500} height={500} />
+            <Visibility vis={metar.vsby} />
+          </div>
+        </div>
+        <div style={{display: "flex"}}> 
+          {metars.map((m, i) => {
+            return (<div key={i} style={{margin: '3px'}} onMouseOver={() => this.handleMouseOver(m)}>
+              {m.valid}
+              </div>);
+          })}
+        </div>
+
       </div>
     );
   }

@@ -15,6 +15,8 @@ class Visibility extends Component {
   createGraph = () => {
     const node = this.node;
     var svg = d3.select(node);
+    svg.selectAll('*').remove();
+
 
 
 
