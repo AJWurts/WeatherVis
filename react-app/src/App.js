@@ -31,16 +31,26 @@ class App extends Component {
           metar: data[0]
         });
       })
-      this.refresh();
-     this.refreshInterval = setInterval(this.refresh, 60000)
+    this.refresh();
+    this.refreshInterval = setInterval(this.refresh, 600000)
   }
 
   refresh = () => {
-    axios.get("https://www.aviationweather.gov/metar/data?ids=KBED&format=raw&hours=0&taf=on&layout=on")
-      .then(result => {
-        console.log(result);
+    var request = new Request("https://www.aviationweather.gov/metar/data?ids=KBED&format=raw&hours=0&taf=on",
+      {
+        mode: 'no-cors',
+        method: 'GET'
       })
-  }
+    
+    fetch(request)
+      .then(response => {
+        console.log(response);
+        return response.body;
+      }).then(response => {
+        console.log(response);
+      });
+    }
+    
 
   handleMouseOver = (metar) => {
     this.setState({
@@ -50,7 +60,7 @@ class App extends Component {
 
   render() {
     var { metars, metar } = this.state;
-    if (metars.length === 0 ) {
+    if (metars.length === 0) {
       return null;
     }
 
@@ -63,11 +73,11 @@ class App extends Component {
             <Visibility vis={metar.vsby} />
           </div>
         </div>
-        <div style={{display: "flex"}}> 
+        <div style={{ display: "flex" }}>
           {metars.map((m, i) => {
-            return (<div key={i} style={{margin: '3px'}} onMouseOver={() => this.handleMouseOver(m)}>
+            return (<div key={i} style={{ margin: '3px' }} onMouseOver={() => this.handleMouseOver(m)}>
               {m.valid}
-              </div>);
+            </div>);
           })}
         </div>
 
