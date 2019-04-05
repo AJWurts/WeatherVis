@@ -110,8 +110,8 @@ class Wind extends Component {
     let theta = ((dir / 10) - 9) * (2 * Math.PI / 36) - (Math.PI / 2);
     let xAltPtDelta = Math.cos(theta) * (this.props.width / 4) * 0.05;
     let yAltPtDelta = Math.sin(theta) * (this.props.width / 4) * 0.05;
-    let radPtX = this.props.width / 2 + this.calcX(dir, length * 0.9);
-    let radPtY = this.props.height / 2 + this.calcY(dir, length * 0.9);
+    let radPtX = this.props.width / 2 + this.calcX(dir, length - 8);
+    let radPtY = this.props.height / 2 + this.calcY(dir, length - 8);
     let lines = [
       {
         x: radPtX - xAltPtDelta,
@@ -313,7 +313,7 @@ class Wind extends Component {
     this.drawRunways(svg, runways);
 
     this.drawArrow(svg, +this.props.metar.drct, this.props.metar.gust, MAX_SPEED, 'orange')
-    this.drawArrow(svg, +this.props.metar.drct, this.props.metar.sknt, MAX_SPEED)
+    this.drawArrow(svg, +this.props.metar.drct, this.props.metar.sknt, MAX_SPEED, '#61a8c6')
 
     this.drawSpeedRings(svg, MAX_SPEED);
 
