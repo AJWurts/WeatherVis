@@ -14,7 +14,7 @@ function metarTextToJson(text) {
   let metar = {}
 
   // Test Metar
-  // text = "KBED 081656Z 02006KT 1/2SM R11/6000VP6000FT -RA BR OVC006 05/05 A2986 RMK AO2 RAE19B46 CIG 004V008 PRESFR SLP126 P0000 T00500050"
+  // text = "KBED 081656Z 02006KT 1/2SM R11/6000VP6000FT -RA BR OVC006 33/M12 A2986 RMK AO2 RAE19B46 CIG 004V008 PRESFR SLP126 P0000 T00500050"
 
   let wind = text.match(/([0-9]{3})([0-9]{2,3})G{0,1}([0-9]{0,3})KT/);
   metar.drct = +wind[1];
@@ -34,7 +34,7 @@ function metarTextToJson(text) {
     metar.vsby = +vis[2];
   }
 
-  let temp = text.match(/(M*[0-9]{1,3})\/(M*[0-9]{1,3})/)
+  let temp = text.match(/ (M*[0-9]{2,3})\/(M*[0-9]{2,3}) /)
   metar.tmpf = temp[1].includes("M") ? -(temp[1].slice(1, temp[1].length)) : +temp[1];
   metar.dwpf = temp[2].includes("M") ? -(temp[2].slice(1, temp[2].length)) : +temp[2];
 
