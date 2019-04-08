@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import *  as d3 from 'd3';
 
 
-class Percip extends Component {
+class Pressure extends Component {
   componentDidMount() {
     this.createGraph()
   }
@@ -203,4 +203,4 @@ class Percip extends Component {
   }
 }
 
-export default Percip;
+export default Pressure;

@@ -4,6 +4,8 @@ import Wind from './onemetar/wind.jsx';
 import Visibility from './onemetar/visibility';
 import CloudLayersVis from './onemetar/CloudLayersVis';
 import Temp from './onemetar/temp.jsx';
+import Percip from './onemetar/percip.jsx';
+import Pressure from './onemetar/pressure.jsx';
 import *  as d3 from 'd3';
 import './App.css';
 
@@ -44,10 +46,14 @@ class App extends Component {
     return (
       <div>
         <div className="App">
-          <CloudLayersVis metar={metar} />
+          <CloudLayersVis metar={metar} height={850}/>
           <div>
             <Wind metar={metar} width={500} height={500} />
-            <Temp metar={metar} />
+            <div style={{display: 'flex'}}>
+              <Temp metar={metar} />
+              <Percip metar={metar} />
+              <Pressure metar={metar} />
+            </div>
             <Visibility vis={metar.vsby} />
           </div>
         </div>

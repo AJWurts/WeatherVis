@@ -156,18 +156,13 @@ class Wind extends Component {
   }
 
   runwayHover = (runway) => {
-    console.log(runway.heading % 180)
     runway = d3.selectAll(".runway" + (runway.heading % 180));
-    console.log(runway);
     runway.attr('stroke', '#444444CC')
-
   }
 
   runwayHoverExit = (runway) => {
     runway = d3.selectAll(".runway" + (runway.heading % 180));
     runway.attr('stroke', '#000000CC')
-
-
   }
 
   rotateAnimation = (inc, end) => {
@@ -208,6 +203,7 @@ class Wind extends Component {
       .data(data)
       .enter()
       .append("line")
+      .attr('cursor', 'pointer')
       .attr('class', d => "runway" + (d.heading % 180))
       .attr('x1', d => this.props.width / 2 + this.calcX(d.heading + 180, d.scaledLength))
       .attr('y1', d => this.props.width / 2 + this.calcY(d.heading + 180, d.scaledLength))
@@ -228,6 +224,10 @@ class Wind extends Component {
       })
       .on('click', d => {
         d3.event.stopPropagation()
+        if (this.interval) {
+          clearInterval(this.interval)
+
+        }
         this.interval = setInterval(() => this.rotateAnimation(((360 - d.heading) - this.state.angle) / 10, 360 - d.heading), 50)
       })
 
@@ -380,7 +380,7 @@ class Wind extends Component {
         .attr('x', this.props.width / 2 + 10)
         .attr('y', this.props.height - 25)
         .attr('fill', 'black')
-        .text( -headwind + 'kts')
+        .text(-headwind + 'kts')
       svg.append('line')
         .attr('x1', this.props.width / 2)
         .attr('y1', this.props.height - 10)
@@ -541,6 +541,9 @@ class Wind extends Component {
     svg.selectAll('*').remove();
 
     svg.on('click', () => {
+      if (this.interval) {
+        clearInterval(this.interval)
+      }
       this.interval = setInterval(() => this.rotateAnimation(((0) - this.state.angle) / 10, 0), 50)
 
     });
