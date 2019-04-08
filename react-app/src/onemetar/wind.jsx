@@ -220,8 +220,8 @@ class Wind extends Component {
   drawRunwayWind = (svg, heading, yCoord) => {
     let dir = this.props.metar.drct * 10;
     let spd = this.props.metar.sknt;
-    let crosswind = -Math.round(Math.cos(this.rads(Math.abs(heading - dir)))* spd);
-    let headwind = -Math.round(Math.sin(this.rads(Math.abs(heading - dir))) * spd);
+    let headwind = -Math.round(Math.cos(this.rads(Math.abs(heading - dir)))* spd);
+    let crosswind = -Math.round(Math.sin(this.rads(Math.abs(heading - dir))) * spd);
     svg.append("text")
       .attr('x', 5)
       .attr('y', yCoord)

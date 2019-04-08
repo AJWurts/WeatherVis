@@ -38,14 +38,13 @@ function metarTextToJson(text) {
   do {
     cloud = re.exec(text);
     if (cloud) {
-      console.log(cloud);
       if (cloud[1]) {
         metar['skyc' + i] = cloud[1];
         i++;
         continue;
       } else {
         metar['skyc' + i] = cloud[3];
-        metar['skyl' + i] = cloud[4];
+        metar['skyl' + i] = +cloud[4] * 100;
       }
       i++;
 
@@ -82,7 +81,6 @@ app.get('/api/newestMetar/:ident', (req, res, next) => {
 
 
 
-      console.log(text);
       res.json(metarJson);
     })
 });
