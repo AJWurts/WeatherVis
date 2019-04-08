@@ -48,7 +48,7 @@ class CloudLayerVis extends Component {
     }
 
     // Clouds
-    svg.selectAll('clouds' + cloud.alt.split('.')[0])
+    svg.selectAll('clouds' + cloud.alt)
       .data(clouds)
       .enter()
       .append('rect')
