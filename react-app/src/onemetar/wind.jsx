@@ -66,6 +66,13 @@ const compass = [
 ]
 
 class Wind extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      angle: 0
+    }
+  }
 
   componentWillMount() {
     this.createGraph()
@@ -102,7 +109,7 @@ class Wind extends Component {
       .attr('stroke-width', '3')
 
     // Tip Triangle
-    let theta = ((dir / 10) - 9) * (2 * Math.PI / 36) - (Math.PI / 2);
+    let theta = (((dir + this.state.angle) / 10) - 9) * (2 * Math.PI / 36) - (Math.PI / 2);
     let xAltPtDelta = Math.cos(theta) * (this.props.width / 4) * 0.05;
     let yAltPtDelta = Math.sin(theta) * (this.props.width / 4) * 0.05;
     let radPtX = this.props.width / 2 + this.calcX(dir, length - 8);
@@ -132,7 +139,7 @@ class Wind extends Component {
 
   calcY = function (direction, length) {
     length = length == null ? (this.props.height / 3) : length;
-    var angle = (direction / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
+    var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
 
     let y = Math.sin(angle) * (length);
 
@@ -141,40 +148,97 @@ class Wind extends Component {
   calcX = (direction, length) => {
     length = length == null ? (this.props.width / 3) : length;
 
-    var angle = (direction / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
+    var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
 
     let x = Math.cos(angle) * (length);
 
     return x;
   }
 
+  runwayHover = (runway) => {
+    console.log(runway.heading % 180)
+    runway = d3.selectAll(".runway" + (runway.heading % 180));
+    console.log(runway);
+    runway.attr('stroke', '#444444CC')
+
+  }
+
+  runwayHoverExit = (runway) => {
+    runway = d3.selectAll(".runway" + (runway.heading % 180));
+    runway.attr('stroke', '#000000CC')
+
+
+  }
+
+  rotateAnimation = (inc, end) => {
+    if (Math.abs(this.state.angle - end) < 2) {
+      this.setState({
+        angle: end
+      }, this.createGraph);
+      console.log(end);
+      clearInterval(this.interval);
+      this.interval = null;
+    }
+    this.setState({
+      angle: this.state.angle + inc
+    });
+
+    this.createGraph();
+
+  }
+
   drawRunways = (svg, runways) => {
     const maxRwyLen = d3.max(runways, x => x.length)
+    var data = [];
     for (let i = 0; i < runways.length; i++) {
       let heading = runways[i].heading;
       let scaledLength = (runways[i].length / maxRwyLen) * (this.props.width / 3) * 0.9;
       let oppHeading = (runways[i].heading + 180) % 360;
-
-      svg.append("line")
-        .attr('x1', this.props.width / 2 + this.calcX(heading, scaledLength))
-        .attr('y1', this.props.width / 2 + this.calcY(heading, scaledLength))
-        .attr('x2', this.props.height / 2 + this.calcX(oppHeading, scaledLength))
-        .attr('y2', this.props.height / 2 + this.calcY(oppHeading, scaledLength))
-        .attr('stroke', '#000000CC')
-        .attr('stroke-width', 25)
-
-      svg.append('text')
-        .attr('transform', `translate(${this.props.width / 2} ${this.props.width / 2}) rotate(${oppHeading}) translate(8 ${-scaledLength + 5}) rotate(180)`)
-        .attr('fill', 'white')
-        .text(heading / 10)
-
-      svg.append('text')
-        .attr('transform', `translate(${this.props.width / 2} ${this.props.width / 2}) rotate(${heading}) translate(8 ${-scaledLength + 5}) rotate(180)`)
-        .attr('fill', 'white')
-
-        .text(oppHeading / 10)
-        .attr('text-anchor', 'start')
+      data.push({
+        heading: oppHeading,
+        scaledLength: scaledLength
+      })
+      data.push({
+        heading: heading,
+        scaledLength: scaledLength
+      })
     }
+
+    svg.selectAll('runways')
+      .data(data)
+      .enter()
+      .append("line")
+      .attr('class', d => "runway" + (d.heading % 180))
+      .attr('x1', d => this.props.width / 2 + this.calcX(d.heading + 180, d.scaledLength))
+      .attr('y1', d => this.props.width / 2 + this.calcY(d.heading + 180, d.scaledLength))
+      .attr('x2', d => this.props.height / 2)
+      .attr('y2', d => this.props.height / 2)
+      .attr('stroke', '#000000CC')
+      .attr('stroke-width', 25)
+      .on('mouseover', d => {
+        if (!this.interval) {
+
+          this.runwayHover(d)
+        }
+      })
+      .on('mouseout', d => {
+        if (!this.interval) {
+          this.runwayHoverExit(d)
+        }
+      })
+      .on('click', d => {
+        d3.event.stopPropagation()
+        this.interval = setInterval(() => this.rotateAnimation(((360 - d.heading) - this.state.angle) / 10, 360 - d.heading), 50)
+      })
+
+    data.forEach((d) => {
+      svg.append('text')
+        .attr('transform', `translate(${this.props.width / 2} ${this.props.width / 2}) rotate(${d.heading + this.state.angle}) translate(8 ${-d.scaledLength + 5}) rotate(180)`)
+        .attr('fill', 'white')
+        .text(((d.heading + 180) % 360) / 10)
+
+    })
+
   }
 
   drawSpeedRings = (svg, maxSpeed) => {
@@ -258,6 +322,189 @@ class Wind extends Component {
     return yCoord;
   }
 
+  drawWindIndicators = (svg, color) => {
+    dir *= 10;
+    color = color || '#1a496b'
+    let dir = this.props.metar.drct * 10;
+    let spd = this.props.metar.sknt;
+    let angle = this.rads(Math.abs((Math.abs(this.state.angle - 360)) - dir))
+    let headwind = -Math.round(Math.cos(angle) * spd);
+    let crosswind = -Math.round(Math.sin(angle) * spd);
+
+
+    // --------------------HeadWind--------------------
+    // Line
+    if (headwind > 0) {
+      svg.append("text")
+        .attr('x', this.props.width / 2 + 10)
+        .attr('y', 25)
+        .attr('fill', 'black')
+        .text(headwind + 'kts')
+
+
+
+      svg.append('line')
+        .attr('x1', this.props.width / 2)
+        .attr('y1', 10)
+        .attr('x2', this.props.width / 2)
+        .attr('y2', 40)
+        .attr('stroke', color)
+        .attr('stroke-width', '3')
+
+      let xAltPtDelta = 8;
+      let yAltPtDelta = 0;
+      let radPtX = this.props.width / 2;
+      let radPtY = 32;
+      let lines = [
+        {
+          x: radPtX - xAltPtDelta,
+          y: radPtY - yAltPtDelta
+        },
+        {
+          x: radPtX + xAltPtDelta,
+          y: radPtY + yAltPtDelta
+        }
+      ];
+      svg.selectAll('arrowhead')
+        .data(lines)
+        .enter()
+        .append('line')
+        .attr('x1', this.props.width / 2)
+        .attr('y1', 40)
+        .attr('x2', d => d.x)
+        .attr('y2', d => d.y)
+        .attr('stroke', color)
+        .attr('stroke-width', 3)
+    } else {
+      svg.append("text")
+        .attr('x', this.props.width / 2 + 10)
+        .attr('y', this.props.height - 25)
+        .attr('fill', 'black')
+        .text( -headwind + 'kts')
+      svg.append('line')
+        .attr('x1', this.props.width / 2)
+        .attr('y1', this.props.height - 10)
+        .attr('x2', this.props.width / 2)
+        .attr('y2', this.props.height - 40)
+        .attr('stroke', color)
+        .attr('stroke-width', '3')
+
+      let xAltPtDelta = 8;
+      let yAltPtDelta = 0;
+      let radPtX = this.props.width / 2;
+      let radPtY = this.props.height - 32;
+      let lines = [
+        {
+          x: radPtX - xAltPtDelta,
+          y: radPtY - yAltPtDelta
+        },
+        {
+          x: radPtX + xAltPtDelta,
+          y: radPtY + yAltPtDelta
+        }
+      ];
+      svg.selectAll('arrowhead')
+        .data(lines)
+        .enter()
+        .append('line')
+        .attr('x1', this.props.width / 2)
+        .attr('y1', this.props.height - 40)
+        .attr('x2', d => d.x)
+        .attr('y2', d => d.y)
+        .attr('stroke', color)
+        .attr('stroke-width', 3)
+    }
+
+
+
+
+    // Crosswind
+    // Line
+    if (crosswind > 0) {
+      svg.append("text")
+        .attr('x', this.props.width - 2)
+        .attr('y', this.props.width / 2 - 10)
+        .attr('fill', 'black')
+        .attr('text-anchor', 'end')
+        .text(crosswind + 'kts')
+
+
+      svg.append('line')
+        .attr('x1', this.props.width - 10)
+        .attr('y1', this.props.height / 2)
+        .attr('x2', this.props.width - 40)
+        .attr('y2', this.props.height / 2)
+        .attr('stroke', color)
+        .attr('stroke-width', '3')
+
+      // Tip Triangle
+      let xAltPtDelta = 0;
+      let yAltPtDelta = 8;
+      let radPtX = this.props.width - 32;
+      let radPtY = this.props.height / 2;
+      let lines = [
+        {
+          x: radPtX - xAltPtDelta,
+          y: radPtY - yAltPtDelta
+        },
+        {
+          x: radPtX + xAltPtDelta,
+          y: radPtY + yAltPtDelta
+        }
+      ];
+      svg.selectAll('arrowhead')
+        .data(lines)
+        .enter()
+        .append('line')
+        .attr('x1', this.props.width - 40)
+        .attr('y1', this.props.height / 2)
+        .attr('x2', d => d.x)
+        .attr('y2', d => d.y)
+        .attr('stroke', color)
+        .attr('stroke-width', 3)
+    } else {
+      svg.append("text")
+        .attr('x', 2)
+        .attr('y', this.props.width / 2 - 10)
+        .attr('fill', 'black')
+        .text(-crosswind + 'kts')
+
+      svg.append('line')
+        .attr('x1', 10)
+        .attr('y1', this.props.height / 2)
+        .attr('x2', 40)
+        .attr('y2', this.props.height / 2)
+        .attr('stroke', color)
+        .attr('stroke-width', '3')
+
+      // Tip Triangle
+      let xAltPtDelta = 0;
+      let yAltPtDelta = 8;
+      let radPtX = 32;
+      let radPtY = this.props.height / 2;
+      let lines = [
+        {
+          x: radPtX - xAltPtDelta,
+          y: radPtY - yAltPtDelta
+        },
+        {
+          x: radPtX + xAltPtDelta,
+          y: radPtY + yAltPtDelta
+        }
+      ];
+      svg.selectAll('arrowhead')
+        .data(lines)
+        .enter()
+        .append('line')
+        .attr('x1', 40)
+        .attr('y1', this.props.height / 2)
+        .attr('x2', d => d.x)
+        .attr('y2', d => d.y)
+        .attr('stroke', color)
+        .attr('stroke-width', 3)
+    }
+  }
+
   rads = (degrees) => {
     var pi = Math.PI;
     return degrees * (pi / 180);
@@ -293,15 +540,19 @@ class Wind extends Component {
     var svg = d3.select(node);
     svg.selectAll('*').remove();
 
+    svg.on('click', () => {
+      this.interval = setInterval(() => this.rotateAnimation(((0) - this.state.angle) / 10, 0), 50)
+
+    });
     var { drct, sknt, gust } = this.props.metar;
+
     // Title
     svg.append('text')
       .attr('x', 10)
       .attr('y', 30)
-      // .text("Wind: " + this.props.metar.drct + "" + this.props.metar.sknt + 'G' + this.props.metar.gust + 'KT')
-      .text(gust ? 
-        `Wind: ${this.pad(drct, 3)}${sknt}G${gust}KT` 
-        :`Wind: ${this.pad(drct, 3)}${sknt}KT` 
+      .text(gust ?
+        `Wind: ${this.pad(drct, 3)} at ${sknt}kts gusting${gust}kts`
+        : `Wind: ${this.pad(drct, 3)} at ${sknt}kts`
       )
       .attr('text-anchor', 'start')
       .attr('font-size', 20)
@@ -333,7 +584,13 @@ class Wind extends Component {
       .attr('color', 'black')
 
 
+
     this.drawRunwayWinds(svg, runways);
+
+    if (!(Math.abs(this.state.angle) < 1) && !this.interval) {
+      console.log(this.state.angle)
+      this.drawWindIndicators(svg);
+    }
   }
 
   render() {
