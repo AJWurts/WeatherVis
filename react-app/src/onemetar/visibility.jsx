@@ -48,7 +48,7 @@ class Visibility extends Component {
 
 
     svg.selectAll('label')
-      .data([0, 2, 4, 6, 8, 10])
+      .data([0, 1, 2, 4, 6, 8, 10])
       .enter()
       .append('text')
       .attr('x', d => xScale(d) - 5)
@@ -56,7 +56,7 @@ class Visibility extends Component {
       .text(d => d + 'sm')
 
     svg.selectAll('ticks')
-      .data([0, 2, 4, 6, 8, 10])
+      .data([0, 1, 2, 4, 6, 8, 10])
       .enter()
       .append('line')
       .attr('x1', d => xScale(d))

@@ -66,11 +66,16 @@ class CloudLayerVis extends Component {
     svg.append('text')
       .attr('x', 5)
       .attr('y', yScale(+cloud.alt + 500))
-      .text(cloud.actual + " " + cloud.alt)
+      .text(cloud.actual + " " + (this.pad(cloud.alt / 100, 3)))
       .attr('color', 'black')
       .attr('text-anchor', 'start')
 
 
+  }
+
+  pad = (num, size) => {
+    var s = "000000000" + num;
+    return s.substr(s.length - size);
   }
 
   createGraph = () => {
@@ -109,7 +114,7 @@ class CloudLayerVis extends Component {
       .attr('y', d => yScale(d) - 2)
       .text((d, i) => {
         if (i == 0) {
-          return d + 'ft MSL';
+          return d + 'ft AGL';
         } else {
           return d + 'ft';
         }

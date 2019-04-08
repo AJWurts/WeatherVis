@@ -66,14 +66,8 @@ const compass = [
 ]
 
 class Wind extends Component {
-  constructor(props) {
-    super(props);
-
-
-  }
 
   componentWillMount() {
-
     this.createGraph()
 
   }
@@ -87,6 +81,7 @@ class Wind extends Component {
   }
 
   drawArrow = (svg, dir, speed, maxSpeed, color) => {
+    dir *= 10;
     var speedScale = d3.scaleLinear()
       .domain([0, maxSpeed])
       .range([0, (this.props.width / 3) * 0.95])
@@ -169,12 +164,12 @@ class Wind extends Component {
         .attr('stroke-width', 25)
 
       svg.append('text')
-        .attr('transform', `translate(${this.props.width / 2} ${this.props.width / 2}) rotate(${heading}) translate(8 ${-scaledLength + 5}) rotate(180)`)
+        .attr('transform', `translate(${this.props.width / 2} ${this.props.width / 2}) rotate(${oppHeading}) translate(8 ${-scaledLength + 5}) rotate(180)`)
         .attr('fill', 'white')
         .text(heading / 10)
 
       svg.append('text')
-        .attr('transform', `translate(${this.props.width / 2} ${this.props.width / 2}) rotate(${oppHeading}) translate(8 ${-scaledLength + 5}) rotate(180)`)
+        .attr('transform', `translate(${this.props.width / 2} ${this.props.width / 2}) rotate(${heading}) translate(8 ${-scaledLength + 5}) rotate(180)`)
         .attr('fill', 'white')
 
         .text(oppHeading / 10)
@@ -220,8 +215,9 @@ class Wind extends Component {
   drawRunwayWind = (svg, heading, yCoord) => {
     let dir = this.props.metar.drct * 10;
     let spd = this.props.metar.sknt;
-    let headwind = -Math.round(Math.cos(this.rads(Math.abs(heading - dir)))* spd);
-    let crosswind = -Math.round(Math.sin(this.rads(Math.abs(heading - dir))) * spd);
+    let angle = this.rads(Math.abs(heading - dir))
+    let headwind = -Math.round(Math.cos(angle) * spd);
+    let crosswind = -Math.round(Math.sin(angle) * spd);
     svg.append("text")
       .attr('x', 5)
       .attr('y', yCoord)
@@ -287,16 +283,26 @@ class Wind extends Component {
 
   }
 
+  pad = (num, size) => {
+    var s = "000000000" + num;
+    return s.substr(s.length - size);
+  }
+
   createGraph = () => {
     const node = this.node;
     var svg = d3.select(node);
     svg.selectAll('*').remove();
 
+    var { drct, sknt, gust } = this.props.metar;
     // Title
     svg.append('text')
       .attr('x', 10)
       .attr('y', 30)
-      .text("Wind: "  + this.props.metar.drct + "" + this.props.metar.sknt + 'G' + this.props.metar.gust)
+      // .text("Wind: " + this.props.metar.drct + "" + this.props.metar.sknt + 'G' + this.props.metar.gust + 'KT')
+      .text(gust ? 
+        `Wind: ${this.pad(drct, 3)}${sknt}G${gust}KT` 
+        :`Wind: ${this.pad(drct, 3)}${sknt}KT` 
+      )
       .attr('text-anchor', 'start')
       .attr('font-size', 20)
 

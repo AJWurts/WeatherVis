@@ -13,6 +13,9 @@ app.use(cors());
 function metarTextToJson(text) {
   let metar = {}
 
+  // Test Metar
+  // text = "KBED 081656Z 02006KT 1/2SM R11/6000VP6000FT -RA BR OVC006 05/05 A2986 RMK AO2 RAE19B46 CIG 004V008 PRESFR SLP126 P0000 T00500050"
+
   let wind = text.match(/([0-9]{3})([0-9]{2,3})G{0,1}([0-9]{0,3})KT/);
   metar.drct = +wind[1];
   metar.sknt = +wind[2];
@@ -21,8 +24,15 @@ function metarTextToJson(text) {
   let pressure = text.match(/A([0-9]{4})/);
   metar.mslp = pressure[1];
 
-  let visibility = text.match(/[A-Z]*([0-9]{1,2})SM/)
-  metar.vsby = +visibility[1];
+  //
+  let vis = text.match(/([0-9]{0,1})[ ]{1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM./)
+  if (vis[1]) {
+    metar.vsby = (+vis[1]) + (+vis[3]) / (+vis[4])
+  } else if (vis[3] && vis[2].includes('/')) {
+    metar.vsby = (+vis[3]) / (+vis[4]);
+  } else {
+    metar.vsby = +vis[2];
+  }
 
   let temp = text.match(/(M*[0-9]{1,3})\/(M*[0-9]{1,3})/)
   metar.tmpf = temp[1].includes("M") ? -(temp[1].slice(1, temp[1].length)) : +temp[1];
