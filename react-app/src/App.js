@@ -3,6 +3,7 @@ import axios from 'axios';
 import Wind from './onemetar/wind.jsx';
 import Visibility from './onemetar/visibility';
 import CloudLayersVis from './onemetar/CloudLayersVis';
+import Temp from './onemetar/temp.jsx';
 import *  as d3 from 'd3';
 import './App.css';
 
@@ -44,6 +45,7 @@ class App extends Component {
           <CloudLayersVis metar={metar} />
           <div>
             <Wind metar={metar} width={500} height={500} />
+            <Temp metar={metar}/>
             <Visibility vis={metar.vsby} />
           </div>
         </div>
