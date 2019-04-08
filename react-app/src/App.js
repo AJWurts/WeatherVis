@@ -19,6 +19,8 @@ class App extends Component {
   componentWillMount() {
     axios.get('http://localhost:8080/api/newestMetar/KBED')
       .then(result => {
+        console.log(result.data)
+
         this.setState({
           metar: result.data
         })
@@ -45,7 +47,7 @@ class App extends Component {
           <CloudLayersVis metar={metar} />
           <div>
             <Wind metar={metar} width={500} height={500} />
-            <Temp metar={metar}/>
+            <Temp metar={metar} />
             <Visibility vis={metar.vsby} />
           </div>
         </div>
