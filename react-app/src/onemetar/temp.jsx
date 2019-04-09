@@ -73,7 +73,7 @@ class Temp extends Component {
     console.log(min, max);
     var tempScale = d3.scaleLinear()
       .domain([min, max])
-      .range([height * 0.94, 20])
+      .range([height * 0.78, 20])
 
 
     this.drawTemps(svg, tempScale, 50);
@@ -120,7 +120,7 @@ class Temp extends Component {
     console.log(minF, maxF);
     let fScale = d3.scaleLinear()
       .domain([+minF, +maxF])
-      .range([height * 0.94, 20])
+      .range([height * 0.78, 20])
 
     svg.selectAll('labels')
       .data(d3.range(+minF, +maxF, 1))
@@ -146,7 +146,7 @@ class Temp extends Component {
 
 
     svg.selectAll("axisbars")
-      .data([[30, 20, 30, height * 0.95], [70, 20, 70, height * 0.95]])
+      .data([[30, 20, 30, height * 0.78], [70, 20, 70, height * 0.78]])
       .enter()
       .append('line')
       .attr('x1', d => d[0])
@@ -157,33 +157,30 @@ class Temp extends Component {
 
 
     svg.append("text")
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('transform', `translate(130,5) rotate(-90) translate(-175, 0)`)
-      .text(`Dew Point:\t   ${this.cToF(dew)}F`)
-      // .attr('font-weight', 'bold')
+      .attr('x', 20)
+      .attr('y', 190)
+      // .attr('transform', `translate(130,5) rotate(-90) translate(-175, 0)`)
+      .text(`Dew Point: ${this.cToF(dew).toFixed(1)}F`)
       .attr('font-size', 15)
 
-
-
     svg.append('circle')
-      .attr('cx', 125)
-      .attr('cy', 190)
+      .attr('cx', 10)
+      .attr('cy', 185)
       .attr('r', 5)
       .attr('fill', 'blue')
 
     svg.append("text")
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('transform', `translate(150,5) rotate(-90) translate(-175, 0)`)
-      .text(`Temp:\t         ${this.cToF(temp)}F`)
+      .attr('x', 20)
+      .attr('y', 175)
+      // .attr('transform', `translate(150,5) rotate(-90) translate(-175, 0)`)
+      .text(`Temp: ${this.cToF(temp).toFixed(1)}F`)
       // .attr('font-weight', 'bold')
       .attr('font-size', 15)
 
 
     svg.append('circle')
-      .attr('cx', 145)
-      .attr('cy', 190)
+      .attr('cx', 10)
+      .attr('cy', 170)
       .attr('r', 5)
       .attr('fill', 'red')
 
