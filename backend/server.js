@@ -14,7 +14,7 @@ function metarTextToJson(text) {
   let metar = {}
 
   // Test Metar
-  // text = "KBED 081656Z 02006KT 1/2SM R11/6000VP6000FT -RA BR OVC006 33/M12 A2986 RMK AO2 RAE19B46 CIG 004V008 PRESFR SLP135 P0000 T00500050"
+  // text = "KBED 081656Z 02006KT 1/2SM R11/6000VP6000FT -RA BRAB OVC006 33/M12 A2986 RMK AO2 RAE19B46 CIG 004V008 PRESFR SLP135 P0000 T00500050"
 
   let wind = text.match(/([0-9]{3})([0-9]{2,3})G{0,1}([0-9]{0,3})KT/);
   metar.drct = +wind[1];
@@ -65,11 +65,16 @@ function metarTextToJson(text) {
   } while (cloud);
 
 
-  let rain = text.match(/([+|-]*)(RN)/)
-  metar.rain = rain ? (rain[1] ? (rain[1] === '+' ? 3 : 1) : 2) : 0;
-
-  let snow = text.match(/([+|-]{0,1}SN)/)
-  metar.snow = snow ? snow[1] : 0;
+  let weather_regex = / ([+|-]{0,1}([A-Z]{2}){1,2})(?![A-Z|0-9])/g;
+  var weather;
+  metar.weather = [];
+  do {
+    weather = weather_regex.exec(text);
+    if (weather) {
+      metar.weather.push(weather[1]);
+      continue;
+    }
+  } while (weather)
 
   return metar;
 
