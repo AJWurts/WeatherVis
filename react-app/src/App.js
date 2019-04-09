@@ -52,7 +52,7 @@ class App extends Component {
             <div style={{display: 'flex'}}>
               <Temp metar={metar} />
               <Percip metar={metar} />
-              <Pressure metar={metar} />
+              <Pressure metar={metar} width={200} height={200}/>
             </div>
             <Visibility vis={metar.vsby} />
           </div>

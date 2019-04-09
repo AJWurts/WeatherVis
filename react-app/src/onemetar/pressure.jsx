@@ -12,42 +12,38 @@ class Pressure extends Component {
     this.createGraph()
   }
 
-  drawTemps = (svg, tempScale, x) => {
+  rads = (deg) => {
+    return deg * (Math.PI / 180);
+  }
 
-    var temp = this.props.metar.tmpf;
-    var dew = this.props.metar.dwpf;
-    console.log(this.props.metar.tmpf, dew)
-    // Dew Point
-    var dewCircle = svg.append('circle')
-      .attr('cx', x)
-      .attr('cy', tempScale(dew))
-      .attr('r', 5)
-      .attr('fill', 'blue')
+  calcX = (angle, length) => {
+    return this.props.width / 2 + Math.cos(this.rads(angle + 90)) * length;
+  }
 
+  calcY = (angle, length) => {
+    return this.props.height / 2 + Math.sin(this.rads(angle + 90)) * length;
 
-    // Temp
-    var tempCircle = svg.append('circle')
-      .attr('cx', x)
-      .attr('cy', tempScale(temp))
-      .attr('r', 5)
-      .attr('fill', 'red')
+  }
 
+  hpaToInhg = (hpa) => {
+    
 
-    if (temp === dew) {
-      dewCircle.attr('stroke-width', 5)
-        .attr('stroke', 'blue')
+    if (+hpa > 500) {
+      hpa = (hpa / 10 + 900) * 0.02953
+    } else {
+      hpa = (hpa / 10 + 1000) * 0.02953;
     }
+
+    return hpa
   }
 
-  cToF = (t) => {
-    //(0°C × 9/5) + 32 = 32°F
-    return (t * (9 / 5)) + 32;
-  }
-
-
-  pad = (num, size) => {
-    var s = "000000000" + num;
-    return s.substr(s.length - size);
+  displayNeedle = (svg, baroScale) => {
+    let mslp = this.hpaToInhg(this.props.metar.mslp);
+    console.log(mslp);
+    svg.append('path')
+      .attr('d', ` m -5 0 l 5 75 l 5 -75 l -5 -5 z`)
+      .attr('transform', `translate(${this.props.width / 2} ${this.props.height / 2}) rotate(${baroScale(mslp)})`)
+      .attr('fill', 'black')
   }
 
   createGraph = () => {
@@ -56,8 +52,8 @@ class Pressure extends Component {
     svg.selectAll('*').remove();
 
 
-
-    if (!this.props.metar.tmpf) {
+    console.log('wasup')
+    if (!this.props.metar.alti) {
       return;
     } else {
       var temp = this.props.metar.tmpf || 5;
@@ -67,128 +63,90 @@ class Pressure extends Component {
     var width = this.props.width || 200;
     var height = this.props.height || 200
 
-    let min = Math.min(temp, dew) - 8;
-    let max = Math.max(temp, dew) + 8;
-    let range = max - min + 16;
-    console.log(min, max);
-    var tempScale = d3.scaleLinear()
-      .domain([min, max])
-      .range([height * 0.94, 20])
+    var arc = d3.arc()
+      .innerRadius(99)
+      .outerRadius(100)
+      .startAngle(-0.75 * Math.PI)
+      .endAngle(0.75 * Math.PI);
 
 
-    this.drawTemps(svg, tempScale, 50);
+    svg
+      .append('path')
+      .attr('transform', `translate(${width / 2} ${height / 2})`)
+      .attr('d', arc)
 
-    svg.append('text')
-      .attr('x', 5)
-      .attr('y', 13)
-      .text(`Temp: ${(temp < 0 ? 'M' : '') + this.pad(Math.abs(temp), 2)}/${(dew < 0 ? 'M' : "") + this.pad(Math.abs(dew), 2)}`)
-      .attr('text-anchor', 'start')
+    var baroScale = d3.scaleLinear()
+      .domain([28, 31])
+      .range([55, 305])
+
+    svg.selectAll("barolabels")
+      .data([28, 28.5, 29, 29.5, 30, 30.5, 31])
+      .enter()
+      .append('text')
+      .attr('text-anchor', 'middle')
+      .attr('transform', d => `translate(${width / 2} ${height / 2}) rotate(${baroScale(d)}) translate(0 75) rotate(180)`)
       .attr('fill', 'black')
-      .attr('font-size', 18)
+      .text(d => d)
 
-    // Celsius
+    svg.selectAll('ticks')
+      .data(d3.range(28, 31.01, 0.1))
+      .enter()
+      .append('line')
+      .attr('x1', d => this.calcX(baroScale(d), 100))
+      .attr('y1', d => this.calcY(baroScale(d), 100))
+      .attr('x2', d => {
+        console.log(d)
+        if (d % 1 === 0) {
+          return this.calcX(baroScale(d), 85);
+        } else if ((d - 0.5) % 1 === 0) {
+          return this.calcX(baroScale(d), 90);
+        } else {
+          return this.calcX(baroScale(d), 93);
+        }
+      })
+      .attr('y2', d => {
+        if (d % 1 === 0) {
+          return this.calcY(baroScale(d), 85);
+        } else if ((d - 0.5) % 1 === 0) {
+          return this.calcY(baroScale(d), 90);
+        } else {
+          return this.calcY(baroScale(d), 93);
+        }
+      })
+      .attr('stroke', 'black')
+      .attr('stroke-width', d => {
+        if (d % 1 === 0) {
+          return 1
+        }
+      })
+
+    this.displayNeedle(svg, baroScale);
+
     // Labels
     svg.selectAll('labels')
-      .data(d3.range( min, max , 1))
+      .data([{
+        label: "Sea Level",
+        value: this.hpaToInhg(this.props.metar.mslp).toFixed(2)
+      },
+      {
+        label: 'Altimeter',
+        value: this.props.metar.alti / 100
+      }])
       .enter()
       .append('text')
-      .attr('x', 28)
-      .attr('y', d => tempScale(d) + 5)
-      .attr('fill', (d, i) => d % 5 == 0 ? "black" : '#00000000')
-      .attr('text-anchor', 'end')
-      .text(d =>  d + "C")
-
-    // Ticks
-    svg.selectAll('ticks')
-      .data(d3.range( min, max, 1))
-      .enter()
-      .append('line')
-      .attr('x1', 30)
-      .attr('y1', d => tempScale(d))
-      .attr('x2', 35)
-      .attr('y2', d => tempScale(d))
-      .attr('stroke', (d, i) => d % 5 == 0 ? "black" : '#00000000')
-
-    // Fahrenheit -------------------
-    if (range > 25) {
-      var tickMod = 10;
-    } else {
-      tickMod = 5;
-    }
-    let minF = this.cToF(min).toFixed(0);
-    let maxF = this.cToF(max).toFixed(0);
-    console.log(minF, maxF);
-    let fScale = d3.scaleLinear()
-      .domain([+minF, +maxF])
-      .range([height * 0.94, 20])
-
-    svg.selectAll('labels')
-      .data(d3.range(+minF, +maxF, 1))
-      .enter()
-      .append('text')
-      .attr('x', 78)
-      .attr('y', d => fScale(d) + 5)
-      .attr('fill', (d, i) => d % tickMod == 0 ? "black" : '#00000000')
-      .attr('text-anchor', 'start')
-      .text(d => d + "F")
+      .attr('x', this.props.width / 2)
+      .attr('y', (d, i) => this.props.height - 23 + (i * 15))
+      .attr('text-anchor', 'middle')
+      .text(d => `${d.label}: ${d.value}"`)
 
     
-    // Ticks
-    svg.selectAll('ticks')
-      .data(d3.range(+minF, +maxF, 1))
-      .enter()
-      .append('line')
-      .attr('x1', 70)
-      .attr('y1', d => fScale(d))
-      .attr('x2', 65)
-      .attr('y2', d => fScale(d))
-      .attr('stroke', (d, i) => d % tickMod == 0 ? "black" : '#00000000')
-
-
-    svg.selectAll("axisbars")
-      .data([[30, 20, 30, height * 0.95], [70, 20, 70, height * 0.95]])
-      .enter()
-      .append('line')
-      .attr('x1', d => d[0])
-      .attr('y1', d => d[1])
-      .attr('x2', d => d[2])
-      .attr('y2', d => d[3])
-      .attr('stroke', 'black')
-
-
-    svg.append("text")
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('transform', `translate(130,5) rotate(-90) translate(-175, 0)`)
-      .text("Dew Point")
-
-    svg.append('circle')
-      .attr('cx', 125)
-      .attr('cy', 190)
-      .attr('r', 5)
-      .attr('fill', 'blue')
-
-    svg.append("text")
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('transform', `translate(130,5) rotate(-90) translate(-80, 0)`)
-      .text("Temp")
-
-    svg.append('circle')
-      .attr('cx', 125)
-      .attr('cy', 95)
-      .attr('r', 5)
-      .attr('fill', 'red')
-
-    // Freezing Line
-    svg.append('line')
-      .attr('x1', 30)
-      .attr('y1', tempScale(0))
-      .attr('x2', 70)
-      .attr('y2', tempScale(0))
-      .attr('stroke-width', 2)
-      .attr('stroke', 'blue')
-      
+    svg.append('text')
+      .attr('x', this.props.width / 2)
+      .attr('y', this.props.height - 45)
+      .text("Pressure")
+      .attr('text-anchor', "middle")
+      .attr('font-size', 20)
+      .attr('fill', 'black')
 
   }
 

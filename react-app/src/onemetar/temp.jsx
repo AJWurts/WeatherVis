@@ -64,7 +64,7 @@ class Temp extends Component {
       var dew = this.props.metar.dwpf || 5;
     }
 
-    var width = this.props.width || 200;
+    var width = this.props.width || 155;
     var height = this.props.height || 200
 
     let min = Math.min(temp, dew) - 8;
@@ -89,25 +89,25 @@ class Temp extends Component {
     // Celsius
     // Labels
     svg.selectAll('labels')
-      .data(d3.range( min, max , 1))
+      .data(d3.range(min, max, 1))
       .enter()
       .append('text')
       .attr('x', 28)
       .attr('y', d => tempScale(d) + 5)
-      .attr('fill', (d, i) => d % 5 == 0 ? "black" : '#00000000')
+      .attr('fill', (d, i) => d % 5 === 0 ? "black" : '#00000000')
       .attr('text-anchor', 'end')
-      .text(d =>  d + "C")
+      .text(d => d + "C")
 
     // Ticks
     svg.selectAll('ticks')
-      .data(d3.range( min, max, 1))
+      .data(d3.range(min, max, 1))
       .enter()
       .append('line')
       .attr('x1', 30)
       .attr('y1', d => tempScale(d))
       .attr('x2', 35)
       .attr('y2', d => tempScale(d))
-      .attr('stroke', (d, i) => d % 5 == 0 ? "black" : '#00000000')
+      .attr('stroke', (d, i) => d % 5 === 0 ? "black" : '#00000000')
 
     // Fahrenheit -------------------
     if (range > 25) {
@@ -132,7 +132,7 @@ class Temp extends Component {
       .attr('text-anchor', 'start')
       .text(d => d + "F")
 
-    
+
     // Ticks
     svg.selectAll('ticks')
       .data(d3.range(+minF, +maxF, 1))
@@ -142,7 +142,7 @@ class Temp extends Component {
       .attr('y1', d => fScale(d))
       .attr('x2', 65)
       .attr('y2', d => fScale(d))
-      .attr('stroke', (d, i) => d % tickMod == 0 ? "black" : '#00000000')
+      .attr('stroke', (d, i) => d % tickMod === 0 ? "black" : '#00000000')
 
 
     svg.selectAll("axisbars")
@@ -160,7 +160,11 @@ class Temp extends Component {
       .attr('x', 0)
       .attr('y', 0)
       .attr('transform', `translate(130,5) rotate(-90) translate(-175, 0)`)
-      .text("Dew Point")
+      .text(`Dew Point:\t   ${this.cToF(dew)}F`)
+      // .attr('font-weight', 'bold')
+      .attr('font-size', 15)
+
+
 
     svg.append('circle')
       .attr('cx', 125)
@@ -171,12 +175,15 @@ class Temp extends Component {
     svg.append("text")
       .attr('x', 0)
       .attr('y', 0)
-      .attr('transform', `translate(130,5) rotate(-90) translate(-80, 0)`)
-      .text("Temp")
+      .attr('transform', `translate(150,5) rotate(-90) translate(-175, 0)`)
+      .text(`Temp:\t         ${this.cToF(temp)}F`)
+      // .attr('font-weight', 'bold')
+      .attr('font-size', 15)
+
 
     svg.append('circle')
-      .attr('cx', 125)
-      .attr('cy', 95)
+      .attr('cx', 145)
+      .attr('cy', 190)
       .attr('r', 5)
       .attr('fill', 'red')
 
@@ -188,7 +195,7 @@ class Temp extends Component {
       .attr('y2', tempScale(0))
       .attr('stroke-width', 2)
       .attr('stroke', 'blue')
-      
+
 
   }
 
@@ -196,7 +203,7 @@ class Temp extends Component {
     var { width, height } = this.props;
     return (
       <div>
-        <svg ref={node => this.node = node} width={width || 200} height={height || 200}>
+        <svg ref={node => this.node = node} width={width || 155} height={height || 200}>
         </svg>
       </div>
     );
