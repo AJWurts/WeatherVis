@@ -124,10 +124,11 @@ class Pressure extends Component {
 
     // Labels
     svg.selectAll('labels')
-      .data([{
+      .data([
+        this.props.metar.mslp ? {
         label: "Sea Level",
         value: this.hpaToInhg(this.props.metar.mslp).toFixed(2)
-      },
+      } : {label: "", value: ""},
       {
         label: 'Altimeter',
         value: this.props.metar.alti / 100
@@ -137,7 +138,7 @@ class Pressure extends Component {
       .attr('x', this.props.width / 2)
       .attr('y', (d, i) => this.props.height - 23 + (i * 15))
       .attr('text-anchor', 'middle')
-      .text(d => `${d.label}: ${d.value}"`)
+      .text(d => d.label ?  `${d.label}: ${d.value}"` : "")
 
     
     svg.append('text')

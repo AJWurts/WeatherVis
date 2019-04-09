@@ -25,7 +25,7 @@ function metarTextToJson(text) {
   metar.alti = pressure[1];
 
   let slp = text.match(/SLP([0-9]{3})/);
-  metar.mslp = slp[1];
+  metar.mslp = slp ? slp[1] : null;
 
   //
   let vis = text.match(/([0-9]{0,1})[ ]{1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM./)
@@ -93,13 +93,14 @@ app.get('/api/newestMetar/:ident', (req, res, next) => {
 
       let searchString = text.slice(start, end);
 
-      let metar = searchString.match(/<code>(.*)<\/code>/)[1];
+      let search = searchString.match(/<code>(.*)<\/code>/);
+      if (!search) {
+        res.status(404).send();
+      } else {
+        let metarJson = metarTextToJson(search[1]);
+        res.json(metarJson);
+      }
 
-      let metarJson = metarTextToJson(metar);
-
-
-
-      res.json(metarJson);
     })
 });
 
