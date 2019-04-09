@@ -11,7 +11,7 @@ const KEY = {
   E: 'ended',
   FC: 'funnel cloud',
   FG: 'fog',
-  FU: 'smoke', 
+  FU: 'smoke',
   FZ: 'freezing',
   GR: 'hail (>5mm)',
   GS: 'small hail/snow pellets (<5mm)',
@@ -52,15 +52,47 @@ class Percip extends Component {
 
 
 
-    if (!this.props.metar.tmpf) {
+    if (!this.props.metar.weather) {
       return;
-    } else {
-      var temp = this.props.metar.tmpf || 5;
-      var dew = this.props.metar.dwpf || 5;
     }
+
 
     var width = this.props.width || 200;
     var height = this.props.height || 200
+
+    svg.append("text")
+      .attr('x', width / 2)
+      .attr('y', 15)
+      .attr('text-anchor', 'start')
+      .text("Current Conditions")
+      .attr('font-size', 20)
+      .attr('text-anchor', 'middle')
+      .attr('fill', 'black')
+
+    console.log(this.props.metar.weather)
+    let base = 30;
+    if (this.props.metar.weather.length > 0) {
+      svg.selectAll("labels")
+        .data(this.props.metar.weather)
+        .enter()
+        .append("text")
+        .attr('text-anchor', 'start')
+        .attr('x', (d, i) => {
+          return 5
+        })
+        .attr('y', (d, i) => {
+          return base + i * 15;
+        })
+        .text(d => d.raw + ": " + d.text)
+        .attr('fill', 'black')
+    } else {
+      svg.append('text')
+        .attr('x', 5)
+        .attr('y', base)
+        .attr('text-anchor', 'start')
+        .text("No Weather Reported")
+        .attr('fill', 'black')
+    }
 
   }
 

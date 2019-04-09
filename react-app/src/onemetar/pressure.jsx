@@ -95,7 +95,6 @@ class Pressure extends Component {
       .attr('x1', d => this.calcX(baroScale(d), 100))
       .attr('y1', d => this.calcY(baroScale(d), 100))
       .attr('x2', d => {
-        console.log(d)
         if (d % 1 === 0) {
           return this.calcX(baroScale(d), 85);
         } else if ((d - 0.5) % 1 === 0) {
