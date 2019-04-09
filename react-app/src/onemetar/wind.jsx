@@ -280,8 +280,8 @@ class Wind extends Component {
     let dir = this.props.metar.drct * 10 - 90;
     let spd = this.props.metar.sknt;
     let angle = this.rads(Math.abs(heading - dir))
-    let headwind = -Math.round(Math.cos(angle) * spd);
-    let crosswind = -Math.round(Math.sin(angle) * spd);
+    let crosswind = -Math.round(Math.cos(angle) * spd);
+    let headwind = -Math.round(Math.sin(angle) * spd);
     svg.append("text")
       .attr('x', 5)
       .attr('y', yCoord)

@@ -57,7 +57,7 @@ class CloudLayerVis extends Component {
       .attr('width', d => {
         return xScale(d[1]) - xScale(d[0])
       })
-      .attr('height',  (yScale(0) - yScale(1000)))
+      .attr('height', (yScale(0) - yScale(1000)))
       .attr('fill', '#AAAAAA')
       .attr('rx', 10)
       .attr('ry', 10)
@@ -92,18 +92,11 @@ class CloudLayerVis extends Component {
     var width = this.props.width || 500;
     var height = this.props.height || 800;
 
-    var MAX_ALT = 21000;
+    var MAX_ALT = 22000;
     var yScale = d3.scaleLinear()
-      .domain([0, 21000])
+      .domain([0, MAX_ALT])
       .range([height * 0.95, height * 0.05])
-    
-    // Title
-    svg.append('text')
-      .attr('x', width / 2)
-      .attr('y', 40)
-      .attr('text-anchor', 'middle')
-      .text("Cloud Layers")
-      .attr('font-size', 25)
+
 
     svg.selectAll('label')
       .data(d3.range(0, MAX_ALT + 1, 3000))
@@ -180,6 +173,13 @@ class CloudLayerVis extends Component {
       )
     })
 
+    // Title
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', 40)
+      .attr('text-anchor', 'middle')
+      .text("Cloud Layers")
+      .attr('font-size', 25)
 
   }
 
