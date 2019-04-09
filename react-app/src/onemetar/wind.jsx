@@ -88,7 +88,6 @@ class Wind extends Component {
   }
 
   drawArrow = (svg, dir, speed, maxSpeed, color) => {
-    console.log(dir)
     // dir *= 10;
     // dir -= 9
     var speedScale = d3.scaleLinear()
