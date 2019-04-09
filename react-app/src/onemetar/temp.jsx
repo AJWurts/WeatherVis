@@ -185,14 +185,15 @@ class Temp extends Component {
       .attr('fill', 'red')
 
     // Freezing Line
-    svg.append('line')
+    if (min < 0 && max > 0) {
+      svg.append('line')
       .attr('x1', 30)
       .attr('y1', tempScale(0))
       .attr('x2', 70)
       .attr('y2', tempScale(0))
       .attr('stroke-width', 2)
       .attr('stroke', 'blue')
-
+    }
 
   }
 

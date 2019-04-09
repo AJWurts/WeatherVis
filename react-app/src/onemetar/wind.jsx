@@ -88,7 +88,9 @@ class Wind extends Component {
   }
 
   drawArrow = (svg, dir, speed, maxSpeed, color) => {
-    dir *= 10;
+    console.log(dir)
+    // dir *= 10;
+    // dir -= 9
     var speedScale = d3.scaleLinear()
       .domain([0, maxSpeed])
       .range([0, (this.props.width / 3) * 0.95])
@@ -98,7 +100,6 @@ class Wind extends Component {
     // Line
     let tipX = this.props.width / 2 + this.calcX(dir, length);
     let tipY = this.props.height / 2 + this.calcY(dir, length);
-
 
     svg.append('line')
       .attr('x1', this.props.width / 2)
@@ -243,10 +244,10 @@ class Wind extends Component {
 
   drawSpeedRings = (svg, maxSpeed) => {
 
-    var labels = d3.range(0, maxSpeed + 10, 10);
+    var labels = d3.range(0, maxSpeed + 2, maxSpeed / 4);
     delete labels[0];
     var speedScale = d3.scaleLinear()
-      .domain([0, labels[labels.length - 1]])
+      .domain([0, maxSpeed])
       .range([0, (this.props.width / 3) * 0.95])
     svg.selectAll('speedRings')
       .data(labels)
@@ -272,12 +273,12 @@ class Wind extends Component {
           return d;
         }
       })
-      .attr('font-size', 10)
+      .attr('font-size', 13)
 
   }
 
   drawRunwayWind = (svg, heading, yCoord) => {
-    let dir = this.props.metar.drct * 10;
+    let dir = this.props.metar.drct * 10 - 90;
     let spd = this.props.metar.sknt;
     let angle = this.rads(Math.abs(heading - dir))
     let headwind = -Math.round(Math.cos(angle) * spd);
@@ -570,12 +571,16 @@ class Wind extends Component {
       .text(d => d.label)
 
     var runways = this.props.runways || hanscomRunways;
-    this.drawRunways(svg, runways);
+    if (this.props.airport === 'KBED') {
+      this.drawRunways(svg, runways)
+    }
 
-    this.drawArrow(svg, +this.props.metar.drct, this.props.metar.gust, MAX_SPEED, 'orange')
-    this.drawArrow(svg, +this.props.metar.drct, this.props.metar.sknt, MAX_SPEED, '#61a8c6')
+    let max_speed = Math.max(sknt, gust) + 5
 
-    this.drawSpeedRings(svg, MAX_SPEED);
+    this.drawArrow(svg, +this.props.metar.drct, this.props.metar.gust, max_speed, 'orange')
+    this.drawArrow(svg, +this.props.metar.drct, this.props.metar.sknt, max_speed, '#61a8c6')
+
+    this.drawSpeedRings(svg, max_speed);
 
     // Wind Direction Label
     svg.append('windDirLabel')

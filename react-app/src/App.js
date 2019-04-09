@@ -6,6 +6,7 @@ import CloudLayersVis from './onemetar/CloudLayersVis';
 import Temp from './onemetar/temp.jsx';
 import Percip from './onemetar/percip.jsx';
 import Pressure from './onemetar/pressure.jsx';
+import SearchBox from './SearchBox.jsx'
 import *  as d3 from 'd3';
 import './App.css';
 
@@ -15,11 +16,13 @@ class App extends Component {
 
     this.state = {
       metar: null,
+      airport: "KBED",
+      errorMessage: ''
     }
   }
 
   componentWillMount() {
-    axios.get('http://localhost:8080/api/newestMetar/KBED')
+    axios.get(`http://localhost:8080/api/newestMetar/${this.state.airport}`)
       .then(result => {
         console.log(result.data)
 
@@ -37,34 +40,46 @@ class App extends Component {
     })
   }
 
+  onSearch = (ident) => {
+    axios.get(`http://localhost:8080/api/newestMetar/${ident}`)
+      .then(result => {
+        console.log(result.data)
+
+        this.setState({
+          metar: result.data,
+          airport: ident,
+          errorMessage: ''
+        })
+      }).catch(error => {
+        console.log("Error");
+        this.setState({
+          metar: null,
+          errorMessage: "Could not find airport. Try again"
+        })
+      })
+  }
+
   render() {
-    var { metars, metar } = this.state;
-    if (!metar) {
-      return null;
-    }
+    var { metars, metar, airport, errorMessage } = this.state;
+
 
     return (
-      <div>
-        <div className="App">
-          <CloudLayersVis metar={metar} height={850}/>
+      <div className='top-bar'>
+        <SearchBox onClick={this.onSearch} />
+        {metar ? <span style={{ fontSize: 20, textAlign: 'center' }}>Airport: {airport}</span> : null}
+        {!metar ? <span style={{fontSize: 30}}>{errorMessage}</span> : 
+           <div className="App">
+          <CloudLayersVis metar={metar} height={850} />
           <div>
-            <Wind metar={metar} width={500} height={500} />
-            <div style={{display: 'flex'}}>
+            <Wind airport={airport} metar={metar} width={500} height={500} />
+            <div style={{ display: 'flex' }}>
               <Temp metar={metar} />
               <Percip metar={metar} />
-              <Pressure metar={metar} width={200} height={200}/>
+              <Pressure metar={metar} width={200} height={200} />
             </div>
             <Visibility vis={metar.vsby} />
           </div>
-        </div>
-        {/* <div style={{ display: "flex" }}>
-          {metars.map((m, i) => {
-            return (<div key={i} style={{ margin: '3px' }} onMouseOver={() => this.handleMouseOver(m)}>
-              {m.valid}
-            </div>);
-          })}
-        </div> */}
-
+        </div>}
       </div>
     );
   }
