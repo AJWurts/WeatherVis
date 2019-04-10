@@ -22,7 +22,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-    axios.get(`http://localhost:8080/api/newestMetar/${this.state.airport}`)
+    axios.get(`/api/newestMetar/${this.state.airport}`)
       .then(result => {
         console.log(result.data)
 
@@ -41,7 +41,7 @@ class App extends Component {
   }
 
   onSearch = (ident) => {
-    axios.get(`http://localhost:8080/api/newestMetar/${ident}`)
+    axios.get(`/api/newestMetar/${ident}`)
       .then(result => {
         console.log(result.data)
 
@@ -59,6 +59,8 @@ class App extends Component {
       })
   }
 
+
+
   render() {
     var { metars, metar, airport, errorMessage } = this.state;
 
@@ -66,7 +68,8 @@ class App extends Component {
     return (
       <div className='top-bar'>
         <SearchBox onClick={this.onSearch} />
-        {metar ? <span style={{ fontSize: 20, textAlign: 'center' }}>Airport: {airport}</span> : null}
+        {metar ? <span style={{ fontSize: 20, textAlign: 'center' }}>METAR: {metar.raw} </span> : null}
+      
         {!metar ? <span style={{fontSize: 30}}>{errorMessage}</span> : 
            <div className="App">
           <CloudLayersVis metar={metar} height={850} />

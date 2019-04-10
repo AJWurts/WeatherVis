@@ -55,9 +55,11 @@ function parseWAbbv(weather) {
   let result = {
     text: ""
   };
-  result.raw = weather[1];
-  if (weather[2]) {
+  result.raw = weather[0];
+  let isValid = false;
+  if (weather[2] && MODIFIERS[weather[2]]) {
     result.text += MODIFIERS[weather[2]] + ' ';
+    isValid = true;
   }
   if (weather[1] && weather[1].length > 3) {
 
@@ -68,25 +70,30 @@ function parseWAbbv(weather) {
       var val1 = weather[1].slice(0, 2);
       var val2 = weather[1].slice(2, 4);
     }
-
-    result.text +=  KEY[val1] + " " + KEY[val2]
-  } else if (weather[3]) {
-    result.text += ' ' + KEY[weather[3]]
-
+    if (KEY[val1] && KEY[val2]) {
+      result.text += KEY[val1] + " " + KEY[val2]
+      isValid = true;
+    }
+  } else if (weather[3] && KEY[weather[3]]) {
+    result.text += ' ' + KEY[weather[3]];
+    isValid = true;
   }
-
-  return result;
+  if (isValid) {
+    return result;
+  } else {
+    return null;
+  }
 }
 
 
 function metarTextToJson(text) {
   let metar = {}
-
+  metar.raw = text
   // Test Metar
-  // text = "KBED 081656Z 02006KT 1/2SM R11/6000VP6000FT -RA BR OVC006 33/M12 A2986 RMK AO2 RAE19B46 CIG 004V008 PRESFR SLP135 P0000 T00500050"
+  // text = "KBED 081656Z 19006KT 1/2SM R11/6000VP6000FT -RA BR OVC006 33/M12 A2986 RMK AO2 RAE19B46 CIG 004V008 PRESFR SLP135 P0000 T00500050"
 
-  let wind = text.match(/([0-9]{3})([0-9]{2,3})G{0,1}([0-9]{0,3})KT/);
-  metar.drct = +wind[1];
+  let wind = text.match(/([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT/);
+  metar.drct = wind[1] === "VRB" ? wind[1] : +wind[1];
   metar.sknt = +wind[2];
   metar.gust = wind.length == 4 ? +wind[3] : '';
 
@@ -115,7 +122,7 @@ function metarTextToJson(text) {
 
   // let clouds = matchAll(text, ).toArray()
   var cloud;
-  var re = /(CLR)|(([A-O|Q-Z]{3})([0-9]{3}))/g;
+  var re = /(CLR)|(([VV|A-O|Q-Z]{2,3})([0-9]{3}))/g;
   let i = 1;
   do {
     cloud = re.exec(text);
@@ -134,15 +141,18 @@ function metarTextToJson(text) {
   } while (cloud);
 
 
-  let weather_regex = / (([+|-]{0,1})([A-Z]{2}){1,2})(?![A-Z|0-9]).*A[0-9]{4}/g;
+  let weather_regex = / (([+|-]{0,1})([A-Z]{2}){1,2})(?![A-Z|0-9])/g;
+  //.*A[0-9]{4}
   var weather;
   metar.weather = [];
   do {
     weather = weather_regex.exec(text);
     if (weather) {
       let result = parseWAbbv(weather);
-      metar.weather.push(result);
-      continue;
+      if (result) {
+        metar.weather.push(result);
+
+      }
     }
   } while (weather)
 
