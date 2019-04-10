@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "rm -r ../backend/client/build && react-scripts build && mv ./build ../backend/client",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -45,6 +45,10 @@ class CloudLayerVis extends Component {
       clouds = [
         [0, 9.6], [9.6, 19.2], [19.2, 28.8], [28.8, 38.4], [38.4, 48]
       ]
+    } else if (cloud.cover === 5) {
+      clouds = [
+        [0,48]
+      ]
     }
 
     // Clouds
