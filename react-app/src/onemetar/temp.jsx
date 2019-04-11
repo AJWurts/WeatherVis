@@ -57,11 +57,11 @@ class Temp extends Component {
 
 
 
-    if (!this.props.metar.tmpf) {
+    if (this.props.metar.tmpf === undefined) {
       return;
     } else {
-      var temp = this.props.metar.tmpf || 5;
-      var dew = this.props.metar.dwpf || 5;
+      var temp = this.props.metar.tmpf;
+      var dew = this.props.metar.dwpf;
     }
 
     var width = this.props.width || 155;
@@ -76,7 +76,7 @@ class Temp extends Component {
       .range([height * 0.78, 20])
 
 
-    this.drawTemps(svg, tempScale, 50);
+    this.drawTemps(svg, tempScale, 60);
 
     svg.append('text')
       .attr('x', 5)
@@ -92,7 +92,7 @@ class Temp extends Component {
       .data(d3.range(min, max, 1))
       .enter()
       .append('text')
-      .attr('x', 28)
+      .attr('x', 38)
       .attr('y', d => tempScale(d) + 5)
       .attr('fill', (d, i) => d % 5 === 0 ? "black" : '#00000000')
       .attr('text-anchor', 'end')
@@ -103,9 +103,9 @@ class Temp extends Component {
       .data(d3.range(min, max, 1))
       .enter()
       .append('line')
-      .attr('x1', 30)
+      .attr('x1', 40)
       .attr('y1', d => tempScale(d))
-      .attr('x2', 35)
+      .attr('x2', 45)
       .attr('y2', d => tempScale(d))
       .attr('stroke', (d, i) => d % 5 === 0 ? "black" : '#00000000')
 
@@ -126,7 +126,7 @@ class Temp extends Component {
       .data(d3.range(+minF, +maxF, 1))
       .enter()
       .append('text')
-      .attr('x', 78)
+      .attr('x', 88)
       .attr('y', d => fScale(d) + 5)
       .attr('fill', (d, i) => d % tickMod == 0 ? "black" : '#00000000')
       .attr('text-anchor', 'start')
@@ -138,15 +138,15 @@ class Temp extends Component {
       .data(d3.range(+minF, +maxF, 1))
       .enter()
       .append('line')
-      .attr('x1', 70)
+      .attr('x1', 80)
       .attr('y1', d => fScale(d))
-      .attr('x2', 65)
+      .attr('x2', 75)
       .attr('y2', d => fScale(d))
       .attr('stroke', (d, i) => d % tickMod === 0 ? "black" : '#00000000')
 
 
     svg.selectAll("axisbars")
-      .data([[30, 20, 30, height * 0.78], [70, 20, 70, height * 0.78]])
+      .data([[40, 20, 40, height * 0.78], [80, 20, 80, height * 0.78]])
       .enter()
       .append('line')
       .attr('x1', d => d[0])
@@ -157,20 +157,20 @@ class Temp extends Component {
 
 
     svg.append("text")
-      .attr('x', 20)
+      .attr('x', 30)
       .attr('y', 190)
       // .attr('transform', `translate(130,5) rotate(-90) translate(-175, 0)`)
       .text(`Dew Point: ${this.cToF(dew).toFixed(1)}F`)
       .attr('font-size', 15)
 
     svg.append('circle')
-      .attr('cx', 10)
+      .attr('cx', 20)
       .attr('cy', 185)
       .attr('r', 5)
       .attr('fill', 'blue')
 
     svg.append("text")
-      .attr('x', 20)
+      .attr('x', 30)
       .attr('y', 175)
       // .attr('transform', `translate(150,5) rotate(-90) translate(-175, 0)`)
       .text(`Temp: ${this.cToF(temp).toFixed(1)}F`)
@@ -179,7 +179,7 @@ class Temp extends Component {
 
 
     svg.append('circle')
-      .attr('cx', 10)
+      .attr('cx', 20)
       .attr('cy', 170)
       .attr('r', 5)
       .attr('fill', 'red')
@@ -187,9 +187,9 @@ class Temp extends Component {
     // Freezing Line
     if (min < 0 && max > 0) {
       svg.append('line')
-      .attr('x1', 30)
+      .attr('x1', 40)
       .attr('y1', tempScale(0))
-      .attr('x2', 70)
+      .attr('x2', 80)
       .attr('y2', tempScale(0))
       .attr('stroke-width', 2)
       .attr('stroke', 'blue')
