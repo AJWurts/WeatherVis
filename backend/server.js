@@ -118,9 +118,12 @@ function metarTextToJson(text) {
   metar.dwpf = temp[2].includes("M") ? -(temp[2].slice(1, temp[2].length)) : +temp[2];
 
   let time = text.match(/([0-9]{2})([0-9]{2})([0-9]{2})Z/)
-  metar.valid = time[0];
+  metar.valid = {
+    day: +time[1],
+    hour: +time[2],
+    minute: +time[3]
+  }
 
-  // let clouds = matchAll(text, ).toArray()
   var cloud;
   var re = /(CLR)|(([VV|A-O|Q-Z]{2,3})([0-9]{3}))/g;
   let i = 1;
@@ -160,6 +163,36 @@ function metarTextToJson(text) {
 
 }
 
+function tafsTextToJson(text) {
+  text = "KBED 221131Z 2212/2312 02004KT 5SM BR BKN025  \
+    FM221600 04008KT 6SM BR VCSH OVC015  \
+    FM221800 04010G19KT 5SM -SHRA OVC010  \
+    FM221900 04010G21KT 3SM SHRA OVC008 \
+    FM230000 02009KT 3SM -SHRA OVC008 \
+    FM230900 01008KT 2SM BR VCSH OVC003"
+  // Split it up and then analyze each line individually
+
+  let tafs = {}
+
+  let startStop = /([0-9]{2})([0-9]{2})\/([0-9]{2})([0-9]{2})/;
+  let time = startStop.match(text);
+  tafs.start = {
+    day: time[1],
+    hour: time[2]
+  }
+
+  tafs.end = {
+    day: time[3],
+    hour: time[4]
+  }
+
+
+  let lineReg = /FM([0-9]{2]})([0-9]{2]})([0-9]{2]}) ([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT ([0-9]{0,1})[ ]{1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM ((([+|-]{0,1})([A-Z]{2}){1,2})(?![A-Z|0-9]))*/g
+  let line;
+  
+
+
+}
 
 app.get('/api/newestMetar/:ident', (req, res, next) => {
 
