@@ -88,8 +88,8 @@ class Wind extends Component {
   }
 
   drawArrow = (svg, dir, speed, maxSpeed, color) => {
-    // dir *= 10;
-    // dir -= 9
+    dir = (dir + 180) % 360;
+
     if (dir === 'VRB') {
       dir = 0;
       speed = 0;
@@ -287,7 +287,7 @@ class Wind extends Component {
     let dir = this.props.metar.drct;
     let spd = this.props.metar.sknt;
     let angle = this.rads(Math.abs(heading - dir))
-    let headwind = -Math.round(Math.cos(angle) * spd);
+    let headwind = Math.round(Math.cos(angle) * spd);
     let crosswind = -Math.round(Math.sin(angle) * spd);
     svg.append("text")
       .attr('x', 5)
@@ -579,7 +579,7 @@ class Wind extends Component {
       .text(d => d.label)
 
     var runways = this.props.runways || hanscomRunways;
-    if (this.props.airport === 'KBED' ) {
+    if (this.props.airport === 'KBED') {
       this.drawRunways(svg, runways);
       // this.drawRunwayWinds(svg, runways);
     }
@@ -601,12 +601,13 @@ class Wind extends Component {
       .attr('color', 'black')
 
 
+    // this.drawWindIndicators(svg);
+    this.drawRunwayWinds(svg, runways);
 
 
 
-    if (!(Math.abs(this.state.angle) < 1) && !this.interval && false) {
+    if (!(Math.abs(this.state.angle) < 1) && !this.interval) {
       console.log(this.state.angle)
-      this.drawWindIndicators(svg);
     }
   }
 
