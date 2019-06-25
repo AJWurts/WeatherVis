@@ -163,19 +163,21 @@ function metarTextToJson(text) {
 
 }
 
-function tafsTextToJson(text) {
-  text = "KBED 221131Z 2212/2312 02004KT 5SM BR BKN025  \
-    FM221600 04008KT 6SM BR VCSH OVC015  \
-    FM221800 04010G19KT 5SM -SHRA OVC010  \
-    FM221900 04010G21KT 3SM SHRA OVC008 \
-    FM230000 02009KT 3SM -SHRA OVC008 \
-    FM230900 01008KT 2SM BR VCSH OVC003"
-  // Split it up and then analyze each line individually
 
-  let tafs = {}
+
+function tafsTextToJson(text) {
+  // text = "KBED 221131Z 2212/2312 02004KT 5SM BR BKN025  \
+  //   FM221600 04008KT 6SM BR VCSH OVC015  \
+  //   FM221800 04010G19KT 5SM -SHRA OVC010  \
+  //   FM221900 04010G21KT 3SM SHRA OVC008 \
+  //   FM230000 02009KT 3SM -SHRA OVC008 \
+  //   FM230900 01008KT 2SM BR VCSH OVC003"
+  // Split it up and then analyze each line individually
+//FM([0-9]{2})([0-9]{2})([0-9]{2}) ([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT ([0-9]{0,1})[ ]{0,1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM ([ ]{1}(([+|-]{0,1})([A-Z]{2}){1,2})(?![A-Z|0-9]))*
+  let tafs = []
 
   let startStop = /([0-9]{2})([0-9]{2})\/([0-9]{2})([0-9]{2})/;
-  let time = startStop.match(text);
+  let time = text.match(startStop);
   tafs.start = {
     day: time[1],
     hour: time[2]
@@ -187,9 +189,28 @@ function tafsTextToJson(text) {
   }
 
 
-  let lineReg = /FM([0-9]{2]})([0-9]{2]})([0-9]{2]}) ([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT ([0-9]{0,1})[ ]{1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM ((([+|-]{0,1})([A-Z]{2}){1,2})(?![A-Z|0-9]))*/g
-  let line;
+  let lineReg = /FM([0-9]{2})([0-9]{2})([0-9]{2}) ([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT([0-9]{0,1})[ ]{1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM (([+|-]{0,1})([A-Z]{2}){1,2}[ ]+)*(?![A-Z|0-9])*/g
+
+  var line;
+  let i = 1;
+  do {
+    line = lineReg.exec(text);
+    console.log(line)
+    if (line) {
+      if (line[1]) {
+        metar['skyc' + i] = cloud[1];
+        i++;
+        continue;
+      } else {
+        metar['skyc' + i] = cloud[3];
+        metar['skyl' + i] = +cloud[4] * 100;
+      }
+      i++;
+
+    }
+  } while (line);
   
+
 
 
 }
@@ -214,6 +235,28 @@ app.get('/api/newestMetar/:ident', (req, res, next) => {
         res.json(metarJson);
       }
 
+    })
+});
+
+
+app.get('/api/newestTAFS/:ident', (req, res, next) => {
+  let airportLetters = req.params.ident;
+  console.log("newestTAFS")
+  axios.get(`https://www.aviationweather.gov/metar/data?ids=${airportLetters}&format=raw&hours=0&taf=on`)
+    .then(result => {
+      var text = result.data;
+
+      let start = text.search(/<!-- Data starts here -->/)
+      let end = text.search(/<!-- Data ends here -->/)
+
+      let searchString = text.slice(start, end);
+      let search = searchString.match(/<code>(.*)<\/code>.*\n.*<code>(.*)<\/code>/);
+      if (!search) {
+        res.status(404).send();
+      } else {
+        let tafs_json = tafsTextToJson(search[2]);
+        res.json(tafs_json);
+      }
     })
 });
 
