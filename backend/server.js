@@ -166,12 +166,13 @@ function metarTextToJson(text) {
 
 
 function tafsTextToJson(text) {
-  // text = "KBED 221131Z 2212/2312 02004KT 5SM BR BKN025  \
-  //   FM221600 04008KT 6SM BR VCSH OVC015  \
-  //   FM221800 04010G19KT 5SM -SHRA OVC010  \
-  //   FM221900 04010G21KT 3SM SHRA OVC008 \
-  //   FM230000 02009KT 3SM -SHRA OVC008 \
-  //   FM230900 01008KT 2SM BR VCSH OVC003"
+  console.log(text)
+  text = "KBED 221131Z 2212/2312 02004KT 5SM BR BKN025  \
+    FM221600 04008KT 6SM BR VCSH OVC015  \
+    FM221800 04010G19KT 5SM -SHRA OVC010  \
+    FM221900 04010G21KT 3SM SHRA OVC008 \
+    FM230000 02009KT 3SM -SHRA OVC008 \
+    FM230900 01008KT 2SM BR VCSH OVC003"
   // Split it up and then analyze each line individually
 //FM([0-9]{2})([0-9]{2})([0-9]{2}) ([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT ([0-9]{0,1})[ ]{0,1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM ([ ]{1}(([+|-]{0,1})([A-Z]{2}){1,2})(?![A-Z|0-9]))*
   let tafs = []
@@ -189,26 +190,32 @@ function tafsTextToJson(text) {
   }
 
 
-  let lineReg = /FM([0-9]{2})([0-9]{2})([0-9]{2}) ([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT([0-9]{0,1})[ ]{1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM (([+|-]{0,1})([A-Z]{2}){1,2}[ ]+)*(?![A-Z|0-9])*/g
+  let from = /FM([0-9]{2})([0-9]{2})([0-9]{2})/g // ([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT([0-9]{0,1})[ ]{1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM (([+|-]{0,1})([A-Z]{2}){1,2}[ ]+)*(?![A-Z|0-9])*/g
+  let wind = /([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT/g
+  let vis = /([0-9]{0,1})[ ]{1}((P{0,1})([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM/g
+  let weather_regex = /SM (([+|-]{0,1})([A-Z]{2}){1,2}[ ]+(?![0-9]+))*/g;
+  let clouds = /(CLR)|(([VV|A-O|Q-Z]{2,3})([0-9]{3}))/g;
 
-  var line;
+
+  var from_;
   let i = 1;
+  
   do {
-    line = lineReg.exec(text);
-    console.log(line)
-    if (line) {
-      if (line[1]) {
-        metar['skyc' + i] = cloud[1];
-        i++;
-        continue;
-      } else {
-        metar['skyc' + i] = cloud[3];
-        metar['skyl' + i] = +cloud[4] * 100;
-      }
-      i++;
+    from_ = from.exec(text)
+    let wind_ = wind.exec(text)
+    let vis_ = vis.exec(text)
+    let weather_ = weather_regex.exec(text)
+    let cloud_ = clouds.exec(text)
+    console.log(from_ ? from_[0] : "Null")
+    console.log(wind_ ? wind_[0] : 'No Wind')
+    console.log(vis_ ? vis_[0] : "No Vis")
+    console.log(weather_ ? weather_[0] : "No Weather")
+    console.log(cloud_ ? cloud_[0] : "No Cloud")
+    
 
-    }
-  } while (line);
+
+
+  } while (from_);
   
 
 
