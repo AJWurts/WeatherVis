@@ -581,7 +581,7 @@ class Wind extends Component {
     var runways = this.props.runways || hanscomRunways;
     if (this.props.airport === 'KBED') {
       this.drawRunways(svg, runways);
-      // this.drawRunwayWinds(svg, runways);
+      this.drawRunwayWinds(svg, runways);
     }
 
     let max_speed = Math.max(sknt, gust) + 5
@@ -602,7 +602,7 @@ class Wind extends Component {
 
 
     // this.drawWindIndicators(svg);
-    this.drawRunwayWinds(svg, runways);
+
 
 
 
