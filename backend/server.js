@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const axios = require('axios');
 const app = express()
+const parsers = require('./weatherparser.js')
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -162,19 +163,63 @@ function metarTextToJson(text) {
   return metar;
 
 }
+function processFrom(text) {
+  let from = /FM([0-9]{2})([0-9]{2})([0-9]{2})/;
+  ///----- FROM -----///
+  current = {}
+  from_ = from.exec(text)
+  if (from_) {
+    current.from = {
+      day: from_[1],
+      hour: from_[2],
+      minute: from_[3],
+      raw: from_[0]
+    }
+
+  }
+  current = {...current, ...parsers.parseWind(text)}
+  current = {...current, ...parsers.parseVis(text)}
+  current = {...current, ...parsers.parseWeather(text)}
+  current = {...current, ...parsers.parseClouds(text)}
+  
+  return current;
+}
+
+function processTempo(text) {
+  let startStop = /([0-9]{2})([0-9]{2})\/([0-9]{2})([0-9]{2})/;
+  let time = text.match(startStop);
+  // TEMPO 1813/1815 4SM -SHRA 
+  current = {}
+  current.start = {
+    day: time[1],
+    hour: time[2]
+  }
+
+  current.end = {
+    day: time[3],
+    hour: time[4]
+  }
+  current = {...current, ...parsers.parseWind(text)}
+  current = {...current, ...parsers.parseVis(text)}
+  current = {...current, ...parsers.parseWeather(text)}
+  current = {...current, ...parsers.parseClouds(text)}
+  console.log(current)
+  return current
+}
+
+function processBecoming(text) {
+  let timeRegex = /([0-9]{2})([0-9]{2})/;
+  let times = timeRegex.exec(text);
+  let current = {}
+  current.start = times[1];
+  current.end = times[2];
 
 
+
+}
 
 function tafsTextToJson(text) {
-  console.log(text)
-  // text = "KBED 221131Z 2212/2312 02004KT 5SM BR BKN025  \
-  //   FM221600 04008KT 6SM BR VCSH OVC015  \
-  //   FM221800 04010G19KT 5SM -SHRA OVC010  \
-  //   FM221900 04010G21KT 3SM SHRA OVC008 \
-  //   FM230000 02009KT 3SM -SHRA OVC008 \
-  //   FM230900 01008KT 2SM BR VCSH OVC003"
-  // Split it up and then analyze each line individually
-//FM([0-9]{2})([0-9]{2})([0-9]{2}) ([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT ([0-9]{0,1})[ ]{0,1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM ([ ]{1}(([+|-]{0,1})([A-Z]{2}){1,2})(?![A-Z|0-9]))*
+  text = text.replace(/&nbsp;&nbsp;/g, '')
   let tafs = {}
 
   let released = /([0-9]{2})([0-9]{2})([0-9]{2})Z/g
@@ -186,7 +231,7 @@ function tafsTextToJson(text) {
     combined: created[0]
   }
 
-  let startStop = /([0-9]{2})([0-9]{2})\/([0-9]{2})([0-9]{2})/g;
+  let startStop = /([0-9]{2})([0-9]{2})\/([0-9]{2})([0-9]{2})/;
   let time = text.match(startStop);
   tafs.start = {
     day: time[1],
@@ -198,68 +243,36 @@ function tafsTextToJson(text) {
     hour: time[4]
   }
 
+  tafs.raw = text
   let textsplit = text.split('<br\/>')
   tafs.forecast = []
-  
+
   let current = {}
   current.raw = textsplit[0]
-  console.log(current.raw)
-  
-  let from = /FM([0-9]{2})([0-9]{2})([0-9]{2})/g // ([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT([0-9]{0,1})[ ]{1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM (([+|-]{0,1})([A-Z]{2}){1,2}[ ]+)*(?![A-Z|0-9])*/g
-  let wind = /([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT/g
-  let vis = /([0-9]{0,1})[ ]{1}((P{0,1})([0-9]{0,1})[\/]{0,1}([0-9]{1,2})SM)/g
-  let weather_regex = /SM (([+|-]{0,1})([A-Z]{2}){1,2}(?![0-9]+)[ ]+)*/g;
-  let clouds = /(CLR)|(([VV|A-O|Q-Z]{2,3})([0-9]{3})) /g;
+
+  let header = /(K[0-z]{3}|FM|TEMPO|BECMG|PROB)/;
 
 
-  var from_ = 1;
-  let i = 1;
-  
-  do {
+
+
+  for (let i = 0; i < textsplit.length; i++) {
+    text = textsplit[i]
     current = {}
-    current.raw = textsplit[i+1]
-    if (i !== 1) {
-      from_ = from.exec(text)
-      current.from = {
-        day: from_[1],
-        hour: from_[2],
-        minute: from_[3],
-        raw: from_[0]
-      }
+    current.raw = textsplit[i]
+    let header_ = header.exec(text);
+    current.type = header_[1];
+
+    if (current.type === 'TEMPO' || text.includes("TEMPO")) {
+      tafs.forecast.push({...current, ...processTempo(current.raw)});
+    } else if (current.type === 'FM' || current.type.includes('K')) {
+      current.type = "FM"; // Overrides K*** type to From type
+      tafs.forecast.push({...current, ...processFrom(current.raw)});
+    } else if (current.type === 'BECMG') {
+      tafs.forecast.push({...current, ...processBecoming(current.raw)});
     }
-    
-    let wind_ = wind.exec(text)
-    current.drct = wind_[1] === "VRB" ? wind_[1] : +wind_[1];
-    current.sknt = +wind_[2];
-    current.gust = wind_.length == 4 ? +wind_[3] : '';
+  } 
 
-    let vis_ = vis.exec(text)
-    // console.log(vis_)
-    if (vis[1]) {
-      current.vsby = (+vis[1]) + (+vis[5]) / (+vis[6])
-    } else if (vis[3] && vis[2].includes('/')) {
-      current.vsby = (+vis[3]) / (+vis[4]);
-    } else if (vis_[3] === 'P') {
-      current.vsby = 10
-    }
-    let weather_ = weather_regex.exec(text)
-
-    let cloud_ = clouds.exec(text)
-    // console.log(from_ ? from_[0] : "Null")
-    // console.log(wind_ ? wind_[0] : 'No Wind')
-    // console.log(vis_ ? vis_[0] : "No Vis")
-    // console.log(weather_ ? weather_[0] : "No Weather")
-    console.log(cloud_ ? cloud_ : "No Cloud")
-    
-
-    i++;
-
-    tafs.forecast.push(current)
-
-  } while (from_);
-  
-
-
+  return tafs
 
 }
 

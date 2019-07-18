@@ -7,6 +7,7 @@ import Temp from './onemetar/temp.jsx';
 import Percip from './onemetar/percip.jsx';
 import Pressure from './onemetar/pressure.jsx';
 import SearchBox from './SearchBox.jsx'
+import TimeLine from './timeline/timeline.jsx'
 import *  as d3 from 'd3';
 import './App.css';
 
@@ -62,27 +63,31 @@ class App extends Component {
 
 
   render() {
-    var { metars, metar, airport, errorMessage } = this.state;
+    var { taf, metar, airport, errorMessage } = this.state;
 
 
     return (
       <div className='top-bar'>
         <SearchBox onClick={this.onSearch} />
         {metar ? <span style={{ fontSize: 20, textAlign: 'center' }}>METAR: {metar.raw} </span> : null}
-      
-        {!metar ? <span style={{fontSize: 30}}>{errorMessage}</span> : 
-           <div className="App">
-          <CloudLayersVis metar={metar} height={850} />
-          <div>
-            <Wind airport={airport} metar={metar} width={500} height={500} />
-            <div style={{ display: 'flex' }}>
-              <Temp metar={metar} />
-              <Percip metar={metar} />
-              <Pressure metar={metar} width={200} height={200} />
+
+        {!metar ? <span style={{ fontSize: 30 }}>{errorMessage}</span> :
+          <div className="App">
+            <CloudLayersVis metar={metar} height={850} />
+            <div>
+              <Wind airport={airport} metar={metar} width={500} height={500} />
+              <div style={{ display: 'flex' }}>
+                <Temp metar={metar} />
+                <Percip metar={metar} />
+                <Pressure metar={metar} width={200} height={200} />
+              </div>
+              <Visibility vis={metar.vsby} />
             </div>
-            <Visibility vis={metar.vsby} />
-          </div>
-        </div>}
+          </div>}
+        {!taf ? <span style={{ fontSize: 30 }}>{errorMessage}</span> :
+          <div>
+            <TimeLine data={taf} />
+          </div>}
       </div>
     );
   }
