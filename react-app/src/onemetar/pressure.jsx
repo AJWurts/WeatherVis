@@ -39,7 +39,7 @@ class Pressure extends Component {
 
   displayNeedle = (svg, baroScale) => {
     let mslp = this.hpaToInhg(this.props.metar.mslp);
-    console.log(mslp);
+    // console.log(mslp);
     svg.append('path')
       .attr('d', ` m -5 0 l 5 75 l 5 -75 l -5 -5 z`)
       .attr('transform', `translate(${this.props.width / 2} ${this.props.height / 2}) rotate(${baroScale(mslp)})`)
@@ -52,7 +52,6 @@ class Pressure extends Component {
     svg.selectAll('*').remove();
 
 
-    console.log('wasup')
     if (!this.props.metar.alti) {
       return;
     } else {

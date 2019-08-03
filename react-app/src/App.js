@@ -31,6 +31,15 @@ class App extends Component {
           metar: result.data
         })
       })
+    
+      axios.get(`/api/newestTAFS/${this.state.airport}`)
+        .then(result => {
+          this.setState({
+            taf: result.data
+          })
+        })
+
+      
   }
 
 
@@ -56,6 +65,13 @@ class App extends Component {
         this.setState({
           metar: null,
           errorMessage: "Could not find airport. Try again"
+        })
+      })
+
+    axios.get(`/api/newestTAFS/${ident}`)
+      .then(result => {
+        this.setState({
+          taf: result.data
         })
       })
   }
@@ -85,7 +101,7 @@ class App extends Component {
             </div>
           </div>}
         {!taf ? <span style={{ fontSize: 30 }}>{errorMessage}</span> :
-          <div>
+          <div width="1055px">
             <TimeLine data={taf} />
           </div>}
       </div>

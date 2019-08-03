@@ -69,7 +69,7 @@ class Percip extends Component {
       .attr('text-anchor', 'middle')
       .attr('fill', 'black')
 
-    console.log(this.props.metar.weather)
+    // console.log(this.props.metar.weather)
     let base = 30;
     if (this.props.metar.weather.length > 0) {
       svg.selectAll("labels")

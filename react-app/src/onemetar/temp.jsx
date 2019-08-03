@@ -16,7 +16,7 @@ class Temp extends Component {
 
     var temp = this.props.metar.tmpf;
     var dew = this.props.metar.dwpf;
-    console.log(this.props.metar.tmpf, dew)
+    // console.log(this.props.metar.tmpf, dew)
     // Dew Point
     var dewCircle = svg.append('circle')
       .attr('cx', x)
@@ -70,7 +70,7 @@ class Temp extends Component {
     let min = Math.min(temp, dew) - 8;
     let max = Math.max(temp, dew) + 8;
     let range = max - min + 16;
-    console.log(min, max);
+    // console.log(min, max);
     var tempScale = d3.scaleLinear()
       .domain([min, max])
       .range([height * 0.78, 20])
@@ -117,7 +117,7 @@ class Temp extends Component {
     }
     let minF = this.cToF(min).toFixed(0);
     let maxF = this.cToF(max).toFixed(0);
-    console.log(minF, maxF);
+    // console.log(minF, maxF);
     let fScale = d3.scaleLinear()
       .domain([+minF, +maxF])
       .range([height * 0.78, 20])
