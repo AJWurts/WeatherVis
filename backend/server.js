@@ -170,9 +170,9 @@ function processFrom(text) {
   from_ = from.exec(text)
   if (from_) {
     current.from = {
-      day: from_[1],
-      hour: from_[2],
-      minute: from_[3],
+      day: +from_[1],
+      hour: +from_[2],
+      minute: +from_[3],
       raw: from_[0]
     }
 
@@ -191,13 +191,13 @@ function processTempo(text) {
   // TEMPO 1813/1815 4SM -SHRA 
   current = {}
   current.start = {
-    day: time[1],
-    hour: time[2]
+    day: +time[1],
+    hour: +time[2]
   }
 
   current.end = {
-    day: time[3],
-    hour: time[4]
+    day: +time[3],
+    hour: +time[4]
   }
   current = {...current, ...parsers.parseWind(text)}
   current = {...current, ...parsers.parseVis(text)}
@@ -225,22 +225,22 @@ function tafsTextToJson(text) {
   let released = /([0-9]{2})([0-9]{2})([0-9]{2})Z/g
   let created = released.exec(text)
   tafs.released = {
-    day: created[1],
-    hour: created[2],
-    minute: created[3],
+    day: +created[1],
+    hour: +created[2],
+    minute: +created[3],
     combined: created[0]
   }
 
   let startStop = /([0-9]{2})([0-9]{2})\/([0-9]{2})([0-9]{2})/;
   let time = text.match(startStop);
   tafs.start = {
-    day: time[1],
-    hour: time[2]
+    day: +time[1],
+    hour: +time[2]
   }
 
   tafs.end = {
-    day: time[3],
-    hour: time[4]
+    day: +time[3],
+    hour: +time[4]
   }
 
   tafs.raw = text
@@ -265,6 +265,9 @@ function tafsTextToJson(text) {
     if (current.type === 'TEMPO' || text.includes("TEMPO")) {
       tafs.forecast.push({...current, ...processTempo(current.raw)});
     } else if (current.type === 'FM' || current.type.includes('K')) {
+      if (current.type !== 'FM') {
+        current.from = tafs.start;
+      }
       current.type = "FM"; // Overrides K*** type to From type
       tafs.forecast.push({...current, ...processFrom(current.raw)});
     } else if (current.type === 'BECMG') {
@@ -299,6 +302,24 @@ app.get('/api/newestMetar/:ident', (req, res, next) => {
     })
 });
 
+// function handleGetTaf(ident) {
+//   return axios.get(`https://www.aviationweather.gov/metar/data?ids=${airportLetters}&format=raw&hours=0&taf=on`)
+//     .then(result => {
+//       var text = result.data;
+
+//       let start = text.search(/<!-- Data starts here -->/)
+//       let end = text.search(/<!-- Data ends here -->/)
+
+//       let searchString = text.slice(start, end);
+//       let search = searchString.match(/<code>(.*)<\/code>.*\n.*<code>(.*)<\/code>/);
+//       if (!search) {
+//         return 404; //res.status(404).send();
+//       } else {
+//         var tafs_json = tafsTextToJson(search[2]);
+//         return tafs_json
+//         // res.json(tafs_json);
+//       }
+// }
 
 app.get('/api/newestTAFS/:ident', (req, res, next) => {
   let airportLetters = req.params.ident;
@@ -320,6 +341,27 @@ app.get('/api/newestTAFS/:ident', (req, res, next) => {
       }
     })
 });
+
+// app.get('/api/weather/:ident', (req, res, next) => {
+//   let airportLetters = req.params.ident;
+//   console.log("weather")
+//   handleGetTaf(airportLetters)
+//     }).then(taf => {
+//       if (taf === 404) {
+//         res.sendStatus(404);
+//         return 404
+//       }
+//       return {
+//         taf: taf,
+//         metar:  handleGetMetar(airportLetters)
+//       };
+//     }).then(result => {
+//       if (result === 404) {
+
+//       }
+//     })
+// });
+
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
