@@ -14,7 +14,7 @@ const COVER_KEY = {
 
 
 var drawCloud = (svg, cloud, minX, maxX, yScale) => {
-    console.log(cloud, minX, maxX)
+    // console.log(cloud, minX, maxX)
     var clouds; // [[startX, endX]]
     var xScale = d3.scaleLinear()
         .domain([0, 48])
@@ -50,7 +50,7 @@ var drawCloud = (svg, cloud, minX, maxX, yScale) => {
         .enter()
         .append('rect')
         .attr('x', d => xScale(d[0]))
-        .attr('y', yScale(+cloud.alt)) //- (yScale(0) - yScale(1000)))
+        .attr('y', yScale(+cloud.alt + 1000)) //- (yScale(0) - yScale(1000)))
         .attr('width', d => {
             return xScale(d[1]) - xScale(d[0])
         })
@@ -105,11 +105,16 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
 
             if (i === divs.length - 1) {
                 var end = xScale(maxX);
+                var endTime = maxX;
             } else {
                 var end = xScale(divs[i + 1][0].time)
+                var endTime = divs[i+1][0].time
             }
             // console.log(levels[i].time)
-            drawCloud(svg, level, xScale(level.time), end, yScale)
+            for (let k = 0; k < endTime - level.time; k++) {
+                drawCloud(svg, level, xScale(level.time + k), xScale((level.time + k + 1)), yScale)
+            }
+            
         }
 
     }
