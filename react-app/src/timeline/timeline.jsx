@@ -11,7 +11,7 @@ function timeFunc(start, end) {
 
     let fun = (full_time) => {
         let time = +full_time.hour;
-        if (+time >= startHour && +full_time.day === +end.day) {
+        if (+time > startHour && +full_time.day === +start.day + 1 ) {
             return (time - startHour) + 24;
         } else if (+time < startHour) {
             return (24 - startHour) % 24 + time;
