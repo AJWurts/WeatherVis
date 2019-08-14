@@ -42,7 +42,7 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
         },
         vsby: 0
     })
-    
+
     forecast.push({
         from: {
             hour: -1
@@ -51,22 +51,28 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
     })
 
     var line = d3.line()
-        .x(function(d) { 
+        .x(function (d) {
+            if (!d.from) {
+                return xScale(timeFunc(d.start));
+            }
             if (d.from.hour === -1) {
                 return xScale(0);
             } else if (d.from.hour === -2) {
                 return xScale(maxX);
             } else {
-                return xScale(timeFunc(d.from)); 
+                return xScale(timeFunc(d.from));
             }
         })
-        .y(function(d) { 
-            console.log(d.vsby)
-            return yScale(d.vsby); })
+        .y(function (d, i) {
+            if (d.type ? d.type === "TEMPO" : false) {
+                return yScale(forecast[i+1].vsby)
+            }
+            return yScale(d.vsby);
+        })
         .curve(d3.curveMonotoneX) // apply smoothing to the line
         ;
 
-    
+
     // Wind Speed Data
     var path = svg.append("path")
         .datum(forecast) // 10. Binds data to the line 

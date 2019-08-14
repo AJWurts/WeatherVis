@@ -96,7 +96,7 @@ class CloudLayerVis extends Component {
     var width = this.props.width || 500;
     var height = this.props.height || 800;
 
-    var MAX_ALT = 22000;
+    var MAX_ALT = 25000;
     var yScale = d3.scaleLinear()
       .domain([0, MAX_ALT])
       .range([height * 0.95, height * 0.05])

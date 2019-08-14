@@ -43,7 +43,6 @@ var drawCloud = (svg, cloud, minX, maxX, yScale) => {
         ]
     }
 
-    console.log("Cloud: ", cloud.alt);
     // Clouds
     svg.selectAll('clouds' + cloud.alt)
         .data(clouds)
@@ -68,7 +67,6 @@ var pad = (num, size) => {
 }
 
 function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
-    console.log(maxY)
     let yScale = d3.scaleLinear()
         .domain([0, 30000])
         .range([maxY, 0])
@@ -82,36 +80,34 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
                 levels.push({
                     cover: COVER_KEY[forecast[i]['skyc' + skyi]],
                     alt: +forecast[i]['skyl' + skyi],
-                    time: timeFunc(forecast[i].from)
+                    time: timeFunc(forecast[i].from || forecast[i].start)
                 })
                 skyi++;
             }
-        } else {
+            divs.push(levels)
+        } else if (forecast[i]['skyl1']) {
             levels.push({
                 cover: COVER_KEY[forecast[i]['skyc' + skyi]],
                 alt: +forecast[i]['skyl' + skyi],
-                time: timeFunc(forecast[i].from),
+                time: timeFunc(forecast[i].from || forecast[i].start),
             })
+            divs.push(levels)
         }
-
-        divs.push(levels)
     }
 
 
     for (let i = 0; i < divs.length; i++) {
         for (let j = 0; j < divs[i].length; j++) {
             let level = divs[i][j];
-            let start = xScale(level.time)
 
             if (i === divs.length - 1) {
-                var end = xScale(maxX);
                 var endTime = maxX;
             } else {
-                var end = xScale(divs[i + 1][0].time)
                 var endTime = divs[i+1][0].time
             }
             // console.log(levels[i].time)
             for (let k = 0; k < endTime - level.time; k++) {
+
                 drawCloud(svg, level, xScale(level.time + k), xScale((level.time + k + 1)), yScale)
             }
             

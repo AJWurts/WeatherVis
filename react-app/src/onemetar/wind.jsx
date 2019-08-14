@@ -88,12 +88,13 @@ class Wind extends Component {
   }
 
   drawArrow = (svg, dir, speed, maxSpeed, color) => {
-    dir = (dir + 180) % 360;
-
     if (dir === 'VRB') {
-      dir = 0;
+      dir = 360;
       speed = 0;
+    } else {
+        dir = (dir + 180) % 360;
     }
+    
     var speedScale = d3.scaleLinear()
       .domain([0, maxSpeed])
       .range([0, (this.props.width / 3) * 0.95])
