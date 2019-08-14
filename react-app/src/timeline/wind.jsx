@@ -35,11 +35,14 @@ function drawWind(forecast, svg, xScale, maxX, maxY, timeFunc) {
     // debugger
     var line = d3.line()
         .x(function(d) { 
-            if (d.from.hour === -2) {
-                return xScale(maxX)
+            let time = d.from ? d.from : d.start;
+            if (time.hour === -2) {
+                return xScale(maxX);
             }
+            
+
             // console.log(d.from.hour, timeFunc(d.from.hour))
-            return xScale(timeFunc(d.from)); })
+            return xScale(timeFunc(time)); })
         .y(function(d) { return yScale(d.sknt); })
         .curve(d3.curveMonotoneX) // apply smoothing to the line
         ;
