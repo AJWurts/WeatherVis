@@ -1,7 +1,7 @@
 const KEY = {
     BC: 'patchy',
     BL: 'blowing',
-    BR: 'mist',
+    BR: 'fog',
     DR: 'low drifting',
     DU: 'dust storm',
     DZ: 'drizzle',
@@ -180,6 +180,8 @@ function parseVis(text) {
             current.vsby = (+vis[3]) / (+vis[4]);
         } else if (vis_[3] === 'P') {
             current.vsby = 10
+        } else {
+          current.vsby = +vis_[5]
         }
     }
 
