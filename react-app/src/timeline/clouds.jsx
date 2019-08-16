@@ -23,19 +23,20 @@ var drawCloud = (svg, cloud, minX, maxX, yScale) => {
         return;
     } else if (cloud.cover === 1) {
         clouds = [
-            [5, 20], [28, 43]
+            // [5, 20], [28, 43]
+            [12,36],
         ]
     } else if (cloud.cover === 2) {
         clouds = [
-            [2, 14], [18, 30], [34, 46]
+            [4, 20], [28,44]
         ]
     } else if (cloud.cover === 3) {
         clouds = [
-            [1, 11], [13, 22], [25, 35], [37, 47]
+            [2, 22], [26,46]
         ]
     } else if (cloud.cover === 4) {
         clouds = [
-            [0, 9.6], [9.6, 19.2], [19.2, 28.8], [28.8, 38.4], [38.4, 48]
+            [-4,52]
         ]
     } else if (cloud.cover === 5) {
         clouds = [

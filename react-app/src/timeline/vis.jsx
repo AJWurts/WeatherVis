@@ -13,14 +13,8 @@ var pad = (num, size) => {
 function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
 
     let yScale = d3.scaleLinear()
-        .domain([0, 10])
+        .domain([0, 12])
         .range([maxY, 0])
-    // debugger
-    // var spd = forecast.map(x => {
-    //     return {
-    //         "sknt":x.sknt,
-    //         "drct": x.drct,
-    //         "")
 
     forecast = [...forecast];
     forecast.unshift({
@@ -77,8 +71,19 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
     var path = svg.append("path")
         .datum(forecast) // 10. Binds data to the line 
         .attr("d", line)
-        .attr('fill', '#2244aaaa')
+        .attr('fill', '#33c6f8a2')
         .attr('stroke', '#2244aa')
+
+    svg.selectAll('cloudLevelLabels')
+        .data([0, 5, 10])
+        .enter()
+        .append('text')
+        .attr('x', 5)
+        .attr('y', d => yScale(d))
+        .text(d => d + 'sm')
+        .attr('color', 'black')
+        .attr('text-anchor', 'start')
+
 
 }
 

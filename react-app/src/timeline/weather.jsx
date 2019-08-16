@@ -52,7 +52,7 @@ function drawWeather(forecast, svg, xScale, maxX, maxY, timeFunc) {
         .attr('x', d => xScale(timeFunc(d.from || d.start)))
         .attr('y', d => {
             height += 2;
-            console.log(height)
+            // console.log(height)
             return yScale(height % 5)
         })
         .attr('text-anchor', 'left')

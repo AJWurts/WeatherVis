@@ -175,7 +175,7 @@ class Wind extends Component {
       this.setState({
         angle: end
       }, this.createGraph);
-      console.log(end);
+      // console.log(end);
       clearInterval(this.interval);
       this.interval = null;
     }
@@ -608,7 +608,7 @@ class Wind extends Component {
 
 
     if (!(Math.abs(this.state.angle) < 1) && !this.interval) {
-      console.log(this.state.angle)
+      // console.log(this.state.angle)
     }
   }
 
