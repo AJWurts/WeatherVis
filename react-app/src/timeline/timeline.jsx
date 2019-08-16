@@ -11,7 +11,7 @@ function timeFunc(start, end) {
     let endHour = 24 + end.hour;
 
     let fun = (full_time) => {
-        let time = +full_time.hour;
+        let time = +full_time.hour + ((full_time.minute ? full_time.minute : 0) / 60);
         if (+time > startHour && +full_time.day === +start.day + 1) {
             return (time - startHour) + 24;
         } else if (+time < startHour) {
@@ -25,13 +25,20 @@ function timeFunc(start, end) {
 }
 
 class TimeLine extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            tafAge: ""
+        }
+    }
     componentDidMount() {
         this.createGraph()
+
     }
 
     componentWillReceiveProps(props) {
         this.props = props;
-        console.log(Object.keys(this.props));
+        // console.log(Object.keys(this.props));
         this.createGraph()
     }
 
@@ -58,13 +65,12 @@ class TimeLine extends Component {
         let widthScale = d3.scaleLinear()
             .domain([0, maxTime])
             .range([width * 0.06, width]);
-        console.log("Width:", width)
-        console.log([0, (24 - data.start.hour) % 24 + data.end.hour])
-
+        // console.log("Width:", width)
+        // console.log([0, (24 - data.start.hour) % 24 + data.end.hour])
+        console.log(data.forecast)
 
         const vcSvg = d3.select(this.vcNode);
         vcSvg.selectAll('*').remove()
-        drawVis(data.forecast, vcSvg, widthScale, maxTime, 100, time);
         drawClouds(data.forecast, vcSvg, widthScale, maxTime, 100, time);
 
         const windSvg = d3.select(this.windNode);
@@ -75,8 +81,24 @@ class TimeLine extends Component {
         weatherSvg.selectAll('*').remove()
         drawWeather(data.forecast, weatherSvg, widthScale, maxTime, 100, time);
 
+        const visSvg = d3.select(this.visNode);
+        visSvg.selectAll('*').remove()
+        drawVis(data.forecast, visSvg, widthScale, maxTime, 100, time);
+    
+        let tafDate = new Date()
+        tafDate.setUTCDate(data.released.day)
+        tafDate.setUTCHours(data.released.hour, data.released.minute)
 
-
+        let diff = new Date() - tafDate
+        console.log(diff)
+        let hours = diff / 3.6e6;
+        let minutes = Math.round(hours - Math.floor(hours) / 60);
+        console.log(hours, minutes)
+        // this.setState({
+        //     tafAge: `TAF released ${Math.floor(hours)}:${minutes} hours ago`
+        // })
+        // // this.tafAge = `TAF released ${hours}:${minutes} hours ago`
+        this.state.tafAge = `TAF released ${Math.floor(hours)}:${("" + minutes).padStart(2, "0")} hours ago`
 
     }
 
@@ -84,7 +106,10 @@ class TimeLine extends Component {
         var { width, height } = this.props;
         return (
             <div style={{ width: '1055px' }} ref={outer => this.outer = outer}>
+
                 <svg ref={node => this.vcNode = node} height={height || 100} width="1055px">
+                </svg>
+                <svg ref={node => this.visNode = node} height={height || 100} width="1055px">
                 </svg>
                 <svg ref={node => this.windNode = node} height={height || 100} width='100%'>
                 </svg>
