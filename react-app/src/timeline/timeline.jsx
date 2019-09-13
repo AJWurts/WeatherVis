@@ -100,7 +100,13 @@ class TimeLine extends Component {
     }
 
     onMouseMove = (event) => {
-        console.log(event)
+        // event.getX
+        // event.getY
+        // want to show
+        // - relevant TAF section
+        // - aligned values for vis, wind, weather, clouds
+        // Need free floating box that moves to mouse X and set y coordinate
+        
     }
     render() {
         var { width, height } = this.props;
@@ -116,6 +122,7 @@ class TimeLine extends Component {
                 </svg>
                 <svg ref={node => this.weatherNode = node} height={height || 100} width='100%'>
                 </svg>
+                
             </div>
         );
     }
