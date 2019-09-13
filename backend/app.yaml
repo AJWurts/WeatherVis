@@ -13,4 +13,9 @@
 
 # [START gae_quickstart_yaml]
 runtime: nodejs10
+handlers:
+- url: /.*
+  secure: always
+  redirect_http_response_code: 301
+  script: auto
 # [END gae_quickstart_yaml]
