@@ -43,7 +43,6 @@ class TimeLine extends Component {
     }
 
     componentWillUpdate(props) {
-        console.log("UPDATING")
         this.createGraph()
     }
 
@@ -90,10 +89,8 @@ class TimeLine extends Component {
         tafDate.setUTCHours(data.released.hour, data.released.minute)
 
         let diff = new Date() - tafDate
-        console.log(diff)
         let hours = diff / 3.6e6;
         let minutes = Math.round(hours - Math.floor(hours) / 60);
-        console.log(hours, minutes)
         // this.setState({
         //     tafAge: `TAF released ${Math.floor(hours)}:${minutes} hours ago`
         // })
@@ -102,10 +99,14 @@ class TimeLine extends Component {
 
     }
 
+    onMouseMove = (event) => {
+        console.log(event)
+    }
     render() {
         var { width, height } = this.props;
         return (
-            <div style={{ width: '1055px' }} ref={outer => this.outer = outer}>
+            <div style={{ width: '1055px' }} ref={outer => this.outer = outer}
+            onMouseMove={this.onMouseMove}>
 
                 <svg ref={node => this.vcNode = node} height={height || 100} width="1055px">
                 </svg>

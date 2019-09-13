@@ -214,7 +214,7 @@ function parseWeather(text) {
     do {
         weather_ = current_split[j];
         if (j == 1) break;
-        if (weather_ && weather_.length >= 2 && weather_.length <= 5 && !weather_.includes("SM")) {
+        if (weather_ && weather_.length >= 2 && weather_.length <= 5 && !weather_.includes("SM") && !weather_.includes("SKC")) {
             let regexed = weather_regex.exec(weather_);
             current.weather.push(parseWAbbv(regexed));
         }
@@ -244,6 +244,10 @@ function parseClouds(text) {
         j--;
     } while (cloud_.length === 0 || cloud_.length >= 6)
 
+    if (!current['skyc1']) {
+      current['skyc1'] = 'SKC'
+      current['skyl1'] = 100000 
+    }
     return current
 }
 
