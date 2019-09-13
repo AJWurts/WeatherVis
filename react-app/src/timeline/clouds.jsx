@@ -78,6 +78,7 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
         let skyi = 1;
         if (forecast[i].skyl2) {
             while (forecast[i]['skyc' + skyi]) {
+                
                 levels.push({
                     cover: COVER_KEY[forecast[i]['skyc' + skyi]],
                     alt: +forecast[i]['skyl' + skyi],
