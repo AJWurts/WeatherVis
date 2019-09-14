@@ -14,6 +14,10 @@ const COVER_KEY = {
 
 
 var drawCloud = (svg, cloud, minX, maxX, yScale) => {
+    // Draws a single layer of clouds
+    // Density based on cloud density
+    // Attempted to replicate cloud cover percentages reflected by coverage names
+
     // console.log(cloud, minX, maxX)
     var clouds; // [[startX, endX]]
     var xScale = d3.scaleLinear()
@@ -54,7 +58,7 @@ var drawCloud = (svg, cloud, minX, maxX, yScale) => {
         .attr('width', d => {
             return xScale(d[1]) - xScale(d[0])
         })
-        .attr('height', (yScale(0) - yScale(2000)))
+        .attr('height', (yScale(0) - yScale(2000))) // Assume clouds are 2000ft think, not always true
         .attr('fill', '#AAAAAA')
         .attr('rx', 10)
         .attr('ry', 10)
@@ -63,6 +67,7 @@ var drawCloud = (svg, cloud, minX, maxX, yScale) => {
 }
 
 var pad = (num, size) => {
+    // Pads numbers
     var s = "000000000" + num;
     return s.substr(s.length - size);
 }
@@ -72,6 +77,7 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
         .domain([0, 30000])
         .range([maxY, 0])
 
+    // Iterates through taf and retrieves cloud cover and converts to format for easier displaying
     let divs = [];
     for (let i = 0; i < forecast.length; i++) {
         let levels = [];
@@ -102,12 +108,13 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
         for (let j = 0; j < divs[i].length; j++) {
             let level = divs[i][j];
 
+            // Calculates end of cloud. So the drawCloud function know what size to work with
             if (i === divs.length - 1) {
                 var endTime = maxX;
             } else {
                 var endTime = divs[i+1][0].time
             }
-            // console.log(levels[i].time)
+
             for (let k = 0; k < endTime - level.time; k++) {
 
                 drawCloud(svg, level, xScale(level.time + k), xScale((level.time + k + 1)), yScale)
@@ -128,9 +135,7 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
         .attr('color', 'black')
         .attr('text-anchor', 'start')
 
-    // this.drawCloud(
-    //     svg, cloud, 100, width, yScale
-    //   )
+
 }
 
 export default drawClouds;

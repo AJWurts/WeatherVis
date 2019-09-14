@@ -16,6 +16,8 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
         .domain([0, 12])
         .range([maxY, 0])
 
+
+    // Adds filler data to make visibility graph cover the entire graph
     forecast = [...forecast];
     forecast.unshift({
         from: {
@@ -59,6 +61,7 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
         })
         .y(function (d, i) {
             if (d.type ? d.type === "TEMPO" : false) {
+                // Tempo does not include visiblity, so it needs to take from the next available vsby
                 return yScale(forecast[i+1].vsby)
             }
             return yScale(d.vsby);
@@ -67,7 +70,7 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
         ;
 
 
-    // Wind Speed Data
+    // Plot vsby based on forecast and fake data
     var path = svg.append("path")
         .datum(forecast) // 10. Binds data to the line 
         .attr("d", line)

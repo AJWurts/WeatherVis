@@ -157,6 +157,8 @@ class TimeLine extends Component {
                 break
             }
         }
+
+        // If no data exists, do nothiing
         if (!previous_data) {
             return;
         }
@@ -186,7 +188,7 @@ class TimeLine extends Component {
         this.last_data = previous_data;
  
 
-
+        // Repositions tooltip to current mouse location
         d3.selectAll('.tooltip')
         .attr('x', event.screenX + (this.maxTime - time < 10 ? -2 : 11))
         .attr("text-anchor", this.maxTime - time < 10 ? 'end' : 'start')

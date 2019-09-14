@@ -62,6 +62,8 @@ function parseWAbbv(weather) {
     result.text += MODIFIERS[weather[2]] + ' ';
     isValid = true;
   }
+
+  
   if (weather[1] && weather[1].length > 3) {
 
     if (weather[2]) {
@@ -93,18 +95,20 @@ function metarTextToJson(text) {
   // Test Metar
   // text = "KBED 081656Z 19006KT 1/2SM R11/6000VP6000FT -RA BR OVC006 33/M12 A2986 RMK AO2 RAE19B46 CIG 004V008 PRESFR SLP135 P0000 T00500050"
 
+  // Wind
   let wind = text.match(/([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT/);
   metar.drct = wind[1] === "VRB" ? wind[1] : +wind[1];
   metar.sknt = +wind[2];
   metar.gust = wind.length == 4 ? +wind[3] : '';
 
+  // Pressure 
   let pressure = text.match(/A([0-9]{4})/);
   metar.alti = pressure[1];
 
   let slp = text.match(/SLP([0-9]{3})/);
   metar.mslp = slp ? slp[1] : null;
 
-  //
+  // Visbility. Includes various formats, 1 1/2, 1/2, 1/3, +10SM
   let vis = text.match(/([0-9]{0,1})[ ]{1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM./)
   if (vis[1]) {
     metar.vsby = (+vis[1]) + (+vis[3]) / (+vis[4])
@@ -114,10 +118,12 @@ function metarTextToJson(text) {
     metar.vsby = +vis[2];
   }
 
+  // Temperture 10/20, 10 is temperature in C, 20 is dew point in C
   let temp = text.match(/ (M*[0-9]{2,3})\/(M*[0-9]{2,3}) /)
   metar.tmpf = temp[1].includes("M") ? -(temp[1].slice(1, temp[1].length)) : +temp[1];
   metar.dwpf = temp[2].includes("M") ? -(temp[2].slice(1, temp[2].length)) : +temp[2];
 
+  // Time in DDHHMM
   let time = text.match(/([0-9]{2})([0-9]{2})([0-9]{2})Z/)
   metar.valid = {
     day: +time[1],
@@ -125,6 +131,7 @@ function metarTextToJson(text) {
     minute: +time[3]
   }
 
+  // Clouds. BKN020 -> Broken 2000ft ceilings, SKC -> sky clear
   var cloud;
   var re = /(CLR)|(([VV|A-O|Q-Z]{2,3})([0-9]{3}))/g;
   let i = 1;
@@ -145,6 +152,7 @@ function metarTextToJson(text) {
   } while (cloud);
 
 
+  // Parses Weather and turns abbreviations into normal text
   let weather_regex = / (([+|-]{0,1})([A-Z]{2}){1,2})(?![A-Z|0-9])/g;
   //.*A[0-9]{4}
   var weather;
@@ -155,7 +163,6 @@ function metarTextToJson(text) {
       let result = parseWAbbv(weather);
       if (result) {
         metar.weather.push(result);
-
       }
     }
   } while (weather)
@@ -163,6 +170,8 @@ function metarTextToJson(text) {
   return metar;
 
 }
+
+// Process a FM line in a TAF
 function processFrom(text) {
   let from = /FM([0-9]{2})([0-9]{2})([0-9]{2})/;
   ///----- FROM -----///
@@ -185,6 +194,7 @@ function processFrom(text) {
   return current;
 }
 
+// Process a TEMPO, known for time less than an hour
 function processTempo(text) {
   let startStop = /([0-9]{2})([0-9]{2})\/([0-9]{2})([0-9]{2})/;
   let time = text.match(startStop);
@@ -207,6 +217,7 @@ function processTempo(text) {
   return current
 }
 
+// Process becoming: TBD
 function processBecoming(text) {
   let timeRegex = /([0-9]{2})([0-9]{2})/;
   let times = timeRegex.exec(text);
@@ -218,6 +229,7 @@ function processBecoming(text) {
 
 }
 
+// Process TAF data from AWC text
 function tafsTextToJson(text) {
   text = text.replace(/&nbsp;&nbsp;/g, '')
   let tafs = {}
@@ -253,8 +265,8 @@ function tafsTextToJson(text) {
   let header = /(K[0-z]{3}|FM|TEMPO|BECMG|PROB)/;
 
 
-
-
+  // Splits rows by <br/> and works line by line processing weather
+  // each line usually consist of either FM, TEMPO or BECMG
   for (let i = 0; i < textsplit.length; i++) {
     text = textsplit[i]
     current = {}
@@ -279,6 +291,7 @@ function tafsTextToJson(text) {
 
 }
 
+// App routing to get newestMetar for given airport ident
 app.get('/api/newestMetar/:ident', (req, res, next) => {
 
   let airportLetters = req.params.ident;
@@ -302,25 +315,7 @@ app.get('/api/newestMetar/:ident', (req, res, next) => {
     })
 });
 
-// function handleGetTaf(ident) {
-//   return axios.get(`https://www.aviationweather.gov/metar/data?ids=${airportLetters}&format=raw&hours=0&taf=on`)
-//     .then(result => {
-//       var text = result.data;
-
-//       let start = text.search(/<!-- Data starts here -->/)
-//       let end = text.search(/<!-- Data ends here -->/)
-
-//       let searchString = text.slice(start, end);
-//       let search = searchString.match(/<code>(.*)<\/code>.*\n.*<code>(.*)<\/code>/);
-//       if (!search) {
-//         return 404; //res.status(404).send();
-//       } else {
-//         var tafs_json = tafsTextToJson(search[2]);
-//         return tafs_json
-//         // res.json(tafs_json);
-//       }
-// }
-
+// Handle get TAF for ident
 app.get('/api/newestTAFS/:ident', (req, res, next) => {
   let airportLetters = req.params.ident;
   console.log("newestTAFS")
@@ -342,25 +337,6 @@ app.get('/api/newestTAFS/:ident', (req, res, next) => {
     })
 });
 
-// app.get('/api/weather/:ident', (req, res, next) => {
-//   let airportLetters = req.params.ident;
-//   console.log("weather")
-//   handleGetTaf(airportLetters)
-//     }).then(taf => {
-//       if (taf === 404) {
-//         res.sendStatus(404);
-//         return 404
-//       }
-//       return {
-//         taf: taf,
-//         metar:  handleGetMetar(airportLetters)
-//       };
-//     }).then(result => {
-//       if (result === 404) {
-
-//       }
-//     })
-// });
 
 
 app.use(express.static(path.join(__dirname, 'client/build')));

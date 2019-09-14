@@ -12,6 +12,7 @@ const SNOW_COLORS = [
 
 const color_func = (weather) => {
 
+    
     // Ice Snow  is blue, GR => dark blue
     // Rain, Drizzle, medium green
     // + makes it orange

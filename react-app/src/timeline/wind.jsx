@@ -16,12 +16,6 @@ function drawWind(forecast, svg, xScale, maxX, maxY, timeFunc) {
     let yScale = d3.scaleLinear()
         .domain([0, maxWind])
         .range([maxY, 0])
-    // debugge
-    // var spd = forecast.map(x => {
-    //     return {
-    //         "sknt":x.sknt,
-    //         "drct": x.drct,
-    //         "")
 
     forecast = [...forecast]
     forecast.push({
@@ -39,8 +33,7 @@ function drawWind(forecast, svg, xScale, maxX, maxY, timeFunc) {
             if (time.hour === -2) {
                 return xScale(maxX);
             }
-            
-
+        
             // console.log(d.from.hour, timeFunc(d.from.hour))
             return xScale(timeFunc(time)); })
         .y(function(d) { return yScale(d.sknt); })
