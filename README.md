@@ -1,8 +1,6 @@
 # Weather Visualization using METARs and TAFs
 By Alexander Wurts
 
-## Try clicking on the runways to see what the wind is like from a given runway.
-
 ## Data Source
 Data retrieved live from aviation weather services, parsed and displayed to the user.
 
