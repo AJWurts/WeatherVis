@@ -18,7 +18,8 @@ class App extends Component {
     this.state = {
       metar: null,
       airport: "KBED",
-      errorMessage: ''
+      tafErrorMesssage: '',
+      metarErrorMessage: ''
     }
   }
 
@@ -27,7 +28,13 @@ class App extends Component {
       .then(result => {
 
         this.setState({
-          metar: result.data
+          metar: result.data,
+          metarErrorMessage: ''
+        })
+      }).catch(err => {
+        this.setState({
+          metar: null,
+          metarErrorMessage: "Could not find airport. Try again."
         })
       })
 
@@ -35,7 +42,13 @@ class App extends Component {
       .then(result => {
 
         this.setState({
-          taf: result.data
+          taf: result.data,
+          tafErrorMessage: ''
+        })
+      }).catch(err => {
+        this.setState({
+          taf: null,
+          tafErrorMesssage: 'No TAF available'
         })
       })
 
@@ -58,28 +71,35 @@ class App extends Component {
         this.setState({
           metar: result.data,
           airport: ident,
-          errorMessage: ''
+          metarErrorMessage: ''
         })
       }).catch(error => {
-        console.log("Error");
+        console.log("Metar Failed");
         this.setState({
           metar: null,
-          errorMessage: "Could not find airport. Try again"
+          meterErrorMessage: "Could not find airport. Try again"
         })
       })
 
     axios.get(`/api/newestTAFS/${ident}`)
       .then(result => {
         this.setState({
-          taf: result.data
+          taf: result.data,
+          tafErrorMesssage: ''
+        })
+      }).catch(err => {
+        console.log("Taf Failed")
+        this.setState({
+          taf: null,
+          tafErrorMesssage: "No TAF available"
         })
       })
   }
 
-
+//
 
   render() {
-    var { taf, metar, airport, errorMessage } = this.state;
+    var { taf, metar, airport, tafErrorMessage, metarErrorMessage } = this.state;
 
     if (metar) {
       let metarDate = new Date()
@@ -118,7 +138,7 @@ class App extends Component {
         {metar ? <div style={{ fontSize: 20, textAlign: 'left' }}>METAR: {metar.raw} </div> : null}
         {metarAge ? <div style={{ fontSize: 16, textAlign: 'left' }}>{metarAge} </div> : null}
 
-        {!metar ? <span style={{ fontSize: 30 }}>{errorMessage}</span> :
+        {!metar ? <div style={{ fontSize: 30 }}>Metar Not Available. Verify Airport Ident was entered correctly.</div> :
           <div className="App">
             <CloudLayersVis metar={metar} height={850} />
             <div>
@@ -131,14 +151,15 @@ class App extends Component {
               <Visibility vis={metar.vsby} />
             </div>
           </div>}
-        {!taf ? <span style={{ fontSize: 30 }}>{errorMessage}</span> :
+        {!taf ? <div style={{ fontSize: 30 }}>TAF Not Available.</div> :
+          
           <div width="1055px">
             <div>
               {this.state.taf.forecast[0].raw.slice(0, 22)}
               <br />
               {tafAge}
             </div>
-            <TimeLine data={taf} />
+            <TimeLine data={taf} metar={metar} />
           </div>}
       </div>
     );

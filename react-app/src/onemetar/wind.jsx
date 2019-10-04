@@ -3,16 +3,29 @@ import *  as d3 from 'd3';
 
 const MAX_SPEED = 40;
 
-const hanscomRunways = [
-  {
-    heading: 290,
-    length: 7011
-  },
-  {
-    heading: 230,
-    length: 5107
-  }
-]; // Default airport is hanscom
+const airports = {
+
+  "KBED": [
+    {
+      heading: 290,
+      length: 7011
+    },
+    {
+      heading: 230,
+      length: 5107
+    }
+  ],
+  "KSFM": [
+    {
+      heading: 250,
+      length: 6389,
+    },
+    {
+      heading: 320,
+      length: 4999
+    }
+  ]
+}// Default airport is hanscom
 
 const compass = [
   {
@@ -92,9 +105,9 @@ class Wind extends Component {
       dir = 360;
       speed = 0;
     } else {
-        dir = (dir + 180) % 360;
+      dir = (dir + 180) % 360;
     }
-    
+
     var speedScale = d3.scaleLinear()
       .domain([0, maxSpeed])
       .range([0, (this.props.width / 3) * 0.95])
@@ -285,11 +298,12 @@ class Wind extends Component {
     if (this.props.metar.drct === 'VRB') {
       return;
     }
+
     let dir = this.props.metar.drct;
     let spd = this.props.metar.sknt;
     let angle = this.rads(Math.abs(heading - dir))
-    let headwind = Math.round(Math.cos(angle) * spd);
-    let crosswind = -Math.round(Math.sin(angle) * spd);
+    let headwind = Math.floor(Math.cos(angle) * spd);
+    let crosswind = Math.floor(Math.sin(angle) * spd);
     svg.append("text")
       .attr('x', 5)
       .attr('y', yCoord)
@@ -579,11 +593,15 @@ class Wind extends Component {
       .attr('y', d => this.props.height / 2 + this.calcY(d.dir) + 6)
       .text(d => d.label)
 
-    var runways = this.props.runways || hanscomRunways;
-    if (this.props.airport === 'KBED') {
-      this.drawRunways(svg, runways);
-      this.drawRunwayWinds(svg, runways);
+    // var runways = this.props.runways || hanscomRunways;
+
+
+    if (airports[this.props.airport]) {
+      this.drawRunways(svg, airports[this.props.airport]);
+      this.drawRunwayWinds(svg, airports[this.props.airport]);
     }
+
+    
 
     let max_speed = Math.max(sknt, gust) + 5
 

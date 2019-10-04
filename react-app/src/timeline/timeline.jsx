@@ -49,6 +49,11 @@ class TimeLine extends Component {
     }
 
     createGraph = () => {
+
+        if (!this.props.data) {
+            return;
+        }
+
         // const node = this.node;
         const outer = this.outer
         var bbox = outer.getBoundingClientRect()
@@ -81,20 +86,25 @@ class TimeLine extends Component {
         // console.log([0, (24 - data.start.hour) % 24 + data.end.hour])
         // console.log(maxTime, data.forecast)
 
+        // Clear everything
         const vcSvg = d3.select(this.vcNode);
         vcSvg.selectAll('*').remove()
-        drawClouds(data.forecast, vcSvg, widthScale, maxTime, 100, this.time);
 
         const windSvg = d3.select(this.windNode);
         windSvg.selectAll("*").remove()
-        drawWind(data.forecast, windSvg, widthScale, maxTime, 100, this.time);
+
 
         const weatherSvg = d3.select(this.weatherNode);
         weatherSvg.selectAll('*').remove()
-        drawWeather(data.forecast, weatherSvg, widthScale, maxTime, 100, this.time);
 
         const visSvg = d3.select(this.visNode);
         visSvg.selectAll('*').remove()
+
+    
+        // Redraw Everything
+        drawClouds(data.forecast, vcSvg, widthScale, maxTime, 100, this.time);
+        drawWind(data.forecast, windSvg, widthScale, maxTime, 100, this.time);
+        drawWeather(data.forecast, weatherSvg, widthScale, maxTime, 100, this.time);
         drawVis(data.forecast, visSvg, widthScale, maxTime, 100, this.time);
 
         let tafDate = new Date()
@@ -142,13 +152,15 @@ class TimeLine extends Component {
     }
 
     onMouseMove = (event) => {
-
+        if (this.props.data && this.props.meter && this.props.data.forecast[0].raw.slice(0, 4) !== this.props.metar.raw.slice(0,4)) {
+            return;
+        }
 
         let invtime = d3.scaleLinear()
             .range([0, this.maxTime])
             .domain([this.width * 0.06, this.width]);
-
-        var time = invtime(event.screenX);
+        
+        var time = invtime(event.clientX);
 
         let previous_data;
         for (var i = this.props.data.forecast.length - 1; i >= 0; i--) {
@@ -190,11 +202,11 @@ class TimeLine extends Component {
 
         // Repositions tooltip to current mouse location
         d3.selectAll('.tooltip')
-        .attr('x', event.screenX + (this.maxTime - time < 10 ? -2 : 11))
+        .attr('x', event.clientX + (this.maxTime - time < 10 ? -2 : 11))
         .attr("text-anchor", this.maxTime - time < 10 ? 'end' : 'start')
 
         d3.select('.ttbox')
-            .attr('x', event.screenX)
+            .attr('x', event.clientX)
     
         d3.select('.time')
             .text(`${previous_data.raw}`)

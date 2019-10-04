@@ -103,7 +103,7 @@ class CloudLayerVis extends Component {
 
 
     svg.selectAll('label')
-      .data(d3.range(0, MAX_ALT + 1, 3000))
+      .data([30000])//d3.range(0, MAX_ALT + 1, 3000))
       .enter()
       .append('text')
       .attr('text-anchor', 'end')
@@ -118,7 +118,7 @@ class CloudLayerVis extends Component {
       })
 
     svg.selectAll("labelTicks")
-      .data(d3.range(0, MAX_ALT + 1, 3000))
+      .data([30000])//)d3.range(0, MAX_ALT + 1, 3000))
       .enter()
       .append('line')
       .attr('x1', 100)
