@@ -5,26 +5,32 @@ const MAX_SPEED = 40;
 
 const airports = {
 
-  "KBED": [
-    {
-      heading: 290,
-      length: 7011
-    },
-    {
-      heading: 230,
-      length: 5107
-    }
-  ],
-  "KSFM": [
-    {
-      heading: 250,
-      length: 6389,
-    },
-    {
-      heading: 320,
-      length: 4999
-    }
-  ]
+  "KBED": {
+    runways: [
+      {
+        heading: 290,
+        length: 7011
+      },
+      {
+        heading: 230,
+        length: 5107
+      }
+    ],
+    variation: 0
+  },
+  "KSFM": {
+    runways: [
+      {
+        heading: 70,
+        length: 6389,
+      },
+      {
+        heading: 140,
+        length: 4999
+      }
+    ],
+    variation: 0
+  }
 }// Default airport is hanscom
 
 const compass = [
@@ -200,7 +206,7 @@ class Wind extends Component {
 
   }
 
-  drawRunways = (svg, runways) => {
+  drawRunways = (svg, runways, variation) => {
     const maxRwyLen = d3.max(runways, x => x.length)
     var data = [];
     for (let i = 0; i < runways.length; i++) {
@@ -209,10 +215,12 @@ class Wind extends Component {
       let oppHeading = (runways[i].heading + 180) % 360;
       data.push({
         heading: oppHeading,
+        trueHeading: oppHeading + variation,
         scaledLength: scaledLength
       })
       data.push({
         heading: heading,
+        trueHeading: heading + variation,
         scaledLength: scaledLength
       })
     }
@@ -223,8 +231,8 @@ class Wind extends Component {
       .append("line")
       .attr('cursor', 'pointer')
       .attr('class', d => "runway" + (d.heading % 180))
-      .attr('x1', d => this.props.width / 2 + this.calcX(d.heading + 180, d.scaledLength))
-      .attr('y1', d => this.props.width / 2 + this.calcY(d.heading + 180, d.scaledLength))
+      .attr('x1', d => this.props.width / 2 + this.calcX(d.trueHeading + 180, d.scaledLength))
+      .attr('y1', d => this.props.width / 2 + this.calcY(d.trueHeading + 180, d.scaledLength))
       .attr('x2', d => this.props.height / 2)
       .attr('y2', d => this.props.height / 2)
       .attr('stroke', '#000000CC')
@@ -246,12 +254,12 @@ class Wind extends Component {
           clearInterval(this.interval)
 
         }
-        this.interval = setInterval(() => this.rotateAnimation(((360 - d.heading) - this.state.angle) / 10, 360 - d.heading), 50)
+        this.interval = setInterval(() => this.rotateAnimation(((360 - d.trueHeading) - this.state.angle) / 10, 360 - d.trueHeading), 50)
       })
 
     data.forEach((d) => {
       svg.append('text')
-        .attr('transform', `translate(${this.props.width / 2} ${this.props.width / 2}) rotate(${d.heading + this.state.angle}) translate(8 ${-d.scaledLength + 5}) rotate(180)`)
+        .attr('transform', `translate(${this.props.width / 2} ${this.props.width / 2}) rotate(${d.trueHeading + this.state.angle}) translate(8 ${-d.scaledLength + 5}) rotate(180)`)
         .attr('fill', 'white')
         .text(((d.heading + 180) % 360) / 10)
 
@@ -294,16 +302,16 @@ class Wind extends Component {
 
   }
 
-  drawRunwayWind = (svg, heading, yCoord) => {
+  drawRunwayWind = (svg, heading, variation, yCoord) => {
     if (this.props.metar.drct === 'VRB') {
       return;
     }
 
     let dir = this.props.metar.drct;
     let spd = this.props.metar.sknt;
-    let angle = this.rads(Math.abs(heading - dir))
+    let angle = this.rads(Math.abs( ( ((heading + variation) + 360 - dir) % 360)))
     let headwind = Math.floor(Math.cos(angle) * spd);
-    let crosswind = Math.floor(Math.sin(angle) * spd);
+    let crosswind = -Math.floor(Math.sin(angle) * spd);
     svg.append("text")
       .attr('x', 5)
       .attr('y', yCoord)
@@ -534,8 +542,8 @@ class Wind extends Component {
     return degrees * (pi / 180);
   }
 
-  drawRunwayWinds = (svg, runways) => {
-
+  drawRunwayWinds = (svg, airport) => {
+    let runways = airport.runways;
     svg.append("text")
       .attr('x', 5)
       .attr('y', this.props.height - 120)
@@ -543,12 +551,12 @@ class Wind extends Component {
       .attr('color', 'black')
     let yCoord = this.props.height - 100;
     for (let i = 0; i < runways.length; i++) {
-      yCoord = this.drawRunwayWind(svg, runways[i].heading, yCoord)
+      yCoord = this.drawRunwayWind(svg, runways[i].heading, airport.variation, yCoord)
     }
 
     for (let i = 0; i < runways.length; i++) {
       let heading = (runways[i].heading + 180) % 360;
-      yCoord = this.drawRunwayWind(svg, heading, yCoord)
+      yCoord = this.drawRunwayWind(svg, heading, airport.variation, yCoord)
 
     }
 
@@ -597,11 +605,11 @@ class Wind extends Component {
 
 
     if (airports[this.props.airport]) {
-      this.drawRunways(svg, airports[this.props.airport]);
+      this.drawRunways(svg, airports[this.props.airport].runways, airports[this.props.airport].variation);
       this.drawRunwayWinds(svg, airports[this.props.airport]);
     }
 
-    
+
 
     let max_speed = Math.max(sknt, gust) + 5
 
