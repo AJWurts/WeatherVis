@@ -2,7 +2,10 @@
 By Alexander Wurts
 
 ## Data Source
-Data retrieved live from aviation weather services, parsed and displayed to the user.
+Data retrieved live from aviation weather services, parsed and displayed to the user.  
+
+Click on the Runways for a fun animation. 
+ 
 ### API for accessing live Metar and TAF data:
 
 #### /api/newestMETAR/{airport ident}
