@@ -38,7 +38,7 @@ class TimeLine extends Component {
             tafAge: ""
         }
     }
-    UNSAFE_componentDidMount() {
+    componentDidMount() {
         this.createGraph()
 
     }

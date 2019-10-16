@@ -1,14 +1,4 @@
-import React, { Component } from 'react';
 import *  as d3 from 'd3';
-
-
-
-
-
-var pad = (num, size) => {
-    var s = "000000000" + num;
-    return s.substr(s.length - size);
-}
 
 function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
 

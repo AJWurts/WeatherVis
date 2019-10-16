@@ -20,10 +20,8 @@ class App extends Component {
 
     render() {
         return (
-            <Router>
-                <div style={{}}>
+            <Router style={{margin: '5px'}}>
 
-                </div>
 
                 <div style={{ fontSize: '30px', backgroundColor: '#33c6f8a2', padding: '10px 5px' }}>
                     <div style={{ height: '100%', display: 'inline-block', verticalAlign: 'middle' }}>

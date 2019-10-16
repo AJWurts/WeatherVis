@@ -6,10 +6,10 @@ import CloudLayersVis from './onemetar/CloudLayersVis';
 import Temp from './onemetar/temp.jsx';
 import Percip from './onemetar/percip.jsx';
 import Pressure from './onemetar/pressure.jsx';
-import SearchBox from '../SearchBox.jsx'
+import SearchBox from './SearchBox.jsx'
 import TimeLine from './timeline/timeline.jsx'
 
-import  './App.css';
+import  './weathervis.css';
 
 class WeatherVis extends Component {
   constructor(props) {
@@ -17,9 +17,10 @@ class WeatherVis extends Component {
 
     this.state = {
       metar: null,
+      taf: null,
       airport: "KBED",
-      tafErrorMesssage: '',
-      metarErrorMessage: ''
+      tafErrorMessage: 'Loading TAF...',
+      metarErrorMessage: 'Loading METAR...'
     }
   }
 
@@ -77,7 +78,7 @@ class WeatherVis extends Component {
         console.log("Metar Failed");
         this.setState({
           metar: null,
-          meterErrorMessage: "Could not find airport. Try again"
+          metarErrorMessage: "Could not find airport. Try again"
         })
       })
 
@@ -85,13 +86,13 @@ class WeatherVis extends Component {
       .then(result => {
         this.setState({
           taf: result.data,
-          tafErrorMesssage: ''
+          tafErrorMessage: ''
         })
       }).catch(err => {
         console.log("Taf Failed")
         this.setState({
           taf: null,
-          tafErrorMesssage: "No TAF available"
+          tafErrorMessage: "No TAF available"
         })
       })
   }
@@ -138,8 +139,8 @@ class WeatherVis extends Component {
         {metar ? <div style={{ fontSize: 20, textAlign: 'left' }}>METAR: {metar.raw} </div> : null}
         {metarAge ? <div style={{ fontSize: 16, textAlign: 'left' }}>{metarAge} </div> : null}
 
-        {!metar ? <div style={{ fontSize: 30 }}>Metar Not Available. Verify Airport Ident was entered correctly.</div> :
-          <div className="App">
+        {!metar ? <div style={{ fontSize: 30 }}>{metarErrorMessage}</div> :
+          <div className="App"  style={{margin:'10px'}}>
             <CloudLayersVis metar={metar} height={850} />
             <div>
               <Wind airport={airport} metar={metar} width={500} height={500} />
@@ -151,7 +152,7 @@ class WeatherVis extends Component {
               <Visibility vis={metar.vsby} />
             </div>
           </div>}
-        {!taf ? <div style={{ fontSize: 30 }}>TAF Not Available.</div> :
+        {!taf ? <div style={{ fontSize: 30 }}>{tafErrorMessage}</div> :
 
           <div width="1055px">
             <div>
