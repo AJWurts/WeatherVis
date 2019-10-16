@@ -99,7 +99,7 @@ function metarTextToJson(text) {
   let wind = text.match(/([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT/);
   metar.drct = wind[1] === "VRB" ? wind[1] : +wind[1];
   metar.sknt = +wind[2];
-  metar.gust = wind.length == 4 ? +wind[3] : '';
+  metar.gust = wind.length === 4 ? +wind[3] : '';
 
   // Pressure 
   let pressure = text.match(/A([0-9]{4})/);

@@ -23,7 +23,7 @@ class WeatherVis extends Component {
     }
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     axios.get(`/api/newestMetar/${this.state.airport}`)
       .then(result => {
 

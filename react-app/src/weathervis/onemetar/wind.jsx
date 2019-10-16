@@ -93,7 +93,7 @@ class Wind extends Component {
     }
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.createGraph()
 
   }
@@ -101,13 +101,13 @@ class Wind extends Component {
     this.createGraph()
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     this.props = props;
     this.createGraph()
   }
 
   drawArrow = (svg, dir, speed, maxSpeed, color) => {
-    if (dir === 'VRB') {
+    if (dir == 'VRB') {
       dir = 360;
       speed = 0;
     } else {
@@ -303,7 +303,7 @@ class Wind extends Component {
   }
 
   drawRunwayWind = (svg, heading, variation, yCoord) => {
-    if (this.props.metar.drct === 'VRB') {
+    if (this.props.metar.drct == 'VRB') {
       return;
     }
 
@@ -353,7 +353,7 @@ class Wind extends Component {
   }
 
   drawWindIndicators = (svg, color) => {
-    if (this.props.metar.drct === 'VRB') {
+    if (this.props.metar.drct == 'VRB') {
       return;
     }
     color = color || '#1a496b'
@@ -586,7 +586,7 @@ class Wind extends Component {
       .attr('x', 10)
       .attr('y', 30)
       .text(gust ?
-        `Wind: ${drct === "VRB" ? "Variable" : this.pad(drct, 3)} at ${sknt}kts gusting ${gust}kts`
+        `Wind: ${drct == "VRB" ? "Variable" : this.pad(drct, 3)} at ${sknt}kts gusting ${gust}kts`
         : `Wind: ${this.pad(drct, 3)} at ${sknt}kts`
       )
       .attr('text-anchor', 'start')

@@ -3,7 +3,7 @@ import NumberSlider from './numberslider';
 import InputLabel from './input';
 import PressureGraph from './visualization';
 
-// import './App.css';
+import './App.css';
 
 class App extends Component {
   constructor(props) {
@@ -61,9 +61,9 @@ class App extends Component {
 
     return (
       <div>
-        <div className="App">
+        <div >
           <div style={{
-            display: 'inline-block', width: isMobile ? '90%' : '75%', margin: '0px',
+            display: isMobile ? 'block' : 'inline-block', width: isMobile ? '90%' : '75%', margin: '0px',
             maxWidth: isMobile ? null : '500px'
           }}>
             <span style={{ fontSize: '20px' }}>
@@ -72,10 +72,10 @@ class App extends Component {
             <span style={{ fontSize: '20px', float: 'right', color: 'blue' }}>
               Density Altitude: Blue
               </span>
-              <PressureGraph temperature={dataOne.temperature} humidity={dataOne.humidity} pressure={dataOne.pressure}></PressureGraph>
+            <PressureGraph temperature={dataOne.temperature} humidity={dataOne.humidity} pressure={dataOne.pressure}></PressureGraph>
           </div>
 
-          <div style={{ padding: '20px', display: 'inline-block', height: '100%', verticalAlign: 'top' }}>
+          <div style={{ padding: '20px', display: isMobile ? 'block' : 'inline-block', height: '100%', verticalAlign: 'top', textAlign: 'left' }}>
             <div style={{ padding: '0px 0px 20px 0px' }}>
 
               <NumberSlider

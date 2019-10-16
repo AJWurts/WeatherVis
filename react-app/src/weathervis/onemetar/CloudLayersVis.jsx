@@ -17,7 +17,7 @@ class CloudLayerVis extends Component {
     this.createGraph()
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     this.props = props;
     this.createGraph()
   }
@@ -110,7 +110,7 @@ class CloudLayerVis extends Component {
       .attr('x', d => 95)
       .attr('y', d => yScale(d) - 2)
       .text((d, i) => {
-        if (i == 0) {
+        if (i === 0) {
           return d + 'ft AGL';
         } else {
           return d + 'ft';
