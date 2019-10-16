@@ -103,7 +103,7 @@ function parseWind(text) {
     if (wind_) {
         current.drct = wind_[1] === "VRB" ? wind_[1] : +wind_[1];
         current.sknt = +wind_[2];
-        current.gust = wind_.length == 4 ? +wind_[3] : '';
+        current.gust = wind_.length === 4 ? +wind_[3] : '';
     }
 
 
@@ -120,7 +120,7 @@ function parseWeather(text) {
     current.weather = [];
     do {
         weather_ = current_split[j];
-        if (j == 1) break;
+        if (j === 1) break;
         if (weather_ && weather_.length >= 2 && weather_.length <= 5 && !weather_.includes("SM") && !weather_.includes("SKC")) {
             let regexed = weather_regex.exec(weather_);
             current.weather.push(parseWAbbv(regexed));
@@ -139,7 +139,7 @@ function parseClouds(text) {
     j = current_split.length - 1;
     let layer_count = 1;
     do {
-        if (j == 0) break;
+        if (j === 0) break;
         cloud_ = current_split[j];
         
 

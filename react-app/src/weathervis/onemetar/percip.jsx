@@ -40,7 +40,7 @@ class Percip extends Component {
     this.createGraph()
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     this.props = props;
     this.createGraph()
   }

@@ -6,6 +6,11 @@ import drawVis from './vis.jsx';
 import drawWeather from './weather.jsx';
 import { domainToASCII } from 'url';
 
+function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+}
+
 function timeFunc(start) {
     let startHour = +start.hour;
 
@@ -13,7 +18,7 @@ function timeFunc(start) {
         let time = +full_time.hour + ((full_time.minute ? full_time.minute : 0) / 60);
 
         let result;
-        if (full_time.day == start.day) {
+        if (full_time.day === start.day) {
 
             result = (time - startHour);
         } else { // (full_time.day > start.day) 
@@ -33,18 +38,18 @@ class TimeLine extends Component {
             tafAge: ""
         }
     }
-    componentDidMount() {
+    UNSAFE_componentDidMount() {
         this.createGraph()
 
     }
 
-    componentWillReceiveProps(props) {
+    UNSAFE_componentWillReceiveProps(props) {
         this.props = props;
         // console.log(Object.keys(this.props));
         this.createGraph()
     }
 
-    componentWillUpdate(props) {
+    UNSAFE_componentWillUpdate(props) {
         this.createGraph()
     }
 
@@ -69,7 +74,7 @@ class TimeLine extends Component {
 
         this.time = timeFunc(data.start, data.end)
         let maxTime;
-        if (data.end.day == data.start.day) {
+        if (data.end.day === data.start.day) {
 
             maxTime = (data.end.hour - data.start.hour);
         } else { // (full_time.day > start.day) 
@@ -180,7 +185,7 @@ class TimeLine extends Component {
             let cloudStr = ""
             for (let j = 5; j >= 0; j--) {
                 if (previous_data['skyc' + j]) {
-                    cloudStr += previous_data['skyc' + j] + " " + previous_data['skyl' + j] + " "
+                    cloudStr += previous_data['skyc' + j] + " " + pad(previous_data['skyl' + j] / 100, 3) + " "
                 }
             }
             d3.select('.clouds')
