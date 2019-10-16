@@ -22,13 +22,21 @@ class App extends Component {
     render() {
         return (
             <Router>
-                <div style={{ fontSize: '30px' }}>
-                    Pilot Weather Visualizations
-                    <AirplaneIcon/>
+                <div style={{}}>
+
                 </div>
-                <div style={{backgroundColor: '#33c6f8a2'}}>
-                    <ButtonLink to='/' text="METAR/TAF Vis" />
-                    <ButtonLink to='/pressure' text="Pressure Vis" />
+
+                <div style={{ fontSize: '30px', backgroundColor: '#33c6f8a2', padding: '10px 5px' }}>
+                    <div style={{ height: '100%', display: 'inline-block', verticalAlign: 'middle' }}>
+                        <AirplaneIcon />
+                        Pilot Weather Visualizations
+                    </div>
+                    <div style={{ display: 'inline-block' }}>
+                        <ButtonLink to='/' text="METAR/TAF Vis" />
+                        <ButtonLink to='/pressure' text="Pressure Vis" />
+
+                    </div>
+
                 </div>
                 <Switch>
 
