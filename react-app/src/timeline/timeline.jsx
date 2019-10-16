@@ -6,6 +6,11 @@ import drawVis from './vis.jsx';
 import drawWeather from './weather.jsx';
 import { domainToASCII } from 'url';
 
+function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+}
+
 function timeFunc(start) {
     let startHour = +start.hour;
 
@@ -180,7 +185,7 @@ class TimeLine extends Component {
             let cloudStr = ""
             for (let j = 5; j >= 0; j--) {
                 if (previous_data['skyc' + j]) {
-                    cloudStr += previous_data['skyc' + j] + " " + previous_data['skyl' + j] + " "
+                    cloudStr += previous_data['skyc' + j] + " " + pad(previous_data['skyl' + j] / 100, 3) + " "
                 }
             }
             d3.select('.clouds')
