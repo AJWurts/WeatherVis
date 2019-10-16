@@ -1,0 +1,44 @@
+.button {
+    background-color: rgb(170, 170, 170);
+    /* width: 85px; */
+    padding: 10px 15px;
+    margin: 10px 5px;
+    text-align: center;
+    vertical-align: center;
+    font-size: 14pt;
+    align-content: center;
+    display: inline-block;
+    font-family: Arial, Helvetica, sans-serif;
+    /* box-shadow: 1px 2px 4px rgba(0, 0, 0, .5); */
+    /* border: 1px solid none; */
+    border-radius: 10px;
+    color: white;
+   
+    
+}
+
+
+.button:hover {
+    cursor: pointer;
+    background-color: #0000002f;
+}
+
+.button:active {
+    /* background-color: #FFB366; */
+    animation-name: click;
+    transform: translate(-1%);
+    box-shadow: none;
+}
+
+*.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+ 
+    /*
+      Introduced in IE 10.
+      See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+    */
+    -ms-user-select: none;
+    user-select: none;
+ }
