@@ -46,7 +46,7 @@ class Pressure extends Component {
       .range(["#000000", "#FFFFFF"])
 
     svg.selectAll('pressureneedles')
-      .data(this.props.metar.reverse())
+      .data(this.props.metar.slice().reverse())
       .enter()
       .append('path')
       .attr('class', (d, i) => 'metar metar' + (this.props.metar.length - i - 1))

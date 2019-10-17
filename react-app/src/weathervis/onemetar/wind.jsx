@@ -118,6 +118,7 @@ class Wind extends Component {
       .domain([0, maxSpeed])
       .range([0, (this.props.width / 3) * 0.95])
 
+
     let length = speedScale(+speed);
     color = color || '#1a496b'
     // Line
@@ -161,6 +162,51 @@ class Wind extends Component {
 
   }
 
+  processWind = (metar, speedScale) => {
+    let {drct, sknt} = metar;
+    if (drct == 'VRB') {
+      drct = 360;
+      // speed = 0;
+    } else {
+      drct = (drct + 180) % 360;
+    }
+
+    return {
+      drct: drct,
+      sknt: speedScale(sknt)
+    }
+  }
+
+  drawOldWind = (svg, winds, maxSpeed) => {
+
+    var speedScale = d3.scalePow()
+      .exponent(0.5)
+      .domain([0, maxSpeed])
+      .range([0, (this.props.width / 3) * 0.95])
+
+    var line = d3.line()
+      .x(d => {
+        let { drct, sknt } = this.processWind(d, speedScale);
+        let x = this.props.width / 2 + this.calcX(drct, sknt)
+        return x;
+      })
+      .y(d => {
+        let { drct, sknt } = this.processWind(d, speedScale);
+        let y = this.props.width / 2 + this.calcY(drct, sknt)
+        return y;
+      })
+      // .curve(d3.curveMonotoneX)
+
+
+    svg.append('path')
+      .datum(winds)
+      .attr('d', line)
+      .attr('stroke', '#61a8DD')
+      .attr('stroke-width', '2px')
+      .attr('fill', 'none')
+
+  }
+
   calcY = function (direction, length) {
     length = length == null ? (this.props.height / 3) : length;
     var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
@@ -169,6 +215,7 @@ class Wind extends Component {
 
     return y;
   }
+
   calcX = (direction, length) => {
     length = length == null ? (this.props.width / 3) : length;
 
@@ -295,7 +342,7 @@ class Wind extends Component {
       .text((d, i) => {
         if (i == labels.length - 1) {
           return d + 'kts'
-        } else  {
+        } else {
           return d;
         }
       })
@@ -304,12 +351,12 @@ class Wind extends Component {
   }
 
   drawRunwayWind = (svg, heading, variation, yCoord) => {
-    if (this.props.metar.drct == 'VRB') {
+    if (this.props.metar[0].drct == 'VRB') {
       return;
     }
 
-    let dir = this.props.metar.drct;
-    let spd = this.props.metar.sknt;
+    let dir = this.props.metar[0].drct;
+    let spd = this.props.metar[0].sknt;
     let angle = this.rads(Math.abs((((heading + variation) + 360 - dir) % 360)))
     let headwind = Math.floor(Math.cos(angle) * spd);
     let crosswind = -Math.floor(Math.sin(angle) * spd);
@@ -353,8 +400,6 @@ class Wind extends Component {
     return yCoord;
   }
 
-  
-
   rads = (degrees) => {
     var pi = Math.PI;
     return degrees * (pi / 180);
@@ -397,7 +442,7 @@ class Wind extends Component {
       this.interval = setInterval(() => this.rotateAnimation(((0) - this.state.angle) / 10, 0), 50)
 
     });
-    var { drct, sknt, gust } = this.props.metar;
+    var { drct, sknt, gust } = this.props.metar[0];
 
 
 
@@ -423,8 +468,11 @@ class Wind extends Component {
     let max_speed = 60; //Math.max(sknt, gust) + 5
     sknt = sknt + 0.01;
     gust = gust + 0.01;
-    this.drawArrow(svg, this.props.metar.drct, gust, max_speed, 'orange')
-    this.drawArrow(svg, this.props.metar.drct, sknt, max_speed, '#61a8c6')
+    
+    this.drawOldWind(svg, this.props.metar, max_speed);
+
+    this.drawArrow(svg, this.props.metar[0].drct, gust, max_speed, 'orange');
+    this.drawArrow(svg, this.props.metar[0].drct, sknt, max_speed, '#61a8c6');
 
     this.drawSpeedRings(svg, max_speed);
 
@@ -434,26 +482,18 @@ class Wind extends Component {
       .attr('text-anchor', 'middle')
       .attr('x', this.props.width / 2)
       .attr('y', this.props.height / 2 - 50)
-      .text(this.props.metar.drct)
+      .text(this.props.metar[0].drct)
       .attr('color', 'black')
 
 
-    // this.drawWindIndicators(svg);
-
-
-
-
-    if (!(Math.abs(this.state.angle) < 1) && !this.interval) {
-      // console.log(this.state.angle)
-    }
   }
 
   render() {
     var { width, height } = this.props;
-    var { drct, sknt, gust } = this.props.metar;
+    var { drct, sknt, gust } = this.props.metar[0];
 
     return (
-      <div style={{textAlign: 'start'}}>
+      <div style={{ textAlign: 'start' }}>
         <div>
           <LabelValue label={"Wind"} value={gust ?
             `${drct == "VRB" ? "Variable" : this.pad(drct, 3)} at ${sknt}kts gusting ${gust}kts`

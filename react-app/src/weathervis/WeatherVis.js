@@ -147,15 +147,15 @@ class WeatherVis extends Component {
           {!metar ? <div style={{ fontSize: 30 }}>{metarErrorMessage}</div> :
             <div className="App" style={{ margin: '10px' }}>
               <div style={{margin: '5px'}}>
-                {/* <CloudLayersVis metar={metar} height={500} width={400} /> */}
-                {/* <Visibility vis={metar} width={400} /> */}
+                <CloudLayersVis metar={metar[0]} height={500} width={400} />
+                <Visibility vis={metar[0].vsby} width={400} />
               </div>
 
               <div>
-                {/* <Wind airport={airport} metar={metar} width={450} height={450} /> */}
+                <Wind airport={airport} metar={metar} width={500} height={500} />
                 <div style={{ display: 'flex' }}>
                   <Temp metar={metar} />
-                  {/* <Percip metar={metar} /> */}
+                  <Percip metar={metar[0]} />
                   <Pressure metar={metar} width={200} height={200} />
                 </div>
               </div>

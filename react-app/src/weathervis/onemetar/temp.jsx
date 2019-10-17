@@ -25,7 +25,7 @@ class Temp extends Component {
 
     var dewCircle =
       svg.selectAll('dewcircles')
-        .data(this.props.metar.reverse())
+        .data(this.props.metar.slice().reverse())
         .enter()
         .append('circle')
         .attr('class', (d, i) => 'metar metar' + (this.props.metar.length - i - 1))
@@ -44,7 +44,7 @@ class Temp extends Component {
 
     var tempCircle =
       svg.selectAll('tempcircles')
-        .data(this.props.metar.reverse())
+        .data(this.props.metar.slice().reverse())
         .enter()
         .append('circle')
         .attr('class', (d, i) => 'metar metar' + (this.props.metar.length - i - 1))
