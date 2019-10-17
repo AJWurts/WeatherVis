@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import WeatherVis from './weathervis/WeatherVis';
 import PressureVis from './pressurevis/PressureVis';
+import TestPage from './testpage/TestPage';
 import { ButtonLink, AirplaneIcon } from './components';
 import {
     BrowserRouter as Router,
@@ -21,8 +22,6 @@ class App extends Component {
     render() {
         return (
             <Router style={{}}>
-
-
                 <div style={{ fontSize: '30px', backgroundColor: '#33c6f8a2', padding: '10px 5px' }}>
                     <div style={{ height: '100%', display: 'inline-block', verticalAlign: 'middle' }}>
                         <AirplaneIcon />
@@ -31,15 +30,15 @@ class App extends Component {
                     <div style={{ display: 'inline-block' }}>
                         <ButtonLink to='/' text="METAR/TAF Vis" />
                         <ButtonLink to='/pressure' text="Pressure Vis" />
-
+                        <ButtonLink to='/test' text="Test Page" />
                     </div>
-
                 </div>
                 <Switch>
-
-
                     <Route path='/pressure'>
                         <PressureVis />
+                    </Route>
+                    <Route path='/test'>
+                        <TestPage/>
                     </Route>
                     <Route path='/'>
                         <WeatherVis />
