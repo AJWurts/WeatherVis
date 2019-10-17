@@ -26,7 +26,7 @@ class WeatherVis extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    axios.get(`/api/newestMetar/${this.state.airport}`)
+    axios.get(`/api/recentMETARs/${this.state.airport}`)
       .then(result => {
 
         this.setState({
@@ -66,7 +66,7 @@ class WeatherVis extends Component {
   }
 
   onSearch = (ident) => {
-    axios.get(`/api/newestMetar/${ident}`)
+    axios.get(`/api/recentMETARs/${ident}`)
       .then(result => {
         console.log(result.data)
 
@@ -105,8 +105,8 @@ class WeatherVis extends Component {
 
     if (metar) {
       let metarDate = new Date()
-      metarDate.setUTCDate(metar.valid.day)
-      metarDate.setUTCHours(metar.valid.hour, metar.valid.minute)
+      metarDate.setUTCDate(metar[0].valid.day)
+      metarDate.setUTCHours(metar[0].valid.hour, metar[0].valid.minute)
 
       let diff = new Date() - metarDate
       let hours = diff / 3.6e6;
@@ -140,22 +140,22 @@ class WeatherVis extends Component {
         <div style={{ margin: '5px' }}>
 
           {metar ?
-            <LabelValue label={"Raw METAR"} value={metar.raw} /> : null}
+            <LabelValue label={"Raw METAR"} value={metar[0].raw} /> : null}
           {metarAge ?
             <LabelValue label="Released" value={metarAge} /> : null}
 
           {!metar ? <div style={{ fontSize: 30 }}>{metarErrorMessage}</div> :
             <div className="App" style={{ margin: '10px' }}>
               <div style={{margin: '5px'}}>
-                <CloudLayersVis metar={metar} height={500} width={400} />
-                <Visibility vis={metar.vsby} width={400} />
+                {/* <CloudLayersVis metar={metar} height={500} width={400} /> */}
+                {/* <Visibility vis={metar} width={400} /> */}
               </div>
 
               <div>
-                <Wind airport={airport} metar={metar} width={450} height={450} />
+                {/* <Wind airport={airport} metar={metar} width={450} height={450} /> */}
                 <div style={{ display: 'flex' }}>
                   <Temp metar={metar} />
-                  <Percip metar={metar} />
+                  {/* <Percip metar={metar} /> */}
                   <Pressure metar={metar} width={200} height={200} />
                 </div>
               </div>

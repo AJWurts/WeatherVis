@@ -15,26 +15,46 @@ class Temp extends Component {
 
   drawTemps = (svg, tempScale, x) => {
 
-    var temp = this.props.metar.tmpf;
-    var dew = this.props.metar.dwpf;
     // console.log(this.props.metar.tmpf, dew)
     // Dew Point
-    var dewCircle = svg.append('circle')
-      .attr('cx', x)
-      .attr('cy', tempScale(dew))
-      .attr('r', 5)
-      .attr('fill', 'blue')
+    let dewScale = d3.scalePow()
+      .exponent(1.3)
+      .domain([0, this.props.metar.length])
+      .range(['#FFFFFF', '#0000FF'])
+    // .interpolate(d3.interpolateHcl)
+
+    var dewCircle =
+      svg.selectAll('dewcircles')
+        .data(this.props.metar.reverse())
+        .enter()
+        .append('circle')
+        .attr('class', (d, i) => 'metar metar' + (this.props.metar.length - i - 1))
+
+        .attr('cx', x)
+        .attr('cy', d => tempScale(d.dwpf))
+        .attr('r', 5)
+        .attr('fill', (d, i) => dewScale(i))
 
 
     // Temp
-    var tempCircle = svg.append('circle')
-      .attr('cx', x)
-      .attr('cy', tempScale(temp))
-      .attr('r', 5)
-      .attr('fill', 'red')
+    let tempColorScale = d3.scaleLinear()
+      .domain([0, this.props.metar.length])
+      .range(["#FFFFFF", "#FF0000"])
+    // .interpolate(d3.interpolateHcl)
+
+    var tempCircle =
+      svg.selectAll('tempcircles')
+        .data(this.props.metar.reverse())
+        .enter()
+        .append('circle')
+        .attr('class', (d, i) => 'metar metar' + (this.props.metar.length - i - 1))
+        .attr('cx', x)
+        .attr('cy', d => tempScale(d.tmpf))
+        .attr('r', 5)
+        .attr('fill', (d, i) => tempColorScale(i))
 
 
-    if (temp == dew) {
+    if (this.props.metar[0].tmpf == this.props.metar[0].dwpf) {
       dewCircle.attr('stroke-width', 5)
         .attr('stroke', 'blue')
     }
@@ -58,11 +78,11 @@ class Temp extends Component {
 
 
 
-    if (this.props.metar.tmpf == undefined) {
+    if (this.props.metar[0].tmpf == undefined) {
       return;
     } else {
-      var temp = this.props.metar.tmpf;
-      var dew = this.props.metar.dwpf;
+      var temp = this.props.metar[0].tmpf;
+      var dew = this.props.metar[0].dwpf;
     }
 
     var width = this.props.width || 155;
@@ -129,7 +149,7 @@ class Temp extends Component {
       .append('text')
       .attr('x', 88)
       .attr('y', d => fScale(d) + 5)
-      .attr('fill', (d, i) => (d % tickMod)== 0 ? "black" : '#00000000')
+      .attr('fill', (d, i) => (d % tickMod) == 0 ? "black" : '#00000000')
       .attr('text-anchor', 'start')
       .text(d => d + "F")
 
@@ -179,7 +199,8 @@ class Temp extends Component {
       .attr('font-size', 15)
 
 
-    svg.append('circle')
+    svg
+      .append('circle')
       .attr('cx', 20)
       .attr('cy', 170)
       .attr('r', 5)
@@ -188,22 +209,22 @@ class Temp extends Component {
     // Freezing Line
     if (min < 0 && max > 0) {
       svg.append('line')
-      .attr('x1', 40)
-      .attr('y1', tempScale(0))
-      .attr('x2', 80)
-      .attr('y2', tempScale(0))
-      .attr('stroke-width', 2)
-      .attr('stroke', 'blue')
+        .attr('x1', 40)
+        .attr('y1', tempScale(0))
+        .attr('x2', 80)
+        .attr('y2', tempScale(0))
+        .attr('stroke-width', 2)
+        .attr('stroke', 'blue')
     }
 
   }
 
   render() {
     var { width, height } = this.props;
-    var { tmpf, dwpf } = this.props.metar;
+    var { tmpf, dwpf } = this.props.metar[0];
     return (
-      <div style={{textAlign: 'start'}}>
-        <LabelValue label={"Temp"} value={`${(tmpf < 0 ? 'M' : '') + this.pad(Math.abs(tmpf), 2)}/${(dwpf < 0 ? 'M' : "") + this.pad(Math.abs(dwpf), 2) }`}/>
+      <div style={{ textAlign: 'start' }}>
+        <LabelValue label={"Temp"} value={`${(tmpf < 0 ? 'M' : '') + this.pad(Math.abs(tmpf), 2)}/${(dwpf < 0 ? 'M' : "") + this.pad(Math.abs(dwpf), 2)}`} />
         <svg ref={node => this.node = node} width={width || 155} height={height || 200}>
         </svg>
       </div>

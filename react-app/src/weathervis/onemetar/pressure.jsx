@@ -39,14 +39,23 @@ class Pressure extends Component {
   }
 
   displayNeedle = (svg, baroScale) => {
-    let alti = (+this.props.metar.alti) / 100;
 
-    console.log(this.props.metar.alti, alti);
-    // console.log(mslp);
-    svg.append('path')
+
+    let colorScale = d3.scaleLinear()
+      .domain([this.props.metar.length, 0])
+      .range(["#000000", "#FFFFFF"])
+
+    svg.selectAll('pressureneedles')
+      .data(this.props.metar.reverse())
+      .enter()
+      .append('path')
+      .attr('class', (d, i) => 'metar metar' + (this.props.metar.length - i - 1))
       .attr('d', ` m -5 0 l 5 75 l 5 -75 l -5 -5 z`)
-      .attr('transform', `translate(${this.props.width / 2} ${this.props.height / 2}) rotate(${baroScale(alti)})`)
-      .attr('fill', 'black')
+      .attr('transform', d => `translate(${this.props.width / 2} ${this.props.height / 2}) rotate(${baroScale(+d.alti / 100)})`)
+      .attr('fill', (d, i) => colorScale(i))
+
+
+
   }
 
   createGraph = () => {
@@ -55,15 +64,15 @@ class Pressure extends Component {
     svg.selectAll('*').remove();
 
 
-    if (!this.props.metar.alti) {
+    if (!this.props.metar[0].alti) {
       return;
     } else {
       var temp = this.props.metar.tmpf || 5;
       var dew = this.props.metar.dwpf || 5;
     }
 
-    var width = this.props.width || 200;
-    var height = this.props.height || 200
+    var width = 200;
+    var height = 200
 
     var arc = d3.arc()
       .innerRadius(99)
@@ -137,7 +146,7 @@ class Pressure extends Component {
     var { width, height } = this.props;
     return (
       <div>
-        <LabelValue label={"Pressure"} value={+this.props.metar.alti / 100 + '"'} />
+        <LabelValue label={"Pressure"} value={+this.props.metar[0].alti / 100 + '"'} />
 
         <svg ref={node => this.node = node} viewBox="0 0 200 160" width={width || 200} height={height || 200}>
         </svg>

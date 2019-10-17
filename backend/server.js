@@ -330,15 +330,20 @@ app.get('/api/recentMETARs/:ident', (req, res, next) => {
 
       if (searchString.includes('<code>')) {
         let split = searchString.split('<br/>');
+        // Sort list so it's always in most recent to oldest
+        split = split.sort((a, b) => {
+          if (!(a.valid && b.valid)) {
+            return false;
+          }
+          return a.valid.day * 10000 + a.valid.hour * 1000 + a.valid.min > b.valid.day * 10000 + b.valid.hour * 1000 + b.valid.min
+        }
+        )
 
         let metars = [];
 
-        for (let i = 0; i < split.length; i++) {
+        for (let i = 0; i < split.length - 1; i++) {
           let trimmed = split[i].slice(8, split[i].length - 7)
-          if (trimmed.length > 10) {
-            metars.push(metarTextToJson(trimmed))
-
-          }
+          metars.push(metarTextToJson(trimmed))
         }
 
         res.status(200).json(metars);
