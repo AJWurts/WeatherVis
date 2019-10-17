@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import *  as d3 from 'd3';
+import { LabelValue } from '../../components';
 
 
 class Pressure extends Component {
@@ -26,7 +27,7 @@ class Pressure extends Component {
   }
 
   hpaToInhg = (hpa) => {
-    
+
 
     if (+hpa > 500) {
       hpa = (hpa / 10 + 900) * 0.02953
@@ -38,11 +39,13 @@ class Pressure extends Component {
   }
 
   displayNeedle = (svg, baroScale) => {
-    let mslp = this.hpaToInhg(this.props.metar.mslp);
+    let alti = (+this.props.metar.alti) / 100;
+
+    console.log(this.props.metar.alti, alti);
     // console.log(mslp);
     svg.append('path')
       .attr('d', ` m -5 0 l 5 75 l 5 -75 l -5 -5 z`)
-      .attr('transform', `translate(${this.props.width / 2} ${this.props.height / 2}) rotate(${baroScale(mslp)})`)
+      .attr('transform', `translate(${this.props.width / 2} ${this.props.height / 2}) rotate(${baroScale(alti)})`)
       .attr('fill', 'black')
   }
 
@@ -120,29 +123,10 @@ class Pressure extends Component {
 
     this.displayNeedle(svg, baroScale);
 
-    // Labels
-    svg.selectAll('labels')
-      .data([
-        this.props.metar.mslp ? {
-        label: "Sea Level",
-        value: this.hpaToInhg(this.props.metar.mslp).toFixed(2)
-      } : {label: "", value: ""},
-      {
-        label: 'Altimeter',
-        value: this.props.metar.alti / 100
-      }])
-      .enter()
-      .append('text')
-      .attr('x', this.props.width / 2)
-      .attr('y', (d, i) => this.props.height - 23 + (i * 15))
-      .attr('text-anchor', 'middle')
-      .text(d => d.label ?  `${d.label}: ${d.value}"` : "")
-
-    
     svg.append('text')
       .attr('x', this.props.width / 2)
       .attr('y', this.props.height - 45)
-      .text("Pressure")
+      .text("inHg")
       .attr('text-anchor', "middle")
       .attr('font-size', 20)
       .attr('fill', 'black')
@@ -153,7 +137,9 @@ class Pressure extends Component {
     var { width, height } = this.props;
     return (
       <div>
-        <svg ref={node => this.node = node} width={width || 200} height={height || 200}>
+        <LabelValue label={"Pressure"} value={+this.props.metar.alti / 100 + '"'} />
+
+        <svg ref={node => this.node = node} viewBox="0 0 200 160" width={width || 200} height={height || 200}>
         </svg>
       </div>
     );

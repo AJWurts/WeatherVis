@@ -8,8 +8,9 @@ import Percip from './onemetar/percip.jsx';
 import Pressure from './onemetar/pressure.jsx';
 import SearchBox from './SearchBox.jsx'
 import TimeLine from './timeline/timeline.jsx'
+import { LabelValue } from '../components';
 
-import  './weathervis.css';
+import './weathervis.css';
 
 class WeatherVis extends Component {
   constructor(props) {
@@ -113,7 +114,7 @@ class WeatherVis extends Component {
       let minRound = Math.round(minutes)
 
 
-      var metarAge = `METAR released ${("" + minRound).padStart(2, "0")} minutes ago`
+      var metarAge = `${("" + minRound).padStart(2, "0")} minutes ago`
     }
 
 
@@ -129,39 +130,48 @@ class WeatherVis extends Component {
       let minRound = Math.round(minutes)
 
 
-      var tafAge = `TAF released ${Math.floor(hours)}:${("" + minRound).padStart(2, "0")} minutes ago`
+      var tafAge = `${Math.floor(hours)}:${("" + minRound).padStart(2, "0")} minutes ago`
     }
 
 
     return (
       <div className='top-bar'>
         <SearchBox onClick={this.onSearch} />
-        {metar ? <div style={{ fontSize: 20, textAlign: 'left' }}>METAR: {metar.raw} </div> : null}
-        {metarAge ? <div style={{ fontSize: 16, textAlign: 'left' }}>{metarAge} </div> : null}
+        <div style={{ margin: '5px' }}>
 
-        {!metar ? <div style={{ fontSize: 30 }}>{metarErrorMessage}</div> :
-          <div className="App"  style={{margin:'10px'}}>
-            <CloudLayersVis metar={metar} height={850} />
-            <div>
-              <Wind airport={airport} metar={metar} width={500} height={500} />
-              <div style={{ display: 'flex' }}>
-                <Temp metar={metar} />
-                <Percip metar={metar} />
-                <Pressure metar={metar} width={200} height={200} />
+          {metar ?
+            <LabelValue label={"Raw METAR"} value={metar.raw} /> : null}
+          {metarAge ?
+            <LabelValue label="Released" value={metarAge} /> : null}
+
+          {!metar ? <div style={{ fontSize: 30 }}>{metarErrorMessage}</div> :
+            <div className="App" style={{ margin: '10px' }}>
+              <div>
+                <CloudLayersVis metar={metar} height={500} width={400} />
+                <Visibility vis={metar.vsby} />
               </div>
-              <Visibility vis={metar.vsby} />
-            </div>
-          </div>}
-        {!taf ? <div style={{ fontSize: 30 }}>{tafErrorMessage}</div> :
 
-          <div width="1055px">
-            <div>
-              {this.state.taf.forecast[0].raw.slice(0, 22)}
-              <br />
-              {tafAge}
-            </div>
-            <TimeLine data={taf} metar={metar} />
-          </div>}
+              <div>
+                <Wind airport={airport} metar={metar} width={450} height={450} />
+                <div style={{ display: 'flex' }}>
+                  <Temp metar={metar} />
+                  <Percip metar={metar} />
+                  <Pressure metar={metar} width={200} height={200} />
+                </div>
+              </div>
+            </div>}
+          {!taf ? <div style={{ fontSize: 30 }}>{tafErrorMessage}</div> :
+
+            <div width="1055px">
+              <div>
+                {this.state.taf.forecast[0].raw.slice(0, 22)}
+                <br />
+                {tafAge}
+              </div>
+              <TimeLine data={taf} metar={metar} />
+            </div>}
+        </div>
+
       </div>
     );
   }

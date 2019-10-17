@@ -36,7 +36,7 @@ class SearchBox extends Component {
 
         </div>
         <input onChange={this.onChange}
-          style={{ height: '20px', width: '45px', fontSize: '18px', borderRadius: '20px', border: 'none', padding: '5px', verticalAlign: 'middle', fontFamily: 'Andale Mono' }} placeholder='KBED' />
+          style={{ height: '20px', width: '50px', fontSize: '18px', borderRadius: '20px', border: 'none', padding: '5px', verticalAlign: 'middle'}} placeholder='KBED' />
         <button onClick={this.onClick} style={{ verticalAlign: 'middle', padding: '5px 25px' }} className='button'>
           Search
         </button>

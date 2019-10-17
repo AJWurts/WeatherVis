@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import *  as d3 from 'd3';
+import { LabelValue } from '../../components';
 
 
 class Temp extends Component {
@@ -78,13 +79,13 @@ class Temp extends Component {
 
     this.drawTemps(svg, tempScale, 60);
 
-    svg.append('text')
-      .attr('x', 5)
-      .attr('y', 13)
-      .text(`Temp: ${(temp < 0 ? 'M' : '') + this.pad(Math.abs(temp), 2)}/${(dew < 0 ? 'M' : "") + this.pad(Math.abs(dew), 2)}`)
-      .attr('text-anchor', 'start')
-      .attr('fill', 'black')
-      .attr('font-size', 18)
+    // svg.append('text')
+    //   .attr('x', 5)
+    //   .attr('y', 13)
+    //   .text(`Temp: ${(temp < 0 ? 'M' : '') + this.pad(Math.abs(temp), 2)}/${(dew < 0 ? 'M' : "") + this.pad(Math.abs(dew), 2)}`)
+    //   .attr('text-anchor', 'start')
+    //   .attr('fill', 'black')
+    //   .attr('font-size', 18)
 
     // Celsius
     // Labels
@@ -199,8 +200,10 @@ class Temp extends Component {
 
   render() {
     var { width, height } = this.props;
+    var { tmpf, dwpf } = this.props.metar;
     return (
-      <div>
+      <div style={{textAlign: 'start'}}>
+        <LabelValue label={"Temp"} value={`${(tmpf < 0 ? 'M' : '') + this.pad(Math.abs(tmpf), 2)}/${(dwpf < 0 ? 'M' : "") + this.pad(Math.abs(dwpf), 2) }`}/>
         <svg ref={node => this.node = node} width={width || 155} height={height || 200}>
         </svg>
       </div>

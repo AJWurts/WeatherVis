@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import *  as d3 from 'd3';
+import { LabelValue } from '../../components';
 
 const MAX_SPEED = 40;
 
@@ -114,7 +115,8 @@ class Wind extends Component {
       dir = (dir + 180) % 360;
     }
 
-    var speedScale = d3.scaleLinear()
+    var speedScale = d3.scalePow()
+      .exponent(0.5)
       .domain([0, maxSpeed])
       .range([0, (this.props.width / 3) * 0.95])
 
@@ -269,9 +271,10 @@ class Wind extends Component {
 
   drawSpeedRings = (svg, maxSpeed) => {
 
-    var labels = d3.range(0, maxSpeed + 2, maxSpeed / 4);
-    delete labels[0];
-    var speedScale = d3.scaleLinear()
+    var labels = [4, 8, 16, 24, 36, 48, 60];
+    // delete labels[2];
+    var speedScale = d3.scalePow()
+      .exponent(0.5)
       .domain([0, maxSpeed])
       .range([0, (this.props.width / 3) * 0.95])
     svg.selectAll('speedRings')
@@ -294,7 +297,7 @@ class Wind extends Component {
       .text((d, i) => {
         if (i == labels.length - 1) {
           return d + 'kts'
-        } else {
+        } else  {
           return d;
         }
       })
@@ -309,7 +312,7 @@ class Wind extends Component {
 
     let dir = this.props.metar.drct;
     let spd = this.props.metar.sknt;
-    let angle = this.rads(Math.abs( ( ((heading + variation) + 360 - dir) % 360)))
+    let angle = this.rads(Math.abs((((heading + variation) + 360 - dir) % 360)))
     let headwind = Math.floor(Math.cos(angle) * spd);
     let crosswind = -Math.floor(Math.sin(angle) * spd);
     svg.append("text")
@@ -581,16 +584,7 @@ class Wind extends Component {
     });
     var { drct, sknt, gust } = this.props.metar;
 
-    // Title
-    svg.append('text')
-      .attr('x', 10)
-      .attr('y', 30)
-      .text(gust ?
-        `Wind: ${drct == "VRB" ? "Variable" : this.pad(drct, 3)} at ${sknt}kts gusting ${gust}kts`
-        : `Wind: ${this.pad(drct, 3)} at ${sknt}kts`
-      )
-      .attr('text-anchor', 'start')
-      .attr('font-size', 20)
+
 
     // Compass Labels
     svg.selectAll('label')
@@ -611,10 +605,11 @@ class Wind extends Component {
 
 
 
-    let max_speed = Math.max(sknt, gust) + 5
-
-    this.drawArrow(svg, this.props.metar.drct, this.props.metar.gust, max_speed, 'orange')
-    this.drawArrow(svg, this.props.metar.drct, this.props.metar.sknt, max_speed, '#61a8c6')
+    let max_speed = 60; //Math.max(sknt, gust) + 5
+    sknt = sknt + 0.01;
+    gust = gust + 0.01;
+    this.drawArrow(svg, this.props.metar.drct, gust, max_speed, 'orange')
+    this.drawArrow(svg, this.props.metar.drct, sknt, max_speed, '#61a8c6')
 
     this.drawSpeedRings(svg, max_speed);
 
@@ -640,9 +635,17 @@ class Wind extends Component {
 
   render() {
     var { width, height } = this.props;
+    var { drct, sknt, gust } = this.props.metar;
+
     return (
-      <div>
-        <svg ref={node => this.node = node} width={width || 500} height={height || 500}>
+      <div style={{textAlign: 'start'}}>
+        <div>
+          <LabelValue label={"Wind"} value={gust ?
+            `${drct == "VRB" ? "Variable" : this.pad(drct, 3)} at ${sknt}kts gusting ${gust}kts`
+            : `${this.pad(drct, 3)} at ${sknt}kts`} />
+        </div>
+
+        <svg ref={node => this.node = node} viewBox='0 50 500 450' width={width || 500} height={height || 500}>
         </svg>
       </div>
     );

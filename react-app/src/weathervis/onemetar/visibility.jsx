@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import *  as d3 from 'd3';
+import { LabelValue } from '../../components';
 
 
 class Visibility extends Component {
@@ -26,7 +27,7 @@ class Visibility extends Component {
       var vis = this.props.vis || 5;
     }
     var width = this.props.width || 500;
-    var height = this.props.height || 100
+    var height = this.props.height || 40
 
 
 
@@ -51,7 +52,8 @@ class Visibility extends Component {
       .data([0, 1, 2, 4, 6, 8, 10])
       .enter()
       .append('text')
-      .attr('x', d => xScale(d) - 5)
+      .attr('text-anchor', 'start')
+      .attr('x', d => xScale(d))
       .attr('y', d => height - 6)
       .text(d => d + 'sm')
 
@@ -89,8 +91,9 @@ class Visibility extends Component {
   render() {
     var { width, height } = this.props;
     return (
-      <div>
-        <svg ref={node => this.node = node} width={width || 500} height={height || 100}>
+      <div style={{textAlign: 'start'}}>
+        <LabelValue label="Visibility" value={this.props.vis + "SM"} />
+        <svg ref={node => this.node = node}  viewBox="25 0 500 40" width={width || 500} height={height || 40}>
         </svg>
       </div>
     );

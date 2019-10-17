@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import *  as d3 from 'd3';
-
+import { LabelValue } from '../../components';
 const COVER_KEY = {
   "SKC": 0,
   "NCD": 0,
@@ -13,6 +13,12 @@ const COVER_KEY = {
 }
 
 class CloudLayerVis extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      stringClouds: ""
+    }
+  }
   componentDidMount() {
     this.createGraph()
   }
@@ -61,7 +67,7 @@ class CloudLayerVis extends Component {
       .attr('width', d => {
         return xScale(d[1]) - xScale(d[0])
       })
-      .attr('height', (yScale(0) - yScale(1000)))
+      .attr('height', (yScale(0) - yScale(1500)))
       .attr('fill', '#AAAAAA')
       .attr('rx', 10)
       .attr('ry', 10)
@@ -158,11 +164,16 @@ class CloudLayerVis extends Component {
       //   cover: Number
       // }
     ]
+    let stringClouds = "";
     for (let i = 1; i <= 4; i++) {
 
       if (!COVER_KEY[metar['skyc' + i]]) {
         continue;
       }
+
+      // Format string to display above graphic
+      stringClouds += metar['skyc' + i] + this.pad((+metar['skyl' + i]) / 100 , 3) + ' '
+
       levels.push({
         alt: metar['skyl' + i],
         cover: COVER_KEY[metar['skyc' + i]],
@@ -177,21 +188,18 @@ class CloudLayerVis extends Component {
       )
     })
 
-    // Title
-    svg.append('text')
-      .attr('x', width / 2)
-      .attr('y', 40)
-      .attr('text-anchor', 'middle')
-      .text("Cloud Layers")
-      .attr('font-size', 25)
+    this.setState({
+      stringClouds: stringClouds
+    })
 
   }
 
   render() {
     var { width, height } = this.props;
     return (
-      <div>
-        <svg ref={node => this.node = node} width={width || 500} height={height || 800}>
+      <div style={{textAlign: 'start'}}>
+        <LabelValue label={"Clouds"} value={this.state.stringClouds ?  this.state.stringClouds : ""} />
+        <svg ref={node => this.node = node} width={width || 500} height={height || 500}>
         </svg>
       </div>
     );

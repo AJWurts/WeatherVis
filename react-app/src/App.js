@@ -20,7 +20,7 @@ class App extends Component {
 
     render() {
         return (
-            <Router style={{margin: '5px'}}>
+            <Router style={{}}>
 
 
                 <div style={{ fontSize: '30px', backgroundColor: '#33c6f8a2', padding: '10px 5px' }}>

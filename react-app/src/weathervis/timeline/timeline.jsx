@@ -169,6 +169,7 @@ class TimeLine extends Component {
 
         let previous_data;
         for (var i = this.props.data.forecast.length - 1; i >= 0; i--) {
+            // Currently broken needs to be fixed to process items other than FM
             if (this.time(this.props.data.forecast[i].from) <= time) {
                 previous_data = this.props.data.forecast[i];
                 break
