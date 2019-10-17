@@ -26,8 +26,8 @@ class Visibility extends Component {
     } else {
       var vis = this.props.vis || 5;
     }
-    var width = this.props.width || 500;
-    var height = this.props.height || 40
+    var width = 500;
+    var height = 40
 
 
 

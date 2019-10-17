@@ -146,9 +146,9 @@ class WeatherVis extends Component {
 
           {!metar ? <div style={{ fontSize: 30 }}>{metarErrorMessage}</div> :
             <div className="App" style={{ margin: '10px' }}>
-              <div>
+              <div style={{margin: '5px'}}>
                 <CloudLayersVis metar={metar} height={500} width={400} />
-                <Visibility vis={metar.vsby} />
+                <Visibility vis={metar.vsby} width={400} />
               </div>
 
               <div>

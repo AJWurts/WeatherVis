@@ -5,7 +5,7 @@ function LabelValue(props) {
 
 
     return (
-        <div >
+        <div className={props.label} >
             <div style={{
                 fontSize: 22, textAlign: 'left', backgroundColor: '#AAAAAA', color: 'white', display: 'inline-block', padding: '5px'
             }}>
