@@ -83,7 +83,7 @@ class Wind extends Component {
 
     if (drct == 'VRB') {
       drct = 360;
-    } 
+    }
 
     return {
       drct: drct,
@@ -91,13 +91,7 @@ class Wind extends Component {
     }
   }
 
-  drawOldWind = (svg, winds, maxSpeed) => {
-
-    var speedScale = d3.scalePow()
-      .exponent(0.5)
-      .domain([0, maxSpeed])
-      .range([0, (this.props.width / 3) * 0.95])
-
+  drawOldWind = (svg, winds, speedScale) => {
 
 
     for (let i = 1; i < winds.length; i++) {
@@ -118,7 +112,7 @@ class Wind extends Component {
         .attr('y1', y1)
         .attr('y2', gy1 != 250 ? gy1 : y1)
         .attr('stroke-width', 3)
-        .attr('stroke', d3.interpolateGreys(1.05- (i / winds.length)))
+        .attr('stroke', d3.interpolateGreys(1.05 - (i / winds.length)))
 
       svg.selectAll('dots' + i)
         .data([[x1, y1], [gx1, gy1]])
@@ -162,18 +156,22 @@ class Wind extends Component {
     return x;
   }
 
-  drawMaxWindRing = (svg, maxWind,) => {
-    
+  drawMaxWindRing = (svg, maxWind, speedScale, color) => {
+    svg.append('circle')
+      .attr('cx', this.props.width / 2)
+      .attr('cy', this.props.width / 2)
+      .attr('r', speedScale(maxWind))
+      .attr('stroke', color)
+      .attr('fill', 'none')
+      .attr('stroke-width', 2)
+
   }
 
-  drawSpeedRings = (svg, maxSpeed) => {
+  drawSpeedRings = (svg, speedScale) => {
 
     var labels = [4, 8, 16, 24, 36, 48, 60];
     delete labels[2];
-    var speedScale = d3.scalePow()
-      .exponent(0.5)
-      .domain([0, maxSpeed])
-      .range([0, (this.props.width / 3) * 0.95])
+
     svg.selectAll('speedRings')
       .data(labels)
       .enter()
@@ -213,6 +211,8 @@ class Wind extends Component {
     var svg = d3.select(node);
     svg.selectAll('*').remove();
 
+
+
     svg.selectAll('label')
       .data(compass)
       .enter()
@@ -221,10 +221,19 @@ class Wind extends Component {
       .attr('y', d => this.props.height / 2 + this.calcY(d.dir) + 6)
       .text(d => d.label)
 
-    let max_speed = 60;
+    let maxSpeed = 60;
+    var speedScale = d3.scalePow()
+      .exponent(0.5)
+      .domain([0, maxSpeed])
+      .range([0, (this.props.width / 3) * 0.95])
 
-    this.drawOldWind(svg, this.props.metars, max_speed);
-    this.drawSpeedRings(svg, max_speed);
+    this.drawMaxWindRing(svg, d3.max(this.props.metars, d => d.sknt), speedScale, 'blue')
+
+
+    this.drawOldWind(svg, this.props.metars, speedScale);
+    this.drawSpeedRings(svg, speedScale);
+    this.drawMaxWindRing(svg, d3.max(this.props.metars, d => d.gust), speedScale, 'orange');
+
   }
 
   render() {
@@ -235,7 +244,8 @@ class Wind extends Component {
       <div style={{ textAlign: 'start' }}>
         <div>
           <LabelValue label={"24 Hour Wind"} />
-          <LabelValue label={"Directions"} value={"The darker the more recent. Orange is gusts, Blue is sustained"} />
+          <LabelValue label={"Directions"} value={"The darker the more recent."} />
+          <LabelValue value={"Orange is gusts. Blue is sustained. Rings are maximums."} />
         </div>
 
         <svg ref={node => this.node = node} viewBox='0 50 500 450' width={width || 500} height={height || 500}>

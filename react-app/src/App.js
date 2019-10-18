@@ -30,14 +30,14 @@ class App extends Component {
                     <div style={{ display: 'inline-block' }}>
                         <ButtonLink to='/' text="METAR/TAF Vis" />
                         <ButtonLink to='/pressure' text="Pressure Vis" />
-                        <ButtonLink to='/test' text="Test Page" />
+                        <ButtonLink to='/24hour' text="24 Hour Data" />
                     </div>
                 </div>
                 <Switch>
                     <Route path='/pressure'>
                         <PressureVis />
                     </Route>
-                    <Route path='/test'>
+                    <Route path='/24hour'>
                         <TestPage/>
                     </Route>
                     <Route path='/'>

@@ -16,42 +16,25 @@ class Temp extends Component {
   drawTemps = (svg, tempScale, x) => {
 
     // console.log(this.props.metar.tmpf, dew)
-    // Dew Point
-    let dewScale = d3.scalePow()
-      .exponent(1.3)
-      .domain([0, this.props.metar.length])
-      .range(['#FFFFFF', '#0000FF'])
-    // .interpolate(d3.interpolateHcl)
+    // Dew Point)
 
     var dewCircle =
-      svg.selectAll('dewcircles')
-        .data(this.props.metar.slice().reverse())
-        .enter()
-        .append('circle')
-        .attr('class', (d, i) => 'metar metar' + (this.props.metar.length - i - 1))
+      svg.append('circle')
 
         .attr('cx', x)
-        .attr('cy', d => tempScale(d.dwpf))
+        .attr('cy', d => tempScale(this.props.metar[0].dwpf))
         .attr('r', 5)
-        .attr('fill', (d, i) => dewScale(i))
+        .attr('fill', '#0000FF')
 
 
-    // Temp
-    let tempColorScale = d3.scaleLinear()
-      .domain([0, this.props.metar.length])
-      .range(["#FFFFFF", "#FF0000"])
-    // .interpolate(d3.interpolateHcl)
 
     var tempCircle =
-      svg.selectAll('tempcircles')
-        .data(this.props.metar.slice().reverse())
-        .enter()
-        .append('circle')
-        .attr('class', (d, i) => 'metar metar' + (this.props.metar.length - i - 1))
+      svg.append('circle')
+
         .attr('cx', x)
-        .attr('cy', d => tempScale(d.tmpf))
+        .attr('cy', d => tempScale(this.props.metar[0].tmpf))
         .attr('r', 5)
-        .attr('fill', (d, i) => tempColorScale(i))
+        .attr('fill',  '#FF0000')
 
 
     if (this.props.metar[0].tmpf == this.props.metar[0].dwpf) {

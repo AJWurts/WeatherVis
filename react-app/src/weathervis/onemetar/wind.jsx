@@ -177,35 +177,6 @@ class Wind extends Component {
     }
   }
 
-  drawOldWind = (svg, winds, maxSpeed) => {
-
-    var speedScale = d3.scalePow()
-      .exponent(0.5)
-      .domain([0, maxSpeed])
-      .range([0, (this.props.width / 3) * 0.95])
-
-    var line = d3.line()
-      .x(d => {
-        let { drct, sknt } = this.processWind(d, speedScale);
-        let x = this.props.width / 2 + this.calcX(drct, sknt)
-        return x;
-      })
-      .y(d => {
-        let { drct, sknt } = this.processWind(d, speedScale);
-        let y = this.props.width / 2 + this.calcY(drct, sknt)
-        return y;
-      })
-      // .curve(d3.curveMonotoneX)
-
-
-    svg.append('path')
-      .datum(winds)
-      .attr('d', line)
-      .attr('stroke', '#61a8DD')
-      .attr('stroke-width', '2px')
-      .attr('fill', 'none')
-
-  }
 
   calcY = function (direction, length) {
     length = length == null ? (this.props.height / 3) : length;
@@ -469,7 +440,6 @@ class Wind extends Component {
     sknt = sknt + 0.01;
     gust = gust + 0.01;
     
-    this.drawOldWind(svg, this.props.metar, max_speed);
 
     this.drawArrow(svg, this.props.metar[0].drct, gust, max_speed, 'orange');
     this.drawArrow(svg, this.props.metar[0].drct, sknt, max_speed, '#61a8c6');

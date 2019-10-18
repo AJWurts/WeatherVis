@@ -6,9 +6,8 @@ import CloudLayersVis from './onemetar/CloudLayersVis';
 import Temp from './onemetar/temp.jsx';
 import Percip from './onemetar/percip.jsx';
 import Pressure from './onemetar/pressure.jsx';
-import SearchBox from './SearchBox.jsx'
 import TimeLine from './timeline/timeline.jsx'
-import { LabelValue } from '../components';
+import { LabelValue, SearchBox } from '../components';
 
 import './weathervis.css';
 

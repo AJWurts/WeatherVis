@@ -110,11 +110,12 @@ function metarTextToJson(text) {
 
   // Visbility. Includes various formats, 1 1/2, 1/2, 1/3, +10SM
   let vis = text.match(/([0-9]{0,1})[ ]{1}(([0-9]{0,1})[\/]{0,1}([0-9]{1,2}))SM./)
-  if (vis[1]) {
+  
+  if (vis && vis[1]) {
     metar.vsby = (+vis[1]) + (+vis[3]) / (+vis[4])
-  } else if (vis[3] && vis[2].includes('/')) {
+  } else if (vis && vis[3] && vis[2].includes('/')) {
     metar.vsby = (+vis[3]) / (+vis[4]);
-  } else {
+  } else if (vis) {
     metar.vsby = +vis[2];
   }
 
@@ -366,7 +367,6 @@ app.get('/api/recentMETARs/:ident', (req, res, next) => {
 // Handle get TAF for ident
 app.get('/api/newestTAFS/:ident', (req, res, next) => {
   let airportLetters = req.params.ident;
-  console.log("newestTAFS")
   axios.get(`https://www.aviationweather.gov/metar/data?ids=${airportLetters}&format=raw&hours=0&taf=on`)
     .then(result => {
       var text = result.data;
