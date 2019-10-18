@@ -66,17 +66,14 @@ class TestPage extends Component {
             })
     }
 
-    //
-
 
 
     render() {
         return (
             <div>
             <SearchBox onClick={this.onSearch} />
-
                 {this.state.metars ?
-                    <Wind metars={this.state.metars} width={500} height={500} />
+                    <Wind metars={this.state.metars} width={800} height={800} />
                     : null}
             </div>
         )

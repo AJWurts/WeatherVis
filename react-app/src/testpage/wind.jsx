@@ -96,11 +96,11 @@ class Wind extends Component {
 
     for (let i = 1; i < winds.length; i++) {
       let res = this.processWind(winds[i - 1].drct, winds[i - 1].sknt, speedScale);
-      let y1 = this.props.width / 2 + this.calcY(res.drct, res.sknt)
-      let x1 = this.props.width / 2 + this.calcX(res.drct, res.sknt)
+      let y1 = 500 / 2 + this.calcY(res.drct, res.sknt)
+      let x1 = 500 / 2 + this.calcX(res.drct, res.sknt)
       res = this.processWind(winds[i - 1].drct, winds[i - 1].gust, speedScale);
-      let gy1 = this.props.width / 2 + this.calcY(res.drct, res.sknt)
-      let gx1 = this.props.width / 2 + this.calcX(res.drct, res.sknt)
+      let gy1 = 500 / 2 + this.calcY(res.drct, res.sknt)
+      let gx1 = 500 / 2 + this.calcX(res.drct, res.sknt)
 
       // res = this.processWind(winds[i].drct, winds[i].sknt, speedScale);
       // let y2 = this.props.width / 2 + this.calcY(res.drct, res.sknt)
@@ -138,7 +138,7 @@ class Wind extends Component {
   }
 
   calcY = function (direction, length) {
-    length = length == null ? (this.props.height / 3) : length;
+    length = length == null ? (500 / 3) : length;
     var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
 
     let y = Math.sin(angle) * (length);
@@ -147,7 +147,7 @@ class Wind extends Component {
   }
 
   calcX = (direction, length) => {
-    length = length == null ? (this.props.width / 3) : length;
+    length = length == null ? (500 / 3) : length;
 
     var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
 
@@ -158,8 +158,8 @@ class Wind extends Component {
 
   drawMaxWindRing = (svg, maxWind, speedScale, color) => {
     svg.append('circle')
-      .attr('cx', this.props.width / 2)
-      .attr('cy', this.props.width / 2)
+      .attr('cx', 500 / 2)
+      .attr('cy', 500/ 2)
       .attr('r', speedScale(maxWind))
       .attr('stroke', color)
       .attr('fill', 'none')
@@ -170,14 +170,14 @@ class Wind extends Component {
   drawSpeedRings = (svg, speedScale) => {
 
     var labels = [4, 8, 16, 24, 36, 48, 60];
-    delete labels[2];
+    
 
     svg.selectAll('speedRings')
       .data(labels)
       .enter()
       .append('circle')
-      .attr('cx', d => this.props.width / 2)
-      .attr('cy', d => this.props.height / 2)
+      .attr('cx', d => 500 / 2)
+      .attr('cy', d => 500 / 2)
       .attr('stroke', '#00000022')
       .attr('r', d => speedScale(d))
       .attr('fill', 'none')
@@ -187,8 +187,8 @@ class Wind extends Component {
       .enter()
       .append('text')
       .attr('text-anchor', 'middle')
-      .attr('x', d => this.props.width / 2 + this.calcX(165, speedScale(d)))
-      .attr('y', d => this.props.height / 2 + this.calcY(165, speedScale(d)))
+      .attr('x', d => 500 / 2 + this.calcX(165, speedScale(d)))
+      .attr('y', d => 500 / 2 + this.calcY(165, speedScale(d)))
       .text((d, i) => {
         if (i == labels.length - 1) {
           return d + 'kts'
@@ -212,20 +212,19 @@ class Wind extends Component {
     svg.selectAll('*').remove();
 
 
-
     svg.selectAll('label')
       .data(compass)
       .enter()
       .append('text')
-      .attr('x', d => this.props.width / 2 + this.calcX(d.dir) - 6)
-      .attr('y', d => this.props.height / 2 + this.calcY(d.dir) + 6)
+      .attr('x', d => 500 / 2 + this.calcX(d.dir) - 6)
+      .attr('y', d => 500 / 2 + this.calcY(d.dir) + 6)
       .text(d => d.label)
 
     let maxSpeed = 60;
     var speedScale = d3.scalePow()
       .exponent(0.5)
       .domain([0, maxSpeed])
-      .range([0, (this.props.width / 3) * 0.95])
+      .range([0, (500 / 3) * 0.95])
 
     this.drawMaxWindRing(svg, d3.max(this.props.metars, d => d.sknt), speedScale, 'blue')
 
@@ -248,7 +247,7 @@ class Wind extends Component {
           <LabelValue value={"Orange is gusts. Blue is sustained. Rings are maximums."} />
         </div>
 
-        <svg ref={node => this.node = node} viewBox='0 50 500 450' width={width || 500} height={height || 500}>
+        <svg ref={node => this.node = node} viewBox='0 0 500 500' width={width || 500} height={height || 500}>
         </svg>
       </div>
     );
