@@ -119,26 +119,28 @@ class Wind extends Component {
       .range([0, (this.props.width / 3) * 0.95])
 
 
+    let halfWidth = this.props.width / 2;
+    let halfHeight = this.props.height / 2;
     let length = speedScale(+speed);
     color = color || '#1a496b'
     // Line
-    let tipX = this.props.width / 2 + this.calcX(dir, length);
-    let tipY = this.props.height / 2 + this.calcY(dir, length);
+    let tipX = halfWidth + this.calcX(dir, length);
+    let tipY = halfHeight + this.calcY(dir, length);
 
     svg.append('line')
-      .attr('x1', this.props.width / 2)
-      .attr('y1', this.props.width / 2)
+      .attr('x1', color === 'orange' ? halfWidth : halfWidth + (halfWidth - tipX))
+      .attr('y1', color === 'orange' ? halfWidth : halfWidth + (halfWidth - tipY))
       .attr('x2', tipX)
       .attr('y2', tipY)
       .attr('stroke', color)
-      .attr('stroke-width', '3')
+      .attr('stroke-width', '5')
 
     // Tip Triangle
     let theta = (((dir + this.state.angle) / 10) - 9) * (2 * Math.PI / 36) - (Math.PI / 2);
-    let xAltPtDelta = Math.cos(theta) * (this.props.width / 4) * 0.05;
-    let yAltPtDelta = Math.sin(theta) * (this.props.width / 4) * 0.05;
-    let radPtX = this.props.width / 2 + this.calcX(dir, length - 8);
-    let radPtY = this.props.height / 2 + this.calcY(dir, length - 8);
+    let xAltPtDelta = Math.cos(theta) * (this.props.width / 4) * 0.06;
+    let yAltPtDelta = Math.sin(theta) * (this.props.width / 4) * 0.06;
+    let radPtX = halfWidth + this.calcX(dir, length - 20);
+    let radPtY = halfWidth + this.calcY(dir, length - 20);
     let lines = [
       {
         x: radPtX - xAltPtDelta,
@@ -158,12 +160,12 @@ class Wind extends Component {
       .attr('x2', d => d.x)
       .attr('y2', d => d.y)
       .attr('stroke', color)
-      .attr('stroke-width', 3)
+      .attr('stroke-width', 5)
 
   }
 
   processWind = (metar, speedScale) => {
-    let {drct, sknt} = metar;
+    let { drct, sknt } = metar;
     if (drct == 'VRB') {
       drct = 360;
       // speed = 0;
@@ -439,9 +441,11 @@ class Wind extends Component {
     let max_speed = 60; //Math.max(sknt, gust) + 5
     sknt = sknt + 0.01;
     gust = gust + 0.01;
-    
 
-    this.drawArrow(svg, this.props.metar[0].drct, gust, max_speed, 'orange');
+
+    if (gust !== 0.01) {
+      this.drawArrow(svg, this.props.metar[0].drct, gust, max_speed, 'orange');
+    }
     this.drawArrow(svg, this.props.metar[0].drct, sknt, max_speed, '#61a8c6');
 
     this.drawSpeedRings(svg, max_speed);

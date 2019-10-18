@@ -65,9 +65,9 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
         .datum(forecast) // 10. Binds data to the line 
         .attr("d", line)
         .attr('fill', '#33c6f8a2')
-        .attr('stroke', '#2244aa')
+        // .attr('stroke', '#2244aa')
 
-    svg.selectAll('cloudLevelLabels')
+    svg.selectAll('visibility')
         .data([0, 5, 10])
         .enter()
         .append('text')

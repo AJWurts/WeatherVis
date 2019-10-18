@@ -145,7 +145,7 @@ class WeatherVis extends Component {
 
           {!metar ? <div style={{ fontSize: 30 }}>{metarErrorMessage}</div> :
             <div className="App" style={{ margin: '10px' }}>
-              <div style={{margin: '5px'}}>
+              <div style={{ margin: '5px' }}>
                 <CloudLayersVis metar={metar[0]} height={500} width={400} />
                 <Visibility vis={metar[0].vsby} width={400} />
               </div>
@@ -163,9 +163,8 @@ class WeatherVis extends Component {
 
             <div width="1055px">
               <div>
-                {this.state.taf.forecast[0].raw.slice(0, 22)}
-                <br />
-                {tafAge}
+                <LabelValue label={"TAF"} value={this.state.taf.forecast[0].raw.slice(0, 22)} />
+                <LabelValue label="Released" value={tafAge} />
               </div>
               <TimeLine data={taf} metar={metar} />
             </div>}

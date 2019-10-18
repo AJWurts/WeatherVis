@@ -4,11 +4,12 @@ import drawClouds from './clouds.jsx';
 import drawWind from './wind.jsx';
 import drawVis from './vis.jsx';
 import drawWeather from './weather.jsx';
-import { domainToASCII } from 'url';
+import { LabelValue } from '../../components/index.js';
+import LabelValueSVG from './LabelValueSVG.jsx';
 
 function pad(num, size) {
     var s = "000000000" + num;
-    return s.substr(s.length-size);
+    return s.substr(s.length - size);
 }
 
 function timeFunc(start) {
@@ -105,7 +106,7 @@ class TimeLine extends Component {
         const visSvg = d3.select(this.visNode);
         visSvg.selectAll('*').remove()
 
-    
+
         // Redraw Everything
         drawClouds(data.forecast, vcSvg, widthScale, maxTime, 100, this.time);
         drawWind(data.forecast, windSvg, widthScale, maxTime, 100, this.time);
@@ -132,18 +133,17 @@ class TimeLine extends Component {
             .append('rect')
             .attr('class', 'tooltip ttbox')
             .attr('x', -100)
-            .attr('y', 20)
-            .attr('width', 10)
+            .attr('y', 0)
+            .attr('width', 3)
             .attr('height', 600)
             .attr('fill', '#00000088')
-            .attr('stroke', 'black')
 
         outer_svg.selectAll("labels")
             .data([
                 ['time', height * 0.01],
-                ["clouds", height * 0.15],
-                ["vis", height * 0.4],
-                ["wind", height * 0.65],
+                ["clouds", height * 0.08],
+                ["vis", height * 0.28],
+                ["wind", height * 0.51],
                 ["weather", height * 0.9]
             ]).enter()
             .append('text')
@@ -157,14 +157,14 @@ class TimeLine extends Component {
     }
 
     onMouseMove = (event) => {
-        if (this.props.data && this.props.meter && this.props.data.forecast[0].raw.slice(0, 4) !== this.props.metar.raw.slice(0,4)) {
+        if (this.props.data && this.props.meter && this.props.data.forecast[0].raw.slice(0, 4) !== this.props.metar.raw.slice(0, 4)) {
             return;
         }
 
         let invtime = d3.scaleLinear()
             .range([0, this.maxTime])
             .domain([this.width * 0.06, this.width]);
-        
+
         var time = invtime(event.clientX);
 
         let previous_data;
@@ -191,48 +191,53 @@ class TimeLine extends Component {
             }
             d3.select('.clouds')
                 .text(cloudStr)
-    
+
             d3.select('.vis')
                 .text(previous_data.vsby + "SM")
-    
+
             d3.select(".wind")
                 .text(`${previous_data.drct} at ${previous_data.sknt} KT ${previous_data.gust > 0 ? "gusting " + previous_data.gust : ""}`)
-    
+
             d3.select('.weather')
                 .text(`${previous_data.weather.length >= 1 ? previous_data.weather[0].text : ""} ${previous_data.weather.length >= 2 ? previous_data.weather[1].text : ""}`)
 
 
-        } 
+        }
         this.last_data = previous_data;
- 
+
 
         // Repositions tooltip to current mouse location
         d3.selectAll('.tooltip')
-        .attr('x', event.clientX + (this.maxTime - time < 10 ? -2 : 11))
-        .attr("text-anchor", this.maxTime - time < 10 ? 'end' : 'start')
+            .attr('x', event.clientX + (this.maxTime - time < 10 ? -2 : 11))
+            .attr("text-anchor", this.maxTime - time < 10 ? 'end' : 'start')
 
         d3.select('.ttbox')
             .attr('x', event.clientX)
-    
+
         d3.select('.time')
             .text(`${previous_data.raw}`)
             .attr('alignment-baseline', 'hanging')
-        
-   
+
+
     }
     render() {
         var { width, height } = this.props;
         return (
             <div style={{ width: '1055px' }} ref={outer => this.outer = outer}
             >
-                <svg style={{ width: '1055px', height: '480' }} ref={outside_svg => this.outer_svg = outside_svg} onMouseMove={this.onMouseMove}>
+                <svg style={{ width: '1055px', height: '600' }} ref={outside_svg => this.outer_svg = outside_svg} onMouseMove={this.onMouseMove}>
                     <g style={{ width: '1055px', height: "100%" }}>
-                        <svg style={{ display: 'block' }} y="5%" ref={node => this.vcNode = node} height={height || 100} width="1055px">
+                        <LabelValueSVG y={0} label="Raw" />
+                        <LabelValueSVG y={0.05} label="Clouds" />
+                        <svg style={{ display: 'block' }} y="8%" ref={node => this.vcNode = node} height={height || 100} width="1055px">
                         </svg>
+                        <LabelValueSVG y={0.25} label="Visibility" />
                         <svg style={{ display: 'block' }} y="30%" ref={node => this.visNode = node} height={height || 100} width="1055px">
                         </svg>
+                        <LabelValueSVG y={0.48} label="Wind" />
                         <svg style={{ display: 'block' }} y="55%" ref={node => this.windNode = node} height={height || 100} width='100%'>
                         </svg>
+                        <LabelValueSVG y={0.75} label="Weather" />
                         <svg style={{ display: 'block' }} y="80%" ref={node => this.weatherNode = node} height={height || 100} width='100%'>
                         </svg>
                     </g>

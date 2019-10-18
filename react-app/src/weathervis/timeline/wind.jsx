@@ -2,7 +2,8 @@ import *  as d3 from 'd3';
 
 function drawWind(forecast, svg, xScale, maxX, maxY, timeFunc) {
 
-    let maxWind = d3.max(forecast, x => Math.max(x.sknt, x.gust)) + 3;
+    let maxWind = d3.max(forecast, x => Math.max(x.sknt, x.gust)) ;
+     maxWind = maxWind * 1.3;
     let yScale = d3.scaleLinear()
         .domain([0, maxWind])
         .range([maxY, 0])
