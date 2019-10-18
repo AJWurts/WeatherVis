@@ -93,7 +93,7 @@ class Wind extends Component {
 
   drawOldWind = (svg, winds, speedScale) => {
 
-
+    winds = winds.slice().reverse();
     for (let i = 1; i < winds.length; i++) {
       let res = this.processWind(winds[i - 1].drct, winds[i - 1].sknt, speedScale);
       let y1 = 500 / 2 + this.calcY(res.drct, res.sknt)
@@ -112,7 +112,7 @@ class Wind extends Component {
         .attr('y1', y1)
         .attr('y2', gy1 != 250 ? gy1 : y1)
         .attr('stroke-width', 3)
-        .attr('stroke', d3.interpolateGreys(1.05 - (i / winds.length)))
+        .attr('stroke', d3.interpolateGreys((i / winds.length)))
 
       svg.selectAll('dots' + i)
         .data([[x1, y1], [gx1, gy1]])
@@ -123,11 +123,11 @@ class Wind extends Component {
         .attr('r', 5)
         .attr('fill', (d, j) => {
           if (j == 0) {
-            return d3.interpolateBlues(1 - (i / winds.length));
+            return d3.interpolateBlues((i / winds.length));
           } else if (d[0] == 250 && d[1] == 250) {
             return 'none'
           } else {
-            return d3.interpolateOranges(1 - (i / winds.length));
+            return d3.interpolateOranges((i / winds.length));
           }
 
         })
@@ -157,20 +157,74 @@ class Wind extends Component {
   }
 
   drawMaxWindRing = (svg, maxWind, speedScale, color) => {
+    var that = this;
     svg.append('circle')
+      .attr('class', 'max' + color)
       .attr('cx', 500 / 2)
-      .attr('cy', 500/ 2)
+      .attr('cy', 500 / 2)
       .attr('r', speedScale(maxWind))
       .attr('stroke', color)
       .attr('fill', 'none')
       .attr('stroke-width', 2)
+
+    svg.append('circle')
+      .attr('cx', 500 / 2)
+      .attr('cy', 500 / 2)
+      .attr('r', speedScale(maxWind))
+      .attr('stroke', '#FFF00F01')
+      .attr('fill', 'none')
+      .attr('stroke-width', 20)
+      .on('mouseover', function (d) {
+        d3.select('.max' + color)
+          .attr('stroke', color)
+          .attr('stroke-width', 5)
+
+        d3.select('.tooltip')
+          .attr('x', d3.mouse(this)[0] + 5)
+          .attr('y', d3.mouse(this)[1] + 5)
+
+        d3.select('.tooltiplabel')
+          .text(d => {
+            if (color == 'orange') {
+              return "Max Gust";
+            } else {
+              return "Max Wind";
+            }
+          })
+
+        d3.select('.tooltipvalue')
+          .text(d => {
+            if (color == 'orange') {
+              return that.maxGust.gust;
+            } else {
+              return that.maxWind.sknt;
+            }
+          })
+
+      })
+      .on('mousemove', function () {
+        d3.select('.tooltip')
+          .attr('x', d3.mouse(this)[0] + 5)
+          .attr('y', d3.mouse(this)[1] + 5)
+      })
+      .on('mouseout', function () {
+        d3.select('.max' + color)
+          .attr('stroke', color)
+          .attr('stroke-width', 2)
+
+        d3.select('.tooltip')
+          .attr('x', -100)
+          .attr('y', -100)
+
+
+      })
 
   }
 
   drawSpeedRings = (svg, speedScale) => {
 
     var labels = [4, 8, 16, 24, 36, 48, 60];
-    
+
 
     svg.selectAll('speedRings')
       .data(labels)
@@ -206,10 +260,57 @@ class Wind extends Component {
     return s.substr(s.length - size);
   }
 
+  createTooltip = (svg) => {
+
+
+    this.tooltip = svg.append('svg')
+      .attr('class', 'tooltip')
+      .attr('x', 100)
+      .attr('y', 100)
+
+    this.tooltip
+      .append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 45)
+      .attr('height', 20)
+      .attr('fill', 'rgb(170, 170, 170')
+
+    this.tooltip
+      .append('rect')
+      .attr('x', 45)
+      .attr('y', 0)
+      .attr('width', 40)
+      .attr('height', 20)
+      .attr('fill', 'rgb(238, 238, 238)')
+
+    this.tooltip
+      .append('text')
+      .attr('class', 'tooltiplabel')
+      .attr('x', 2)
+      .attr('y', 13)
+      .attr('text-anchor', 'top')
+      .text('Max Gust')
+      .attr('font-size', '10px')
+      .style('fill', 'white')
+
+      this.tooltip
+        .append('text')
+        .attr('class', 'tooltipvalue')
+        .attr('x', 50)
+        .attr('y', 13)
+        .attr('text-anchor', 'top')
+        .text('Max Gust')
+        .attr('font-size', '10px')
+        .style('fill', 'black')
+  }
+
   createGraph = () => {
     const node = this.node;
     var svg = d3.select(node);
     svg.selectAll('*').remove();
+
+
 
 
     svg.selectAll('label')
@@ -226,12 +327,18 @@ class Wind extends Component {
       .domain([0, maxSpeed])
       .range([0, (500 / 3) * 0.95])
 
-    this.drawMaxWindRing(svg, d3.max(this.props.metars, d => d.sknt), speedScale, 'blue')
+    this.maxGust = d3.max(this.props.metars, d => d.gust);
+    this.maxWind = d3.max(this.props.metars, d => d.sknt);
 
 
     this.drawOldWind(svg, this.props.metars, speedScale);
     this.drawSpeedRings(svg, speedScale);
-    this.drawMaxWindRing(svg, d3.max(this.props.metars, d => d.gust), speedScale, 'orange');
+
+    this.drawMaxWindRing(svg, this.maxWind, speedScale, 'blue')
+    this.drawMaxWindRing(svg, this.maxGust, speedScale, 'orange');
+
+    this.createTooltip(svg);
+
 
   }
 
@@ -247,7 +354,7 @@ class Wind extends Component {
           <LabelValue value={"Orange is gusts. Blue is sustained. Rings are maximums."} />
         </div>
 
-        <svg ref={node => this.node = node} viewBox='0 0 500 500' width={width || 500} height={height || 500}>
+        <svg ref={node => this.node = node} viewBox='75 75 400 400' width={width || 500} height={height || 500}>
         </svg>
       </div>
     );
