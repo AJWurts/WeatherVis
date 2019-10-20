@@ -195,9 +195,9 @@ class Wind extends Component {
         d3.select('.tooltipvalue')
           .text(d => {
             if (color == 'orange') {
-              return that.maxGust.gust;
+              return that.maxGust + 'kts';
             } else {
-              return that.maxWind.sknt;
+              return that.maxWind + 'kts';
             }
           })
 
@@ -294,15 +294,15 @@ class Wind extends Component {
       .attr('font-size', '10px')
       .style('fill', 'white')
 
-      this.tooltip
-        .append('text')
-        .attr('class', 'tooltipvalue')
-        .attr('x', 50)
-        .attr('y', 13)
-        .attr('text-anchor', 'top')
-        .text('Max Gust')
-        .attr('font-size', '10px')
-        .style('fill', 'black')
+    this.tooltip
+      .append('text')
+      .attr('class', 'tooltipvalue')
+      .attr('x', 50)
+      .attr('y', 13)
+      .text("30kts")
+      .attr('text-anchor', 'top')
+      .attr('font-size', '10px')
+      .style('fill', 'black')
   }
 
   createGraph = () => {
@@ -329,6 +329,7 @@ class Wind extends Component {
 
     this.maxGust = d3.max(this.props.metars, d => d.gust);
     this.maxWind = d3.max(this.props.metars, d => d.sknt);
+    console.log(this.maxGust, this.maxWind);
 
 
     this.drawOldWind(svg, this.props.metars, speedScale);
@@ -354,7 +355,7 @@ class Wind extends Component {
           <LabelValue value={"Orange is gusts. Blue is sustained. Rings are maximums."} />
         </div>
 
-        <svg ref={node => this.node = node} viewBox='75 75 400 400' width={width || 500} height={height || 500}>
+        <svg ref={node => this.node = node} viewBox='75 75 400 400' width={width } height={height}>
         </svg>
       </div>
     );
