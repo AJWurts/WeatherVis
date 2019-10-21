@@ -20,8 +20,22 @@ class WeatherVis extends Component {
       taf: null,
       airport: "KBED",
       tafErrorMessage: 'Loading TAF...',
-      metarErrorMessage: 'Loading METAR...'
+      metarErrorMessage: 'Loading METAR...',
+      isMobile: false
     }
+  }
+
+  handleWindowResize = () => {
+    this.setState({ isMobile: window.innerWidth < 715 });
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.handleWindowResize);
+    this.handleWindowResize()
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleWindowResize);
   }
 
   UNSAFE_componentWillMount() {
@@ -55,8 +69,6 @@ class WeatherVis extends Component {
 
 
   }
-
-
 
   handleMouseOver = (metar) => {
     this.setState({
@@ -100,7 +112,7 @@ class WeatherVis extends Component {
   //
 
   render() {
-    var { taf, metar, airport, tafErrorMessage, metarErrorMessage } = this.state;
+    var { taf, metar, airport, tafErrorMessage, metarErrorMessage, isMobile } = this.state;
 
     if (metar) {
       let metarDate = new Date()
@@ -144,7 +156,7 @@ class WeatherVis extends Component {
             <LabelValue label="Released" value={metarAge} /> : null}
 
           {!metar ? <div style={{ fontSize: 30 }}>{metarErrorMessage}</div> :
-            <div className="App" style={{ margin: '10px' }}>
+            <div className="App" style={{ display: isMobile ? 'block' : 'flex', margin: '10px' }}>
               <div style={{ margin: '5px' }}>
                 <CloudLayersVis metar={metar[0]} height={500} width={400} />
                 <Visibility vis={metar[0].vsby} width={400} />
@@ -161,7 +173,7 @@ class WeatherVis extends Component {
             </div>}
           {!taf ? <div style={{ fontSize: 30 }}>{tafErrorMessage}</div> :
 
-            <div width="1055px">
+            <div width="1055px" style={{overflow: 'scroll'}}>
               <div>
                 <LabelValue label={"TAF"} value={this.state.taf.forecast[0].raw.slice(0, 22)} />
                 <LabelValue label="Released" value={tafAge} />

@@ -18,8 +18,8 @@ class TestPage extends Component {
     }
 
     handleWindowResize = () => {
-        console.log(Math.min(500, window.width ));
-        this.setState({ width: Math.min(500, window.width )});
+        console.log( window.width < 500 ? window.width : 500);
+        this.setState({ width: window.width < 500 ? window.width : 500});
     }
 
     componentDidMount() {

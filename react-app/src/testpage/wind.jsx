@@ -248,22 +248,22 @@ class Wind extends Component {
 
     this.tooltip = svg.append('svg')
       .attr('class', 'tooltip')
-      .attr('x', 100)
-      .attr('y', 100)
+      .attr('x', -100)
+      .attr('y', -100)
 
     this.tooltip
       .append('rect')
       .attr('x', 0)
       .attr('y', 0)
-      .attr('width', 45)
+      .attr('width', 100)
       .attr('height', 20)
       .attr('fill', 'rgb(170, 170, 170')
 
     this.tooltip
       .append('rect')
-      .attr('x', 45)
+      .attr('x', 55)
       .attr('y', 0)
-      .attr('width', 40)
+      .attr('width', 45)
       .attr('height', 20)
       .attr('fill', 'rgb(238, 238, 238)')
 
@@ -280,7 +280,7 @@ class Wind extends Component {
     this.tooltip
       .append('text')
       .attr('class', 'tooltipvalue')
-      .attr('x', 50)
+      .attr('x', 58)
       .attr('y', 13)
       .text("30kts")
       .attr('text-anchor', 'top')
@@ -314,7 +314,6 @@ class Wind extends Component {
 
     this.maxGust = d3.max(this.props.metars, d => d.gust);
     this.maxWind = d3.max(this.props.metars, d => d.sknt);
-    console.log(this.maxGust, this.maxWind);
 
 
     this.drawOldWind(svg, this.props.metars, speedScale);
@@ -330,7 +329,6 @@ class Wind extends Component {
 
   render() {
     var { width, height } = this.props;
-    var { drct, sknt, gust } = this.props.metars[0];
 
     return (
       <div style={{ textAlign: 'start' }}>
