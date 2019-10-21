@@ -10,48 +10,32 @@ const compass = [
     label: 'N'
   },
   {
-    dir: 30,
-    label: '3',
-  },
-  {
-    dir: 60,
-    label: '6'
+    dir: 45,
+    label: 'NE',
   },
   {
     dir: 90,
     label: 'E'
   },
   {
-    dir: 120,
-    label: '12'
-  },
-  {
-    dir: 150,
-    label: '15'
+    dir: 135,
+    label: 'SE'
   },
   {
     dir: 180,
     label: "S"
   },
   {
-    dir: 210,
-    label: '21'
-  },
-  {
-    dir: 240,
-    label: '24'
+    dir: 225,
+    label: 'SW'
   },
   {
     dir: 270,
     label: "W"
   },
   {
-    dir: 300,
-    label: '30'
-  },
-  {
-    dir: 330,
-    label: '33'
+    dir: 315,
+    label: 'NW'
   },
 ]
 
@@ -170,8 +154,7 @@ class Wind extends Component {
   drawSpeedRings = (svg, speedScale) => {
 
     var labels = [4, 8, 16, 24, 36, 48, 60];
-    delete labels[2];
-
+      
     svg.selectAll('speedRings')
       .data(labels)
       .enter()
@@ -217,9 +200,11 @@ class Wind extends Component {
       .data(compass)
       .enter()
       .append('text')
-      .attr('x', d => this.props.width / 2 + this.calcX(d.dir) - 6)
+      .attr('x', d => this.props.width / 2 + this.calcX(d.dir))
       .attr('y', d => this.props.height / 2 + this.calcY(d.dir) + 6)
       .text(d => d.label)
+      .attr('font-size', 20)
+      .attr('text-anchor', 'middle')
 
     let maxSpeed = 60;
     var speedScale = d3.scalePow()
