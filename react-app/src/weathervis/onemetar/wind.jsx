@@ -427,6 +427,7 @@ class Wind extends Component {
       .attr('x', d => this.props.width / 2 + this.calcX(d.dir) - 6)
       .attr('y', d => this.props.height / 2 + this.calcY(d.dir) + 6)
       .text(d => d.label)
+      .attr('font-size', 18)
 
     // var runways = this.props.runways || hanscomRunways;
 

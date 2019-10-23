@@ -11,9 +11,24 @@ class TestPage extends Component {
         this.state = {
             airport: "KBED",
             metars: null,
-            metarErrorMessage: "Loading METAR..."
+            metarErrorMessage: "Loading METAR...",
+            width: 500
         }
 
+    }
+
+    handleWindowResize = () => {
+        console.log( window.width < 500 ? window.width : 500);
+        this.setState({ width: window.width < 500 ? window.width : 500});
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.handleWindowResize);
+        this.handleWindowResize()
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleWindowResize);
     }
 
     UNSAFE_componentWillMount() {
@@ -66,17 +81,14 @@ class TestPage extends Component {
             })
     }
 
-    //
-
 
 
     render() {
         return (
             <div>
-            <SearchBox onClick={this.onSearch} />
-
+                <SearchBox onClick={this.onSearch} />
                 {this.state.metars ?
-                    <Wind metars={this.state.metars} width={500} height={500} />
+                    <Wind metars={this.state.metars} width={this.state.width} height={this.state.width} />
                     : null}
             </div>
         )
