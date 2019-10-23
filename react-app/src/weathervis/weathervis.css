@@ -56,3 +56,19 @@
   padding: 5px
 }
 
+
+.selector {
+  background-color: #EEEEEE;
+  font-size: 18;
+  text-align: left;
+  display: inline-block;
+  padding: 9px 8px 6px 8px;
+  display: inline-block;
+  height: 100%;
+  border-radius: 8px;
+  margin-left: 2px
+}
+
+.selector:hover {
+  background-color: rgba(51, 198, 248, 0.635)
+}

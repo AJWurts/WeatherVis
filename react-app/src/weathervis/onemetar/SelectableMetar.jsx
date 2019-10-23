@@ -10,7 +10,9 @@ var innerStyle = {
   padding: '9px 8px 6px 8px',
   display: 'inline-block',
   height: '100%',
-  textWrap: 'none'
+  textWrap: 'none',
+  borderRadius: '8px',
+  marginLeft: '2px'
 }
 
 class SelectableMetar extends Component {
@@ -105,7 +107,7 @@ class SelectableMetar extends Component {
           </div> : null}
         {metarData.map((d, i) => {
           if (d.val) {
-            return (<div style={innerStyle} key={i} onMouseOver={() => this.onHover(d.key)} onMouseLeave={() => this.onMouseLeave(d.key)}>
+            return (<div className={'selector'}  key={i} onMouseOver={() => this.onHover(d.key)} onMouseLeave={() => this.onMouseLeave(d.key)}>
             {d.val + " "}
           </div>)
           } else {
