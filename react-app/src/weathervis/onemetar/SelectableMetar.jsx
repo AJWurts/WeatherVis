@@ -9,7 +9,8 @@ var innerStyle = {
   display: 'inline-block',
   padding: '9px 8px 6px 8px',
   display: 'inline-block',
-  height: '100%'
+  height: '100%',
+  textWrap: 'none'
 }
 
 class SelectableMetar extends Component {
@@ -97,15 +98,14 @@ class SelectableMetar extends Component {
   render() {
     let metarData = this.metarToRaw(this.props.metar)
     return (
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "inline-block", width:'100%' }}>
         {this.props.label ?
-
           <div className={this.props.className + ' normal'} >
             {this.props.label}
           </div> : null}
-        {metarData.map(d => {
+        {metarData.map((d, i) => {
           if (d.val) {
-            return (<div style={innerStyle} onMouseOver={() => this.onHover(d.key)} onMouseLeave={() => this.onMouseLeave(d.key)}>
+            return (<div style={innerStyle} key={i} onMouseOver={() => this.onHover(d.key)} onMouseLeave={() => this.onMouseLeave(d.key)}>
             {d.val + " "}
           </div>)
           } else {

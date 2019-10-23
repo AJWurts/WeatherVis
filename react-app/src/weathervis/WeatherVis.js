@@ -75,7 +75,6 @@ class WeatherVis extends Component {
   }
 
   handleMouseOver = (key) => {
-    console.log(key);
     d3.selectAll("." + key)
       .attr('class', 'selectable ' + key + ' highlighted')
   }
