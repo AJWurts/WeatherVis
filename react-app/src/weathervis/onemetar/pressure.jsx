@@ -146,7 +146,7 @@ class Pressure extends Component {
     var { width, height } = this.props;
     return (
       <div>
-        <LabelValue label={"Pressure"} value={+this.props.metar[0].alti / 100 + '"'} />
+        <LabelValue className='selectable pressure' label={"Pressure"} value={+this.props.metar[0].alti / 100 + '"'} />
 
         <svg ref={node => this.node = node} viewBox="0 0 200 160" width={width || 200} height={height || 200}>
         </svg>

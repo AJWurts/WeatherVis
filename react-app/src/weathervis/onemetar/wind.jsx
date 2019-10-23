@@ -470,9 +470,9 @@ class Wind extends Component {
     return (
       <div style={{ textAlign: 'start' }}>
         <div>
-          <LabelValue label={"Wind"} value={gust ?
-            `${drct == "VRB" ? "Variable" : this.pad(drct, 3)} at ${sknt}kts gusting ${gust}kts`
-            : `${this.pad(drct, 3)} at ${sknt}kts`} />
+          <LabelValue className='selectable wind' label={"Wind"} value={gust ?
+            `${drct == "VRB" ? "Variable" : this.pad(drct, 3)} at ${sknt} knots (${(sknt * 1.15077945).toFixed(0)}mph) gusting ${gust} knots (${(gust * 1.15077945).toFixed(0)}mph)`
+            : `${this.pad(drct, 3)} at ${sknt} knots (${(sknt * 1.15077945).toFixed(0)}mph)`} />
         </div>
 
         <svg ref={node => this.node = node} viewBox='0 50 500 450' width={width || 500} height={height || 500}>

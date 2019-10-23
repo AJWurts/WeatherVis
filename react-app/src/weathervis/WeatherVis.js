@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import Wind from './onemetar/wind.jsx';
-import Visibility from './onemetar/visibility';
-import CloudLayersVis from './onemetar/CloudLayersVis';
-import Temp from './onemetar/temp.jsx';
-import Percip from './onemetar/percip.jsx';
-import Pressure from './onemetar/pressure.jsx';
-import TimeLine from './timeline/timeline.jsx'
+import *  as d3 from 'd3';
+import {
+  Wind,
+  Visibility,
+  CloudLayersVis,
+  Temp,
+  Percip,
+  Pressure,
+  SelectableMetar
+} from './onemetar';
+import TimeLine from './timeline/timeline';
 import { LabelValue, SearchBox } from '../components';
 
 import './weathervis.css';
@@ -70,10 +74,15 @@ class WeatherVis extends Component {
 
   }
 
-  handleMouseOver = (metar) => {
-    this.setState({
-      metar: metar
-    })
+  handleMouseOver = (key) => {
+    console.log(key);
+    d3.selectAll("." + key)
+      .attr('class', 'selectable ' + key + ' highlighted')
+  }
+
+  handleMouseLeave = (key) => {
+    d3.selectAll("." + key)
+    .attr('class', 'selectable ' + key + ' normal')
   }
 
   onSearch = (ident) => {
@@ -151,9 +160,12 @@ class WeatherVis extends Component {
         <div style={{ margin: '5px' }}>
 
           {metar ?
+            <SelectableMetar label="Selectable Metar" onHover={this.handleMouseOver} onMouseLeave={this.handleMouseLeave} metar={metar[0]} /> : null}
+          {/* <LabelValue label={"Raw METAR"} value={metar[0].raw} /> : null} */}
+          {metar ?
             <LabelValue label={"Raw METAR"} value={metar[0].raw} /> : null}
           {metarAge ?
-            <LabelValue label="Released" value={metarAge} /> : null}
+            <LabelValue className='valid' label="Released" value={metarAge} /> : null}
 
           {!metar ? <div style={{ fontSize: 30 }}>{metarErrorMessage}</div> :
             <div className="App" style={{ display: isMobile ? 'block' : 'flex', margin: '10px' }}>
@@ -173,7 +185,7 @@ class WeatherVis extends Component {
             </div>}
           {!taf ? <div style={{ fontSize: 30 }}>{tafErrorMessage}</div> :
 
-            <div width="1055px" style={{overflow: 'scroll'}}>
+            <div width="1055px" style={{ overflow: 'scroll' }}>
               <div>
                 <LabelValue label={"TAF"} value={this.state.taf.forecast[0].raw.slice(0, 22)} />
                 <LabelValue label="Released" value={tafAge} />

@@ -92,7 +92,7 @@ class Visibility extends Component {
     var { width, height } = this.props;
     return (
       <div style={{textAlign: 'start'}}>
-        <LabelValue label="Visibility" value={this.props.vis + "SM"} />
+        <LabelValue className='selectable visibility' label="Visibility" value={this.props.vis + " Statute (Standard) Miles"} />
         <svg ref={node => this.node = node}  viewBox="25 0 500 40" width={width || 500} height={height || 40}>
         </svg>
       </div>
