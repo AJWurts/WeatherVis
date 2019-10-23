@@ -63,7 +63,7 @@ class SelectableMetar extends Component {
     let i = 1;
 
     while (metar['skyc' + i]) {
-      cloudStr += metar['skyc' + i] + this.pad(metar['skyl' + i] / 100, 3)
+      cloudStr += metar['skyc' + i] + this.pad(metar['skyl' + i] / 100, 3) + " "
       i++;
     }
     rawMetar.push({
@@ -104,9 +104,14 @@ class SelectableMetar extends Component {
             {this.props.label}
           </div> : null}
         {metarData.map(d => {
-          return (<div style={innerStyle} onMouseOver={() => this.onHover(d.key)} onMouseLeave={() => this.onMouseLeave(d.key)}>
+          if (d.val) {
+            return (<div style={innerStyle} onMouseOver={() => this.onHover(d.key)} onMouseLeave={() => this.onMouseLeave(d.key)}>
             {d.val + " "}
           </div>)
+          } else {
+            return null;
+          }
+        
         })}
       </div>
     );
