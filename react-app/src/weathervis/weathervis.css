@@ -36,3 +36,23 @@
     transform: rotate(360deg);
   }
 }
+
+
+.highlighted {
+  background-color: black;
+  font-size: 22px;
+  text-align: left;
+  color: white;
+  display: inline-block;
+  padding: 5px
+}
+
+.normal {
+  background-color: #AAAAAA;
+  font-size: 22px;
+  text-align: left;
+  color: white;
+  display: inline-block;
+  padding: 5px
+}
+

@@ -46,7 +46,7 @@ class Percip extends Component {
     var { width, height } = this.props;
     return (
       <div>
-        <LabelValue label={'Current Conditions'}/>
+        <LabelValue className='selectable metarweather' label={'Current Conditions'}/>
         <div style={{textAlign: 'start'}} width={width || 200} height={height || 200}>
           {this.props.metar.weather.length > 0 ? this.props.metar.weather.map(val => {
             console.log(val);

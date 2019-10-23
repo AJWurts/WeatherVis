@@ -5,12 +5,10 @@ function LabelValue(props) {
 
 
     return (
-        <div className={props.label} >
+        <div  >
             {props.label ?
 
-                <div style={{
-                    fontSize: 22, textAlign: 'left', backgroundColor: '#AAAAAA', color: 'white', display: 'inline-block', padding: '5px'
-                }}>
+                <div className={props.className + ' normal'} >
                     {props.label}
                 </div> : null}
             {props.value ? <div style={{

@@ -12,6 +12,16 @@ const COVER_KEY = {
   "VV": 5
 }
 
+const COVER_TO_STRING = {
+  "SKC": "Sky Clear",
+  "FEW": "Few",
+  "SCT": "Scattered",
+  "BKN": "Broken",
+  "OVC": "Overcast",
+  "VV": "Variable",
+  "CLR": "Clear",
+}
+
 class CloudLayerVis extends Component {
   constructor(props) {
     super(props);
@@ -76,7 +86,7 @@ class CloudLayerVis extends Component {
     svg.append('text')
       .attr('x', 5)
       .attr('y', yScale(+cloud.alt + 500))
-      .text(cloud.actual + " " + (this.pad(cloud.alt / 100, 3)))
+      .text(COVER_TO_STRING[cloud.actual] + " " + (cloud.alt + "ft"))
       .attr('color', 'black')
       .attr('text-anchor', 'start')
 
@@ -127,9 +137,9 @@ class CloudLayerVis extends Component {
       .data([30000])//)d3.range(0, MAX_ALT + 1, 3000))
       .enter()
       .append('line')
-      .attr('x1', 100)
+      .attr('x1', 140)
       .attr('y1', d => yScale(d))
-      .attr('x2', 90)
+      .attr('x2', 100)
       .attr('y2', d => yScale(d))
       .attr('stroke', 'black')
       .attr('stroke-width', 1)
@@ -137,16 +147,16 @@ class CloudLayerVis extends Component {
 
     // Vertical Line
     svg.append('line')
-      .attr('x1', 100)
+      .attr('x1', 140)
       .attr('y1', yScale(MAX_ALT) - 10)
-      .attr('x2', 100)
+      .attr('x2', 140)
       .attr('y2', yScale(0))
       .attr('stroke', 'black')
       .attr('stroke-width', 1)
 
     // Horizontal Line
     svg.append('line')
-      .attr('x1', 100)
+      .attr('x1', 140)
       .attr('y1', yScale(0))
       .attr('x2', width)
       .attr('y2', yScale(0))
@@ -184,7 +194,7 @@ class CloudLayerVis extends Component {
     levels.forEach(cloud => {
 
       this.drawCloud(
-        svg, cloud, 100, width, yScale
+        svg, cloud, 140, width, yScale
       )
     })
 
@@ -198,7 +208,7 @@ class CloudLayerVis extends Component {
     var { width, height } = this.props;
     return (
       <div style={{textAlign: 'start'}}>
-        <LabelValue label={"Clouds"} value={this.state.stringClouds ?  this.state.stringClouds : ""} />
+        <LabelValue className='selectable metarclouds' label={"Clouds"} value={this.state.stringClouds ?  this.state.stringClouds : ""} />
         <svg ref={node => this.node = node} width={width || 500} height={height || 500}>
         </svg>
       </div>
