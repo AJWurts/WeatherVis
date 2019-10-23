@@ -38,7 +38,7 @@ class SelectableMetar extends Component {
     })
 
     rawMetar.push({
-      key: 'wind',
+      key: 'metarwind',
       'val': this.pad(metar.drct, 3) + "" + this.pad(metar.sknt, 2) + (metar.gust > 0 ? "G" + this.pad(metar.gust, 2) : "" + "KT")
     })
 
@@ -53,7 +53,7 @@ class SelectableMetar extends Component {
     }
 
     rawMetar.push({
-      key: 'weather',
+      key: 'metarweather',
       val: weatherStr
     })
 
@@ -67,7 +67,7 @@ class SelectableMetar extends Component {
       i++;
     }
     rawMetar.push({
-      key: "clouds",
+      key: "metarclouds",
       'val': cloudStr
     })
 

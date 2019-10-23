@@ -144,7 +144,7 @@ class TimeLine extends Component {
                 ["clouds", height * 0.08],
                 ["vis", height * 0.28],
                 ["wind", height * 0.51],
-                ["weather", height * 0.9]
+                ["weather", height * 0.78]
             ]).enter()
             .append('text')
             .attr('class', d => 'tooltip ' + d[0])

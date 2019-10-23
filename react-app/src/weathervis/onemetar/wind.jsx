@@ -470,7 +470,7 @@ class Wind extends Component {
     return (
       <div style={{ textAlign: 'start' }}>
         <div>
-          <LabelValue className='selectable wind' label={"Wind"} value={gust ?
+          <LabelValue className='selectable metarwind' label={"Wind"} value={gust ?
             `${drct == "VRB" ? "Variable" : this.pad(drct, 3)} at ${sknt} knots (${(sknt * 1.15077945).toFixed(0)}mph) gusting ${gust} knots (${(gust * 1.15077945).toFixed(0)}mph)`
             : `${this.pad(drct, 3)} at ${sknt} knots (${(sknt * 1.15077945).toFixed(0)}mph)`} />
         </div>

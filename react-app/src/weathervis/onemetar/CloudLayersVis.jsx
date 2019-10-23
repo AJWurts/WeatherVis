@@ -208,7 +208,7 @@ class CloudLayerVis extends Component {
     var { width, height } = this.props;
     return (
       <div style={{textAlign: 'start'}}>
-        <LabelValue className='selectable clouds' label={"Clouds"} value={this.state.stringClouds ?  this.state.stringClouds : ""} />
+        <LabelValue className='selectable metarclouds' label={"Clouds"} value={this.state.stringClouds ?  this.state.stringClouds : ""} />
         <svg ref={node => this.node = node} width={width || 500} height={height || 500}>
         </svg>
       </div>
