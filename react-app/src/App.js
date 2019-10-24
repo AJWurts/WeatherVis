@@ -31,21 +31,26 @@ class App extends Component {
                         <ButtonLink to='/' text="METAR/TAF Vis" />
                         <ButtonLink to='/pressure' text="Pressure Vis" />
                         <ButtonLink to='/24hour' text="24 Hour Data" />
+                        <ButtonLink to='/code' text='Github Code Link' />
                     </div>
                 </div>
-               
+
                 <Switch>
+                    <Route path='/code' component={() => {
+                        window.location.href = 'https://github.com/ajwurts/WeatherVis'
+                    }} />
                     <Route path='/pressure'>
                         <PressureVis />
                     </Route>
                     <Route path='/24hour'>
-                        <TestPage/>
+                        <TestPage />
                     </Route>
                     <Route path='/'>
                         <WeatherVis />
                     </Route>
+
                 </Switch>
-                <div style={{height: '100%'}}/>
+                <div style={{ height: '100%' }} />
             </Router>
         );
     }
