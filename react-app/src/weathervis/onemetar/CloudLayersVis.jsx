@@ -63,7 +63,7 @@ class CloudLayerVis extends Component {
       ]
     } else if (cloud.cover === 5) {
       clouds = [
-        [0,48]
+        [0, 48]
       ]
     }
 
@@ -164,7 +164,6 @@ class CloudLayerVis extends Component {
       .attr('stroke-width', 1)
 
 
-
     // For each level we want the cloud level
     // Important columns: skyc1,skyc2,skyc3,skyc4,skyl1,skyl2,skyl3,skyl4
     // Potential data
@@ -178,11 +177,16 @@ class CloudLayerVis extends Component {
     for (let i = 1; i <= 4; i++) {
 
       if (!COVER_KEY[metar['skyc' + i]]) {
+        if (metar['skyc' + i] == 'CLR' || metar['skyc' + i] == 'SKC') {
+          stringClouds += metar['skyc' + i]
+        }
         continue;
       }
 
       // Format string to display above graphic
-      stringClouds += metar['skyc' + i] + this.pad((+metar['skyl' + i]) / 100 , 3) + ' '
+
+      stringClouds += metar['skyc' + i] + this.pad((+metar['skyl' + i]) / 100, 3) + ' '
+
 
       levels.push({
         alt: metar['skyl' + i],
@@ -207,8 +211,8 @@ class CloudLayerVis extends Component {
   render() {
     var { width, height } = this.props;
     return (
-      <div style={{textAlign: 'start'}}>
-        <LabelValue className='selectable metarclouds' label={"Clouds"} value={this.state.stringClouds ?  this.state.stringClouds : ""} />
+      <div style={{ textAlign: 'start' }}>
+        <LabelValue className='selectable metarclouds' label={"Clouds"} value={this.state.stringClouds ? this.state.stringClouds : ""} />
         <svg ref={node => this.node = node} width={width || 500} height={height || 500}>
         </svg>
       </div>

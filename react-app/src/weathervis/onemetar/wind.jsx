@@ -119,8 +119,8 @@ class Wind extends Component {
       .range([0, (this.props.width / 3) * 0.95])
 
 
-    let halfWidth = this.props.width / 2;
-    let halfHeight = this.props.height / 2;
+    let halfWidth = 250;
+    let halfHeight = 250;
     let length = speedScale(+speed);
     color = color || '#1a496b'
     // Line
@@ -251,10 +251,10 @@ class Wind extends Component {
       .append("line")
       .attr('cursor', 'pointer')
       .attr('class', d => "runway" + (d.heading % 180))
-      .attr('x1', d => this.props.width / 2 + this.calcX(d.trueHeading + 180, d.scaledLength))
-      .attr('y1', d => this.props.width / 2 + this.calcY(d.trueHeading + 180, d.scaledLength))
-      .attr('x2', d => this.props.height / 2)
-      .attr('y2', d => this.props.height / 2)
+      .attr('x1', d => 250 + this.calcX(d.trueHeading + 180, d.scaledLength))
+      .attr('y1', d => 250 + this.calcY(d.trueHeading + 180, d.scaledLength))
+      .attr('x2', d => 250)
+      .attr('y2', d => 250)
       .attr('stroke', '#000000CC')
       .attr('stroke-width', 25)
       .on('mouseover', d => {
@@ -279,7 +279,7 @@ class Wind extends Component {
 
     data.forEach((d) => {
       svg.append('text')
-        .attr('transform', `translate(${this.props.width / 2} ${this.props.width / 2}) rotate(${d.trueHeading + this.state.angle}) translate(8 ${-d.scaledLength + 5}) rotate(180)`)
+        .attr('transform', `translate(${250} ${250}) rotate(${d.trueHeading + this.state.angle}) translate(8 ${-d.scaledLength + 5}) rotate(180)`)
         .attr('fill', 'white')
         .text(((d.heading + 180) % 360) / 10)
 
@@ -299,8 +299,8 @@ class Wind extends Component {
       .data(labels)
       .enter()
       .append('circle')
-      .attr('cx', d => this.props.width / 2)
-      .attr('cy', d => this.props.height / 2)
+      .attr('cx', d => 250)
+      .attr('cy', d => 250)
       .attr('stroke', '#00000022')
       .attr('r', d => speedScale(d))
       .attr('fill', 'none')
@@ -310,8 +310,8 @@ class Wind extends Component {
       .enter()
       .append('text')
       .attr('text-anchor', 'middle')
-      .attr('x', d => this.props.width / 2 + this.calcX(165, speedScale(d)))
-      .attr('y', d => this.props.height / 2 + this.calcY(165, speedScale(d)))
+      .attr('x', d => 250 + this.calcX(165, speedScale(d)))
+      .attr('y', d => 250 + this.calcY(165, speedScale(d)))
       .text((d, i) => {
         if (i == labels.length - 1) {
           return d + 'kts'
@@ -424,8 +424,8 @@ class Wind extends Component {
       .data(compass)
       .enter()
       .append('text')
-      .attr('x', d => this.props.width / 2 + this.calcX(d.dir) - 6)
-      .attr('y', d => this.props.height / 2 + this.calcY(d.dir) + 6)
+      .attr('x', d => 250 + this.calcX(d.dir) - 6)
+      .attr('y', d => 250 + this.calcY(d.dir) + 6)
       .text(d => d.label)
       .attr('font-size', 18)
 
@@ -436,8 +436,6 @@ class Wind extends Component {
       this.drawRunways(svg, airports[this.props.airport].runways, airports[this.props.airport].variation);
       this.drawRunwayWinds(svg, airports[this.props.airport]);
     }
-
-
 
     let max_speed = 60; //Math.max(sknt, gust) + 5
     sknt = sknt + 0.01;
@@ -455,8 +453,8 @@ class Wind extends Component {
     svg.append('windDirLabel')
       .append("text")
       .attr('text-anchor', 'middle')
-      .attr('x', this.props.width / 2)
-      .attr('y', this.props.height / 2 - 50)
+      .attr('x', 250)
+      .attr('y', 250 - 50)
       .text(this.props.metar[0].drct)
       .attr('color', 'black')
 
@@ -475,7 +473,7 @@ class Wind extends Component {
             : `${this.pad(drct, 3)} at ${sknt} knots (${(sknt * 1.15077945).toFixed(0)}mph)`} />
         </div>
 
-        <svg ref={node => this.node = node} viewBox='0 50 500 450' width={width || 500} height={height || 500}>
+        <svg ref={node => this.node = node} viewBox='0 50 375 475' width={width || 500} height={height || 500}>
         </svg>
       </div>
     );

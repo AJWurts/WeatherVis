@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-const order = ['']
 
 var innerStyle = {
   backgroundColor: '#EEEEEE',
@@ -66,7 +65,11 @@ class SelectableMetar extends Component {
     let i = 1;
 
     while (metar['skyc' + i]) {
-      cloudStr += metar['skyc' + i] + this.pad(metar['skyl' + i] / 100, 3) + " "
+      if (metar['skyc' + i] == 'CLR' || metar['skyc' + i] == 'SKC') {
+        cloudStr += metar['skyc' + i]
+      } else {
+        cloudStr += metar['skyc' + i] + this.pad(metar['skyl' + i] / 100, 3) + " "
+      }
       i++;
     }
     rawMetar.push({

@@ -33,6 +33,7 @@ class App extends Component {
                         <ButtonLink to='/24hour' text="24 Hour Data" />
                     </div>
                 </div>
+               
                 <Switch>
                     <Route path='/pressure'>
                         <PressureVis />
@@ -44,10 +45,8 @@ class App extends Component {
                         <WeatherVis />
                     </Route>
                 </Switch>
-
+                <div style={{height: '100%'}}/>
             </Router>
-
-
         );
     }
 }
