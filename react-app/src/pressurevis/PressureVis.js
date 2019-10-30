@@ -122,7 +122,7 @@ class App extends Component {
           <br></br>
           <br></br>
 
-          &emsp;Changes in pressure or temerature effect the density altitude.  The density altitude is calculated based on the current surface pressure, humidity, and temperature. The higher the density altitude the worse a plane performs. Set the temperature to 23˚C, 8˚C degrees above the standard atmosphere temperature. The density altitude at 1000ft above sea level (ASL) is a roughly 2000ft. That means taking off at an airport at 1000ft (ASL) will be the same as a 2000ft airport on standard day.
+          &emsp;Changes in pressure or temperature effect the density altitude.  The density altitude is calculated based on the current surface pressure, humidity, and temperature. The higher the density altitude the worse a plane performs. Set the temperature to 23˚C, 8˚C degrees above the standard atmosphere temperature. The density altitude at 1000ft above sea level (ASL) is a roughly 2000ft. That means taking off at an airport at 1000ft (ASL) will be the same as a 2000ft airport on standard day.
           <br></br>
           <br></br>
           &emsp;To understand how the altimeter of a plane is affected click the checkbox to show a plane. When changing the temperature and pressure at the surface the plane's true altitude changes. This assumes the altimeter setting was not changed. This simulates flying between areas with different altimeter settingsWhen it is changed the correct altitude is maintained.  Since altimeters are just sensitive barometers (pressure sensors) they follow the pressure lines.
