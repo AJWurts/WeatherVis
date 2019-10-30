@@ -18,3 +18,17 @@
 .App-link {
   color: #09d3ac;
 }
+
+
+.description {
+  margin: 5px;
+  max-width: 600px;
+
+}
+
+.description-title {
+  font-size: 25px;
+  margin: 10px;
+  white-space: pre-wrap;
+
+}
