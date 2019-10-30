@@ -12,7 +12,8 @@ class TestPage extends Component {
             airport: "KBED",
             metars: null,
             metarErrorMessage: "Loading METAR...",
-            width: 500
+            width: 500,
+            showAirplane: false
         }
 
     }

@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
+import { AirplaneIcon } from '../components';
+
+const PLANE_ALT = 3000;
 
 class PressureGraph extends Component {
     constructor(props) {
         super(props);
     }
-    
+
 
     UNSAFE_componentWillReceiveProps(props) {
 
@@ -37,7 +40,7 @@ class PressureGraph extends Component {
 
         svg.append('path')
             .attr('d', `M 0,${yVal + 20} l 500,0`)
-            .attr('class', 'hover')
+            .attr('class', 'd3add hover')
             .attr('stroke', 'black')
             .attr('stroke-width', 2)
             .attr('stroke-dasharray', '5,5')
@@ -53,17 +56,19 @@ class PressureGraph extends Component {
 
 
         svg.append('text')
-            .attr('class', 'hover hovertext')
+            .attr('class', 'd3add hover hovertext')
             .attr('x', 10)
             .attr('y', yVal + 14)
             .text('True Alt: ' + this.invTrueAltScale(yVal + 20).toFixed(0) + 'ft')
 
         svg.append('text')
-            .attr('class', 'hover hovertext')
+            .attr('class', 'd3add hover hovertext')
             .attr('x', 500 - 10)
             .attr('y', yVal + 14)
             .text('Density Alt: ' + this.invPresAltScale(yVal + 20).toFixed(0) + 'ft')
             .attr('text-anchor', 'end')
+
+
     }
 
     onMouseMove = (event) => {
@@ -73,13 +78,20 @@ class PressureGraph extends Component {
 
     }
 
+    drawAirplane = () => {
+        let x = 375;
+        let y = this.presAltScale(PLANE_ALT) - 16;
+
+        return <AirplaneIcon x={x} y={y} rotate={-90} />
+    }
+
     onTouchMove = (event) => {
         this.onUpdateHover(event.targetTouches[0].clientY);
     }
 
     createGraph = (props) => {
         let svg = d3.select(this.svg);
-        svg.selectAll('*').remove()
+        svg.selectAll('.d3add').remove()
 
         let height = 500;
         let width = 500
@@ -89,8 +101,8 @@ class PressureGraph extends Component {
         // console.log(temperature, humidity, pressure)
         let minAlt = (29.92 - pressure) * 1000
 
-        let minDAlt =(120 * (temperature - 15))  + minAlt
-        
+        let minDAlt = (120 * (temperature - 15)) + minAlt
+
         this.trueAltScale = d3.scaleLinear()
             .domain([0, 10000])
             .range([height, 0])
@@ -112,7 +124,7 @@ class PressureGraph extends Component {
             .data(d3.range(0, 10001, 1000))
             .enter()
             .append('line')
-            .attr('class', 'truealt')
+            .attr('class', 'd3add truealt')
             .attr('x1', 0)
             .attr('x2', width / 2)
             .attr('y1', d => this.trueAltScale(d))
@@ -124,7 +136,7 @@ class PressureGraph extends Component {
             .data(d3.range(0, 10001, 1000))
             .enter()
             .append('text')
-            .attr('class', 'truealtlabel')
+            .attr('class', 'd3add truealtlabel')
             .attr('x', 10)
             .attr('y', d => this.trueAltScale(d) - 5)
             .text(d => d + "ft")
@@ -134,7 +146,7 @@ class PressureGraph extends Component {
             .data(d3.range(-10000, 100001, 1000))
             .enter()
             .append('line')
-            .attr('class', 'pressurealt')
+            .attr('class', 'd3add pressurealt')
             .attr('x1', width / 2)
             .attr('x2', width)
             .attr('y1', d => this.presAltScale(d))
@@ -146,15 +158,13 @@ class PressureGraph extends Component {
             .data(d3.range(-10000, 20000, 1000))
             .enter()
             .append('text')
-            .attr('class', 'truealtlabel')
+            .attr('class', 'd3add truealtlabel')
             .attr('x', width - 10)
             .attr('y', d => this.presAltScale(d) - 5)
             .attr('text-anchor', 'end')
             .text(d => d + "ft")
             .attr('color', 'blue')
             .attr('font-size', '20px')
-
-
 
     }
 
@@ -165,8 +175,11 @@ class PressureGraph extends Component {
                     onPointerMove={this.onMouseMove}
                     onTouchMove={this.onTouchMove}
                     ref={svg => this.svg = svg}
-                    viewBox="0 0 500 500" 
-                    style={{touchAction: 'none'}}>
+                    viewBox="0 0 500 500"
+                    style={{ touchAction: 'none' }}>
+
+                    {this.props.isPlaneVisible && this.presAltScale ? this.drawAirplane() : null}
+
                 </svg>
             </div>
         );

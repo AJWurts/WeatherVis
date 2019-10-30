@@ -21,7 +21,7 @@ class App extends Component {
         pressure: 29.92,
       },
       isMobile: false,
-      isPlaneView: false
+      isPlaneVisible: false
     }
   }
 
@@ -43,7 +43,7 @@ class App extends Component {
       dataOne: {
         temperature: 15,
         humidity: 50,
-        pressure: 29.92
+        pressure: 29.92,
       }
     })
   }
@@ -57,10 +57,10 @@ class App extends Component {
   }
 
   render() {
-    var { dataOne, dataTwo, isPlaneView, isMobile } = this.state;
+    var { dataOne, dataTwo, isPlaneVisible, isMobile } = this.state;
 
     return (
-      <div style={{margin: '10px'}}>
+      <div style={{ margin: '10px' }}>
         <div style={{
           display: isMobile ? 'block' : 'inline-block', width: isMobile ? '90%' : '75%', margin: '0px',
           maxWidth: isMobile ? null : '500px'
@@ -71,7 +71,7 @@ class App extends Component {
           <span style={{ fontSize: '20px', float: 'right', color: 'blue' }}>
             Density Altitude: Blue
               </span>
-          <PressureGraph temperature={dataOne.temperature} humidity={dataOne.humidity} pressure={dataOne.pressure}></PressureGraph>
+          <PressureGraph isPlaneVisible={isPlaneVisible} temperature={dataOne.temperature} humidity={dataOne.humidity} pressure={dataOne.pressure}></PressureGraph>
         </div>
 
         <div style={{ padding: '20px', display: isMobile ? 'block' : 'inline-block', height: '100%', verticalAlign: 'top', textAlign: 'left' }}>
@@ -101,6 +101,10 @@ class App extends Component {
             <InputLabel onChange={this.onChange} keyVal={['dataOne', 'temperature']} value={dataOne.temperature} label={"Temperature (C)"} />
             {/* <InputLabel onChange={this.onChange} keyVal={'humidity'} value={humidity} label={"% Humidity"} /> */}
             <InputLabel step={0.01} onChange={this.onChange} keyVal={['dataOne', 'pressure']} value={dataOne.pressure} label={"Pressure (inHg)"} />
+
+            <input type="checkbox" name="showPlan" value={this.state.isPlaneVisible} onChange={() => this.setState({ isPlaneVisible: !this.state.isPlaneVisible })} />Show Plane
+            <br />
+
           </div>
 
 
