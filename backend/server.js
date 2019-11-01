@@ -383,7 +383,7 @@ app.get('/api/newestTAFS/:ident', (req, res, next) => {
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get('*', (req, res, next) => {
-  res.status(404).send();
+  res.sendFile(path.join(__dirname+'/client/build/index.html'));
 })
 
 PORT = process.env.PORT || 8080;
