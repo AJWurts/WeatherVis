@@ -88,7 +88,7 @@ class Visibility extends Component {
       .attr('y', 0)
       .attr('width', xScale(vis) - xScale(0))
       .attr('height', height - 20)
-      .attr('fill', '#33c6f8a2')
+      .attr('fill', '#33c6f8')
 
 
   }

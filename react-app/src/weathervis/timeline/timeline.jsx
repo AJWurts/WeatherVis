@@ -143,7 +143,7 @@ class TimeLine extends Component {
 
         outer_svg.selectAll("labels")
             .data([
-                ['time', height * 0.01],
+                ['time', height * 0.03],
                 ["clouds", height * 0.08],
                 ["vis", height * 0.28],
                 ["wind", height * 0.51],
@@ -228,23 +228,20 @@ class TimeLine extends Component {
         return (
             <div style={{ width: '1055px' }} ref={outer => this.outer = outer}
             >
-                <svg style={{ width: '1055px', height: '600' }} ref={outside_svg => this.outer_svg = outside_svg} onMouseMove={this.onMouseMove}>
+                <svg style={{ width: '1055px', height: '600px' }} ref={outside_svg => this.outer_svg = outside_svg} onMouseMove={this.onMouseMove}>
                     <g style={{ width: '1055px', height: "100%" }}>
-                        <LabelValueSVG y={0} label="Raw" />
+                        <LabelValueSVG y={0.00} label="Raw" />
                         <LabelValueSVG y={0.05} label="Clouds" />
-                        <svg style={{ display: 'block' }} y="8%"
-                         ref={node => this.vcNode = node} 
-                         height={height || 100}
-                          width="1055px">
+                        <svg style={{ display: 'block' }} y="8%" ref={node => this.vcNode = node} height={(height || 100) + 'px'} width="1055px">
                         </svg>
                         <LabelValueSVG y={0.25} label="Visibility" />
-                        <svg style={{ display: 'block' }} y="30%" ref={node => this.visNode = node} height={height || 100} width="1055px">
+                        <svg style={{ display: 'block' }} y="30%" ref={node => this.visNode = node} height={(height || 100)} width="1055px">
                         </svg>
                         <LabelValueSVG y={0.48} label="Wind" />
-                        <svg style={{ display: 'block' }} y="55%" ref={node => this.windNode = node} height={height || 100} width='100%'>
+                        <svg style={{ display: 'block' }} y="55%" ref={node => this.windNode = node} height={(height || 100)} width='100%'>
                         </svg>
                         <LabelValueSVG y={0.75} label="Weather" />
-                        <svg style={{ display: 'block' }} y="80%" ref={node => this.weatherNode = node} height={height || 100} width='100%'>
+                        <svg style={{ display: 'block' }} y="80%" ref={node => this.weatherNode = node} height={(height || 100)} width='100%'>
                         </svg>
                     </g>
                 </svg>

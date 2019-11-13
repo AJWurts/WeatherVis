@@ -62,7 +62,7 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
     var path = svg.append("path")
         .datum(forecast) // 10. Binds data to the line 
         .attr("d", line)
-        .attr('fill', '#33c6f8a2')
+        .attr('fill', '#33c6f8')
         // .attr('stroke', '#2244aa')
 
     svg.selectAll('visibility')

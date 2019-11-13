@@ -57,7 +57,7 @@ class PressureGraph extends Component {
             .attr('width', 500)
             .attr('y', yVal)
             .attr('height', 20)
-            .attr('fill', '#FFFFFFEE')
+            .attr('fill', '#FFFFFF')
 
         // Draws True Altitude Text
         svg.append('text')
