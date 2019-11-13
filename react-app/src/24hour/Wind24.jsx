@@ -205,6 +205,79 @@ class Wind extends Component {
 
   }
 
+  drawLegend = (svg) => {
+
+    let amt = 11;
+    let range = d3.range(amt).reverse();
+    let start = 110;
+    let scale = d3.scaleLinear()
+      .domain([0, amt - 1])
+      .range([0, 1]);
+
+    svg.selectAll('legend-lines')
+      .data(range)
+      .enter()
+      .append('line')
+      .attr('y1', (d, i) => start + i * 30)
+      .attr('y2', (d, i) => start + i * 30)
+      .attr('x1', 440)
+      .attr('x2', 460)
+      .attr('stroke-width', 3)
+      .attr('stroke', d => d3.interpolateGreys(scale(d)))
+
+    svg.selectAll('legentbubbles')
+      .data(range)
+      .enter()
+      .append('circle')
+      .attr('cy', (d, i) => start + i * 30)
+      .attr('cx', 440)
+      .attr('r', 8)
+      .attr('fill', d => d3.interpolateBlues(scale(d)))
+
+    svg.selectAll('legentbubbles')
+      .data(range)
+      .enter()
+      .append('circle')
+      .attr('cy', (d, i) => start + i * 30)
+      .attr('cx', 460)
+      .attr('r', 8)
+      .attr('fill', d => d3.interpolateOranges(scale(d)))
+
+    svg.append('text')
+      .attr('y', 100)
+      .attr('x', 438)
+      .style('font-size', '12px')
+      .text('Now')
+    
+
+    // Multiline Text because I dont know how to do it any other way
+    svg.append('text')
+      .attr('y', 440)
+      .attr('x', 449)
+      .attr('text-anchor', 'middle')
+      .style('font-size', '12px')
+      .text('24')
+
+    svg.append('text')
+      .attr('y', 450)
+      .attr('x', 449)
+      .style('font-size', '12px')
+      .attr('text-anchor', 'middle')
+
+      .text('Hours')
+    svg.append('text')
+      .attr('y', 460)
+      .attr('x', 449)
+      .style('font-size', '12px')
+      .attr('text-anchor', 'middle')
+
+      .text('Ago')
+
+
+
+    
+  }
+
   drawSpeedRings = (svg, speedScale, maxSpeed) => {
 
     // var labels = [4, 8, 16, 24, 36, 48, 60];
@@ -325,6 +398,7 @@ class Wind extends Component {
 
     this.drawMaxWindRing(svg, this.maxWind, speedScale, 'blue')
     this.drawMaxWindRing(svg, this.maxGust, speedScale, 'orange');
+    this.drawLegend(svg);
 
     this.createTooltip(svg);
 
@@ -338,8 +412,7 @@ class Wind extends Component {
       <div style={{ textAlign: 'start' }}>
         <div>
           <LabelValue label={"24 Hour Wind"} />
-          <LabelValue label={"Directions"} value={"The darker the more recent."} />
-          <LabelValue value={"Orange is gusts. Blue is sustained. Rings are maximums."} />
+          <LabelValue label={"Directions"} value={"Orange is gusts. Blue is sustained. Rings are maximums."} />
         </div>
 
         <svg ref={node => this.node = node} viewBox='75 75 400 400' width={width } height={height}>
