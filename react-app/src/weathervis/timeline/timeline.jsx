@@ -15,23 +15,23 @@ function timeFunc(start) {
     let startHour = +start.hour;
 
     let fun = (full_time) => {
-        
+
         try {
-            
+
             let time = +full_time.hour + ((full_time.minute ? full_time.minute : 0) / 60);
 
             let result;
             if (full_time.day === start.day) {
-    
+
                 result = (time - startHour);
             } else { // (full_time.day > start.day) 
                 result = (24 - startHour) + time
             }
             return result
         } catch (e) {
-           
+
         }
- 
+
         return 0;
     }
 
@@ -205,7 +205,7 @@ class TimeLine extends Component {
                 .text(`${previous_data.weather.length >= 1 ? previous_data.weather[0].text : ""} ${previous_data.weather.length >= 2 ? previous_data.weather[1].text : ""}`)
 
 
-        } 
+        }
         this.last_data = previous_data;
 
 
@@ -226,27 +226,34 @@ class TimeLine extends Component {
     render() {
         var { width, height } = this.props;
         return (
-            <div style={{ width: '1055px' }} ref={outer => this.outer = outer}
-            >
+            <div style={{ width: '1055px' }} ref={outer => this.outer = outer}>
                 <svg style={{ width: '1055px', height: '600px' }} ref={outside_svg => this.outer_svg = outside_svg} onMouseMove={this.onMouseMove}>
                     <g style={{ width: '1055px', height: "100%" }}>
                         <LabelValueSVG y={0.00} label="Raw" />
                         <LabelValueSVG y={0.05} label="Clouds" />
-                        <svg style={{ display: 'block' }} y="8%" ref={node => this.vcNode = node} height={(height || 100) + 'px'} width="1055px">
-                        </svg>
-                        <LabelValueSVG y={0.25} label="Visibility" />
-                        <svg style={{ display: 'block' }} y="30%" ref={node => this.visNode = node} height={(height || 100)} width="1055px">
-                        </svg>
-                        <LabelValueSVG y={0.48} label="Wind" />
-                        <svg style={{ display: 'block' }} y="55%" ref={node => this.windNode = node} height={(height || 100)} width='100%'>
+                        <svg style={{ display: 'block' }}
+                            y="8%"
+                            ref={node => this.vcNode = node}
+                            height={(height || 100) + 'px'}
+                            width="1055px">
+                            </svg>
+                            <LabelValueSVG y={0.25} label="Visibility" />
+                            <svg style={{ display: 'block' }}
+                             y="30%" 
+                             ref={node => this.visNode = node} 
+                             height={(height || 100)}
+                              width="1055px">
+                            </svg>
+                            <LabelValueSVG y={0.48} label="Wind" />
+                            <svg style={{ display: 'block' }} y="55%" ref={node => this.windNode = node} height={(height || 100)} width='100%'>
                         </svg>
                         <LabelValueSVG y={0.75} label="Weather" />
                         <svg style={{ display: 'block' }} y="80%" ref={node => this.weatherNode = node} height={(height || 100)} width='100%'>
+                                </svg>
+                            </g>
                         </svg>
-                    </g>
-                </svg>
-            </div>
-        );
+                    </div>
+                );
     }
 }
 
