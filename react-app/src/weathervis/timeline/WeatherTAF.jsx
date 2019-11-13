@@ -27,7 +27,6 @@ function drawWeather(forecast, svg, xScale, maxX, maxY, timeFunc) {
         .enter()
         .append('text')
         .text(d => {
-            console.log(d)
             if (d.weather.length >= 1) {
                 return d.weather[0].raw + ": " + d.weather[0].text;
             } else {

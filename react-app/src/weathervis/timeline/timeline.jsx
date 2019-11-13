@@ -232,7 +232,10 @@ class TimeLine extends Component {
                     <g style={{ width: '1055px', height: "100%" }}>
                         <LabelValueSVG y={0} label="Raw" />
                         <LabelValueSVG y={0.05} label="Clouds" />
-                        <svg style={{ display: 'block' }} y="8%" ref={node => this.vcNode = node} height={height || 100} width="1055px">
+                        <svg style={{ display: 'block' }} y="8%"
+                         ref={node => this.vcNode = node} 
+                         height={height || 100}
+                          width="1055px">
                         </svg>
                         <LabelValueSVG y={0.25} label="Visibility" />
                         <svg style={{ display: 'block' }} y="30%" ref={node => this.visNode = node} height={height || 100} width="1055px">

@@ -4,6 +4,7 @@ const path = require('path');
 const axios = require('axios');
 const app = express()
 const parsers = require('./weatherparser.js')
+const runwayData = require('./RunwayData.js')
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -247,8 +248,9 @@ function processK(text) {
 
 // App routing to get newestMetar for given airport ident
 app.get('/api/newestMetar/:ident', (req, res, next) => {
-
   let airportLetters = processK(req.params.ident);
+  console.log(airportLetters)
+
   axios.get(`https://www.aviationweather.gov/metar/data?ids=${airportLetters}&format=raw&hours=0&taf=on`)
     .then(result => {
       var text = result.data;
@@ -263,9 +265,13 @@ app.get('/api/newestMetar/:ident', (req, res, next) => {
         res.status(404).send();
       } else {
         let metarJson = metarTextToJson(search[1]);
-        res.json(metarJson);
+        return runwayData.addRwysToMETAR(metarJson, airportLetters);
       }
 
+    }).then(result => {
+      res.status(200).json(result);
+    }).catch(error => {
+      console.error(error);
     })
 });
 
@@ -291,13 +297,15 @@ app.get('/api/recentMETARs/:ident', (req, res, next) => {
           let trimmed = split[i].slice(i == 0 ? 32 : 8, split[i].length - 7)
           metars.push(metarTextToJson(trimmed))
         }
-
-        res.status(200).json(metars);
+        return runwayData.addRwysToMETAR({metars: metars}, airportLetters);
       } else {
         res.status(404).send();
       }
-
-    }).catch(err => {
+    })
+    .then(result => {
+      res.status(200).json(result);
+    })
+    .catch(err => {
       console.log(err);
     })
 
