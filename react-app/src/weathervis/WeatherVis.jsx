@@ -47,7 +47,8 @@ class WeatherVis extends Component {
       .then(result => {
 
         this.setState({
-          metar: result.data,
+          metar: result.data.metars,
+          runways: result.data.runways,
           metarErrorMessage: ''
         })
       }).catch(err => {
@@ -81,7 +82,7 @@ class WeatherVis extends Component {
 
   handleMouseLeave = (key) => {
     d3.selectAll("." + key)
-    .attr('class', 'selectable ' + key + ' normal')
+      .attr('class', 'selectable ' + key + ' normal')
   }
 
   onSearch = (ident) => {
@@ -90,8 +91,9 @@ class WeatherVis extends Component {
         console.log(result.data)
 
         this.setState({
-          metar: result.data,
+          metar: result.data.metars,
           airport: ident,
+          runways: result.data.runways,
           metarErrorMessage: ''
         })
       }).catch(error => {
@@ -120,7 +122,11 @@ class WeatherVis extends Component {
   //
 
   render() {
-    var { taf, metar, airport, tafErrorMessage, metarErrorMessage, isMobile } = this.state;
+    var { taf, metar,
+      airport, runways,
+      tafErrorMessage,
+      metarErrorMessage,
+      isMobile } = this.state;
 
     if (metar) {
       let metarDate = new Date()
@@ -156,7 +162,7 @@ class WeatherVis extends Component {
     return (
       <div className='top-bar'>
         <SearchBox onClick={this.onSearch} />
-        <div style={{ margin: '5px', overflow: 'visible'}}>
+        <div style={{ margin: '5px', overflow: 'visible' }}>
 
           {metar ?
             <SelectableMetar label="Selectable Metar" onHover={this.handleMouseOver} onMouseLeave={this.handleMouseLeave} metar={metar[0]} /> : null}
@@ -169,12 +175,21 @@ class WeatherVis extends Component {
           {!metar ? <div style={{ fontSize: 30 }}>{metarErrorMessage}</div> :
             <div className="App" style={{ display: isMobile ? 'block' : 'flex', margin: '10px' }}>
               <div style={{ margin: '5px' }}>
-                <CloudLayersVis metar={metar[0]} height={500} width={isMobile ? 300 : 400} />
-                <Visibility vis={metar[0].vsby} width={isMobile ? 300 : 400} />
+                <CloudLayersVis
+                  metar={metar[0]}
+                  height={500}
+                  width={isMobile ? 300 : 400} />
+                <Visibility
+                  vis={metar[0].vsby}
+                  width={isMobile ? 300 : 400} />
               </div>
 
               <div>
-                <Wind airport={airport} metar={metar} width={isMobile? 350 : 500} height={isMobile ? 350 :500} />
+                <Wind airport={airport}
+                  runways={runways}
+                  metar={metar}
+                  width={isMobile ? 350 : 500}
+                  height={isMobile ? 350 : 500} />
                 <div style={{ textAlign: 'left', display: isMobile ? 'inline-block' : 'flex' }}>
                   <Temp metar={metar} />
                   <Percip metar={metar[0]} />
@@ -186,10 +201,17 @@ class WeatherVis extends Component {
 
             <div width="1055px" style={{ overflow: 'scroll' }}>
               <div>
-                <LabelValue label={"TAF"} value={this.state.taf.forecast[0].raw.slice(0, 22)} />
-                <LabelValue label="Released" value={tafAge} />
-                <LabelValue label="Directions" value={"Hover or Tap on charts to see data for selected time."} />
-                <LabelValue value="On mobile turn phone sideways for better quality."/> 
+                <LabelValue
+                  label={"TAF"}
+                  value={this.state.taf.forecast[0].raw.slice(0, 22)} />
+                <LabelValue
+                  label="Released"
+                  value={tafAge} />
+                <LabelValue
+                  label="Directions"
+                  value={"Hover or Tap on charts to see data for selected time."} />
+                <LabelValue
+                  value="On mobile turn phone sideways for better quality." />
               </div>
               <TimeLine data={taf} metar={metar} />
             </div>}

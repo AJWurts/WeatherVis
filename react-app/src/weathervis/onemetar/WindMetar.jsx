@@ -2,36 +2,6 @@ import React, { Component } from 'react';
 import *  as d3 from 'd3';
 import { LabelValue } from '../../components';
 
-// Runways for small set of airports
-const airports = {
-
-  "KBED": {
-    runways: [
-      {
-        heading: 290,
-        length: 7011
-      },
-      {
-        heading: 230,
-        length: 5107
-      }
-    ],
-    variation: 0
-  },
-  "KSFM": {
-    runways: [
-      {
-        heading: 70,
-        length: 6389,
-      },
-      {
-        heading: 140,
-        length: 4999
-      }
-    ],
-    variation: 0
-  }
-}// Default airport is hanscom
 
 const compass = [
   {
@@ -244,9 +214,9 @@ class Wind extends Component {
     const maxRwyLen = d3.max(runways, x => x.length)
     var data = [];
     for (let i = 0; i < runways.length; i++) {
-      let heading = runways[i].heading;
+      let heading = runways[i].direction;
       let scaledLength = (runways[i].length / maxRwyLen) * (this.props.width / 3) * 0.9;
-      let oppHeading = (runways[i].heading + 180) % 360;
+      let oppHeading = (runways[i].direction + 180) % 360;
       data.push({
         heading: oppHeading,
         trueHeading: oppHeading + variation,
@@ -350,38 +320,38 @@ class Wind extends Component {
     let headwind = Math.floor(Math.cos(angle) * spd);
     let crosswind = -Math.floor(Math.sin(angle) * spd);
     svg.append("text")
-      .attr('x', 5)
+      .attr('x', -35)
       .attr('y', yCoord)
       .text(`${heading / 10}: `)
       .attr('color', 'black')
     if (headwind < 0) {
       svg.append('path')
-        .attr('d', `M${30} ${yCoord - 4} l5-5 5 5z`) //M7 14l5-5 5 5z
+        .attr('d', `M${-10} ${yCoord - 4} l5-5 5 5z`) //M7 14l5-5 5 5z
         .attr('fill', 'red')
     } else {
       svg.append('path')
-        .attr('d', `M${30} ${yCoord - 8} l5 5 5-5z`)
+        .attr('d', `M${-10} ${yCoord - 8} l5 5 5-5z`)
         .attr('fill', 'green')
     }
 
 
     svg.append("text")
-      .attr('x', 40)
+      .attr('x', 0)
       .attr('y', yCoord)
       .text(`${Math.abs(headwind)}`)
       .attr('color', 'black')
 
     if (crosswind < 0) {
       svg.append('path')
-        .attr('d', `M${70} ${yCoord} l0 -10 5 5z`)
+        .attr('d', `M${30} ${yCoord} l0 -10 5 5z`)
         .attr('fill', Math.abs(crosswind) < 10 ? 'green' : "red")
     } else {
       svg.append('path')
-        .attr('d', `M${75} ${yCoord} l0 -10 -5 5z`)
+        .attr('d', `M${35} ${yCoord} l0 -10 -5 5z`)
         .attr('fill', Math.abs(crosswind) < 10 ? 'green' : "red")
     }
     svg.append("text")
-      .attr('x', 80)
+      .attr('x', 40)
       .attr('y', yCoord)
       .text(`${Math.abs(crosswind)}`)
       .attr('color', 'black')
@@ -394,22 +364,30 @@ class Wind extends Component {
     return degrees * (pi / 180);
   }
 
-  drawRunwayWinds = (svg, airport) => {
+  drawRunwayWinds = (svg, runways) => {
     // Draws all runway winds
-    let runways = airport.runways;
+
     svg.append("text")
-      .attr('x', 5)
-      .attr('y', this.props.height - 120)
+      .attr('x',-35)
+      .attr('y', 80)
       .text("Runway Winds")
       .attr('color', 'black')
-    let yCoord = this.props.height - 100;
+    let yCoord = 100;
+    let alreadyDrawn = {}
     for (let i = 0; i < runways.length; i++) {
-      yCoord = this.drawRunwayWind(svg, runways[i].heading, airport.variation, yCoord)
+      if (!alreadyDrawn[runways[i].direction]) {
+        yCoord = this.drawRunwayWind(svg, runways[i].direction, 0, yCoord)
+        let direction = (runways[i].direction + 180) % 360;
+        yCoord = this.drawRunwayWind(svg, direction, 0, yCoord)
+
+        alreadyDrawn[runways[i].direction] = true;
+        alreadyDrawn[direction] = true;
+      }
+      
     }
 
     for (let i = 0; i < runways.length; i++) {
-      let heading = (runways[i].heading + 180) % 360;
-      yCoord = this.drawRunwayWind(svg, heading, airport.variation, yCoord)
+  
 
     }
 
@@ -452,9 +430,9 @@ class Wind extends Component {
     gust = gust + 0.01;
     this.drawSpeedRings(svg, max_speed);
 
-    if (airports[this.props.airport]) {
-      this.drawRunways(svg, airports[this.props.airport].runways, airports[this.props.airport].variation);
-      this.drawRunwayWinds(svg, airports[this.props.airport]);
+    if (this.props.runways) {
+      this.drawRunways(svg, this.props.runways, 0);
+      this.drawRunwayWinds(svg,  this.props.runways);
     }
 
 
@@ -475,6 +453,12 @@ class Wind extends Component {
       .text(this.props.metar[0].drct)
       .attr('color', 'black')
 
+
+    svg.append('text')
+      .attr('x', 32)
+      .attr('y', 450)
+      .text("Runway direction and size are to scale, but not relative location.")
+      .attr('font-size', '14px');
 
   }
 
