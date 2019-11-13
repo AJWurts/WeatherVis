@@ -240,8 +240,10 @@ function tafsTextToJson(text) {
 function processK(text) {
   if (text.slice(0, 1) === "K") {
     return text;
-  } else {
+  } else if (text.length == 3) {
     return "K" + text;
+  } else {
+    return text;
   }
 }
 

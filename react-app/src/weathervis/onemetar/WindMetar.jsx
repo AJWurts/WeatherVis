@@ -213,12 +213,12 @@ class Wind extends Component {
   // Runway Interaction
   runwayHover = (runway) => {
     runway = d3.selectAll(".runway" + (runway.heading % 180));
-    runway.attr('stroke', '#444444CC')
+    runway.attr('stroke', '#444444')
   }
 
   runwayHoverExit = (runway) => {
     runway = d3.selectAll(".runway" + (runway.heading % 180));
-    runway.attr('stroke', '#000000CC')
+    runway.attr('stroke', '#000000')
   }
 
   rotateAnimation = (inc, end) => {
@@ -269,7 +269,7 @@ class Wind extends Component {
       .attr('y1', d => 250 + this.calcY(d.trueHeading + 180, d.scaledLength))
       .attr('x2', d => 250)
       .attr('y2', d => 250)
-      .attr('stroke', '#000000CC')
+      .attr('stroke', '#000000')
       .attr('stroke-width', 25)
       .on('mouseover', d => {
         if (!this.interval) {
@@ -315,7 +315,7 @@ class Wind extends Component {
       .append('circle')
       .attr('cx', d => 250)
       .attr('cy', d => 250)
-      .attr('stroke', '#00000022')
+      .attr('stroke', '#000000')
       .attr('r', d => speedScale(d))
       .attr('fill', 'none')
 
@@ -447,16 +447,17 @@ class Wind extends Component {
       .attr('font-size', 18)
 
     // var runways = this.props.runways || hanscomRunways;
-
+    let max_speed = Math.max(60, sknt, gust) //Math.max(sknt, gust) + 5
+    sknt = sknt + 0.01;
+    gust = gust + 0.01;
+    this.drawSpeedRings(svg, max_speed);
 
     if (airports[this.props.airport]) {
       this.drawRunways(svg, airports[this.props.airport].runways, airports[this.props.airport].variation);
       this.drawRunwayWinds(svg, airports[this.props.airport]);
     }
 
-    let max_speed = Math.max(60, sknt, gust) //Math.max(sknt, gust) + 5
-    sknt = sknt + 0.01;
-    gust = gust + 0.01;
+
 
 
     if (gust !== 0.01) {
@@ -464,7 +465,6 @@ class Wind extends Component {
     }
     this.drawArrow(svg, this.props.metar[0].drct, sknt, max_speed, '#61a8c6');
 
-    this.drawSpeedRings(svg, max_speed);
 
     // Wind Direction Label
     svg.append('windDirLabel')

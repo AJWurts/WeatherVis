@@ -87,25 +87,25 @@ class Temp extends Component {
     // Celsius
     // Labels
     svg.selectAll('labels')
-      .data(d3.range(min, max, 1))
+      .data(d3.range(min, max, 5))
       .enter()
       .append('text')
       .attr('x', 38)
       .attr('y', d => tempScale(d) + 5)
-      .attr('fill', (d, i) => (d % 5) == 0 ? "black" : '#00000000')
+      .attr('fill', (d, i) => (d % 5) == 0 ? "black" : 'null')
       .attr('text-anchor', 'end')
       .text(d => d + "C")
 
     // Ticks
     svg.selectAll('ticks')
-      .data(d3.range(min, max, 1))
+      .data(d3.range(min, max, 5))
       .enter()
       .append('line')
       .attr('x1', 40)
       .attr('y1', d => tempScale(d))
       .attr('x2', 45)
       .attr('y2', d => tempScale(d))
-      .attr('stroke', (d, i) => (d % 5) == 0 ? "black" : '#00000000')
+      .attr('stroke', (d, i) => (d % 5) == 0 ? "black" : 'null')
 
     // Fahrenheit -------------------
     // Changes tick size based on difference between temp and dew point
@@ -123,7 +123,7 @@ class Temp extends Component {
       .range([height * 0.78, 20])
 
     svg.selectAll('labels')
-      .data(d3.range(+minF, +maxF, 1))
+      .data(d3.range(+minF, +maxF, 5))
       .enter()
       .append('text')
       .attr('x', 88)
