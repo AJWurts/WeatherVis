@@ -87,7 +87,7 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
                 levels.push({
                     cover: COVER_KEY[forecast[i]['skyc' + skyi]],
                     alt: +forecast[i]['skyl' + skyi],
-                    time: timeFunc(forecast[i].from || forecast[i].start)
+                    time: timeFunc(forecast[i].start)
                 })
                 skyi++;
             }
@@ -96,7 +96,7 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
             levels.push({
                 cover: COVER_KEY[forecast[i]['skyc' + skyi]],
                 alt: +forecast[i]['skyl' + skyi],
-                time: timeFunc(forecast[i].from || forecast[i].start),
+                time: timeFunc(forecast[i].start),
             })
             divs.push(levels)
         }

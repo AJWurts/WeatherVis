@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import *  as d3 from 'd3';
-import drawClouds from './clouds.jsx';
-import drawWind from './wind.jsx';
-import drawVis from './vis.jsx';
-import drawWeather from './weather.jsx';
-import { LabelValue } from '../../components/index.js';
+import drawClouds from './CloudTAF.jsx';
+import drawWind from './WindTAF.jsx';
+import drawVis from './VisibilityTAF.jsx';
+import drawWeather from './WeatherTAF.jsx';
 import LabelValueSVG from './LabelValueSVG.jsx';
 
 function pad(num, size) {
@@ -16,17 +15,24 @@ function timeFunc(start) {
     let startHour = +start.hour;
 
     let fun = (full_time) => {
-        let time = +full_time.hour + ((full_time.minute ? full_time.minute : 0) / 60);
+        
+        try {
+            
+            let time = +full_time.hour + ((full_time.minute ? full_time.minute : 0) / 60);
 
-        let result;
-        if (full_time.day === start.day) {
-
-            result = (time - startHour);
-        } else { // (full_time.day > start.day) 
-            result = (24 - startHour) + time
+            let result;
+            if (full_time.day === start.day) {
+    
+                result = (time - startHour);
+            } else { // (full_time.day > start.day) 
+                result = (24 - startHour) + time
+            }
+            return result
+        } catch (e) {
+           
         }
-
-        return result
+ 
+        return 0;
     }
 
     return fun;
@@ -88,9 +94,6 @@ class TimeLine extends Component {
         let widthScale = d3.scaleLinear()
             .domain([0, maxTime])
             .range([width * 0.06, width]);
-        // console.log("Width:", width)
-        // console.log([0, (24 - data.start.hour) % 24 + data.end.hour])
-        // console.log(maxTime, data.forecast)
 
         // Clear everything
         const vcSvg = d3.select(this.vcNode);
@@ -170,19 +173,19 @@ class TimeLine extends Component {
         let previous_data;
         for (var i = this.props.data.forecast.length - 1; i >= 0; i--) {
             // Currently broken needs to be fixed to process items other than FM
-            if (this.time(this.props.data.forecast[i].from) <= time) {
+            if (this.time(this.props.data.forecast[i].start) <= time) {
                 previous_data = this.props.data.forecast[i];
                 break
             }
         }
 
-        // If no data exists, do nothiing
+        // If no data exists, do nothing
         if (!previous_data) {
             return;
         }
 
-        // If they are the same only update. else do everything
-        if (this.last_data && this.last_data.from.hour !== previous_data.from.hour) {
+
+        if (this.last_data && this.last_data.start && this.last_data.start.hour !== previous_data.start.hour) {
             let cloudStr = ""
             for (let j = 5; j >= 0; j--) {
                 if (previous_data['skyc' + j]) {
@@ -202,7 +205,7 @@ class TimeLine extends Component {
                 .text(`${previous_data.weather.length >= 1 ? previous_data.weather[0].text : ""} ${previous_data.weather.length >= 2 ? previous_data.weather[1].text : ""}`)
 
 
-        }
+        } 
         this.last_data = previous_data;
 
 

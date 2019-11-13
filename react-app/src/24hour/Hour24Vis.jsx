@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Wind from './wind';
+import Wind from './Wind24';
 import { SearchBox } from '../components';
 import axios from 'axios';
 

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import *  as d3 from 'd3';
 import { LabelValue } from '../../components';
 
+// Runways for small set of airports
 const airports = {
 
   "KBED": {
@@ -92,6 +93,7 @@ class Wind extends Component {
     }
   }
 
+  // Handle Creation of Graph when Loading
   UNSAFE_componentWillMount() {
     this.createGraph()
 
@@ -105,11 +107,16 @@ class Wind extends Component {
     this.createGraph()
   }
 
+  // Draw an Arrow
+  // Used for Wind and Gust arrows
   drawArrow = (svg, dir, speed, maxSpeed, color) => {
+
+    // If Variable set speed to 0 so arrow doesnt show anything
     if (dir == 'VRB') {
       dir = 360;
       speed = 0;
     } else {
+      // Flip arrow 180 so it points with the wind
       dir = (dir + 180) % 360;
     }
 
@@ -127,6 +134,7 @@ class Wind extends Component {
     let tipX = halfWidth + this.calcX(dir, length);
     let tipY = halfHeight + this.calcY(dir, length);
 
+    // If Arrow is orange (gust) stop being from being too long
     svg.append('line')
       .attr('x1', color === 'orange' ? halfWidth : halfWidth + (halfWidth - tipX))
       .attr('y1', color === 'orange' ? halfWidth : halfWidth + (halfWidth - tipY))
@@ -136,6 +144,7 @@ class Wind extends Component {
       .attr('stroke-width', '5')
 
     // Tip Triangle
+    // IDK what I did, but it works so go with it
     let theta = (((dir + this.state.angle) / 10) - 9) * (2 * Math.PI / 36) - (Math.PI / 2);
     let xAltPtDelta = Math.cos(theta) * (this.props.width / 4) * 0.06;
     let yAltPtDelta = Math.sin(theta) * (this.props.width / 4) * 0.06;
@@ -180,10 +189,10 @@ class Wind extends Component {
   }
 
 
+  // Trig Stuff ---------
   calcY = function (direction, length) {
     length = length == null ? (this.props.height / 3) : length;
     var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
-
     let y = Math.sin(angle) * (length);
 
     return y;
@@ -199,6 +208,9 @@ class Wind extends Component {
     return x;
   }
 
+  //////////////////////
+
+  // Runway Interaction
   runwayHover = (runway) => {
     runway = d3.selectAll(".runway" + (runway.heading % 180));
     runway.attr('stroke', '#444444CC')
@@ -225,6 +237,8 @@ class Wind extends Component {
     this.createGraph();
 
   }
+
+  ////////////////////////////////////
 
   drawRunways = (svg, runways, variation) => {
     const maxRwyLen = d3.max(runways, x => x.length)
@@ -288,9 +302,9 @@ class Wind extends Component {
   }
 
   drawSpeedRings = (svg, maxSpeed) => {
-
+    // Uses power scale to emphasize slower speed winds which are more common
     var labels = [4, 8, 16, 24, 36, 48, 60];
-    // delete labels[2];
+
     var speedScale = d3.scalePow()
       .exponent(0.5)
       .domain([0, maxSpeed])
@@ -324,6 +338,8 @@ class Wind extends Component {
   }
 
   drawRunwayWind = (svg, heading, variation, yCoord) => {
+
+    // Draw a single runway wind indicator in bottom left
     if (this.props.metar[0].drct == 'VRB') {
       return;
     }
@@ -379,6 +395,7 @@ class Wind extends Component {
   }
 
   drawRunwayWinds = (svg, airport) => {
+    // Draws all runway winds
     let runways = airport.runways;
     svg.append("text")
       .attr('x', 5)
@@ -437,7 +454,7 @@ class Wind extends Component {
       this.drawRunwayWinds(svg, airports[this.props.airport]);
     }
 
-    let max_speed = 60; //Math.max(sknt, gust) + 5
+    let max_speed = Math.max(60, sknt, gust) //Math.max(sknt, gust) + 5
     sknt = sknt + 0.01;
     gust = gust + 0.01;
 

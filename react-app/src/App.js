@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import WeatherVis from './weathervis/WeatherVis';
+import WeatherVis from './weathervis/WeatherVis.jsx';
 import PressureVis from './pressurevis/PressureVis';
-import TestPage from './testpage/TestPage';
+import TestPage from './24hour/Hour24Vis';
 import { ButtonLink, AirplaneIcon } from './components';
 import {
     BrowserRouter as Router,
@@ -22,6 +22,7 @@ class App extends Component {
     render() {
         return (
             <Router style={{}}>
+                {/* Navigation Bar */}
                 <div style={{ fontSize: '30px', backgroundColor: '#33c6f8a2', padding: '10px 5px' }}>
                     <div style={{ height: '100%', display: 'inline-block', verticalAlign: 'middle' }}>
                         <AirplaneIcon />
@@ -35,6 +36,7 @@ class App extends Component {
                     </div>
                 </div>
 
+                {/* Page Switching */}
                 <Switch>
                     <Route path='/code' component={() => {
                         window.location.href = 'https://github.com/ajwurts/WeatherVis'

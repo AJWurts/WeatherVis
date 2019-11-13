@@ -10,22 +10,6 @@ const SNOW_COLORS = [
     '#2aedfe', '#1c9afe', '#f04bfe', '#0000bf'
 ]
 
-const color_func = (weather) => {
-
-    
-    // Ice Snow  is blue, GR => dark blue
-    // Rain, Drizzle, medium green
-    // + makes it orange
-    // - makes it light green or blue for snow
-    // TS automatic orange, + red, - dark green
-    // Fog is gray
-
-    let category = 0;
-    
-
-
-}
-
 var pad = (num, size) => {
     var s = "000000000" + num;
     return s.substr(s.length - size);
@@ -43,14 +27,15 @@ function drawWeather(forecast, svg, xScale, maxX, maxY, timeFunc) {
         .enter()
         .append('text')
         .text(d => {
-            if (d.weather.length > 0) {
+            console.log(d)
+            if (d.weather.length >= 1) {
                 return d.weather[0].raw + ": " + d.weather[0].text;
             } else {
                 return "";
             }
 
         })
-        .attr('x', d => xScale(timeFunc(d.from || d.start)))
+        .attr('x', d => xScale(timeFunc(d.start)))
         .attr('y', d => {
             height += 2;
             // console.log(height)
@@ -63,9 +48,9 @@ function drawWeather(forecast, svg, xScale, maxX, maxY, timeFunc) {
         .data(forecast)
         .enter()
         .append('line')
-        .attr('x1', d => xScale(timeFunc(d.from || d.start)))
+        .attr('x1', d => xScale(timeFunc(d.start)))
         .attr('y1', d => 0)
-        .attr('x2', d => xScale(timeFunc(d.from || d.start)))
+        .attr('x2', d => xScale(timeFunc(d.start)))
         .attr('y2', d => maxY)
         .attr('stroke', 'black')
         .attr('stroke-width', 2)

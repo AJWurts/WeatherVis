@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import NumberSlider from './numberslider';
-import InputLabel from './input';
-import PressureGraph from './visualization';
+import { InputLabel, NumberSlider } from '../components';
+import PressureGraph from './Visualization';
 
 import './pressurevis.css';
 
-class App extends Component {
+// Pressure Visualization to understand effects of density altitude on airplane
+// altimeters.
+class PressureVis extends Component {
   constructor(props) {
     super(props);
 
@@ -25,19 +26,20 @@ class App extends Component {
     }
   }
 
+  //  Handles Window Resizing for Mobile 
   handleWindowResize = () => {
     this.setState({ isMobile: window.innerWidth < 715 });
   }
-
   componentDidMount() {
     window.addEventListener('resize', this.handleWindowResize);
     this.handleWindowResize()
   }
-
   componentWillUnmount() {
     window.removeEventListener('resize', this.handleWindowResize);
   }
+  /////////////////////////////////////////
 
+  // Reset all values to Standard Atmospheric Conditions
   reset = () => {
     this.setState({
       dataOne: {
@@ -61,8 +63,11 @@ class App extends Component {
 
     return (
       <div style={{ margin: '10px' }}>
+
+        {/* Visualization and Titles */}
         <div style={{
-          display: isMobile ? 'block' : 'inline-block', width: isMobile ? '90%' : '75%', margin: '0px',
+          display: isMobile ? 'block' : 'inline-block',
+          width: isMobile ? '90%' : '75%', margin: '0px',
           maxWidth: isMobile ? null : '500px'
         }}>
           <span style={{ fontSize: '20px' }}>
@@ -74,6 +79,7 @@ class App extends Component {
           <PressureGraph isPlaneVisible={isPlaneVisible} temperature={dataOne.temperature} humidity={dataOne.humidity} pressure={dataOne.pressure}></PressureGraph>
         </div>
 
+        {/* Slider Bars for manipulating Visual */}
         <div style={{ padding: '20px', display: isMobile ? 'block' : 'inline-block', height: '100%', verticalAlign: 'top', textAlign: 'left' }}>
           <div style={{ padding: '0px 0px 20px 0px' }}>
 
@@ -86,6 +92,7 @@ class App extends Component {
               units={'C'}
               vertical={!isMobile}
               onChange={this.onChange} />
+
             <NumberSlider
               label={"Pressure"}
               value={dataOne.pressure}
@@ -96,13 +103,25 @@ class App extends Component {
               keyVal={['dataOne', 'pressure']}
               onChange={this.onChange} />
           </div>
-
+          {/* Input Boxes to directly edit values */}
           <div style={{ padding: '20px 0px 0px 0px' }}>
-            <InputLabel onChange={this.onChange} keyVal={['dataOne', 'temperature']} value={dataOne.temperature} label={"Temperature (C)"} />
-            {/* <InputLabel onChange={this.onChange} keyVal={'humidity'} value={humidity} label={"% Humidity"} /> */}
-            <InputLabel step={0.01} onChange={this.onChange} keyVal={['dataOne', 'pressure']} value={dataOne.pressure} label={"Pressure (inHg)"} />
+            <InputLabel
+              onChange={this.onChange}
+              keyVal={['dataOne', 'temperature']}
+              value={dataOne.temperature}
+              label={"Temperature (C)"} />
+            <InputLabel step={0.01}
+              onChange={this.onChange}
+              keyVal={['dataOne', 'pressure']}
+              value={dataOne.pressure}
+              label={"Pressure (inHg)"} />
 
-            <input type="checkbox" name="showPlan" value={this.state.isPlaneVisible} onChange={() => this.setState({ isPlaneVisible: !this.state.isPlaneVisible })} />Show Plane
+            {/* Turn on or off plane */}
+            <input type="checkbox"
+              name="showPlan"
+              value={this.state.isPlaneVisible}
+              onChange={() => this.setState({ isPlaneVisible: !this.state.isPlaneVisible })} />
+            Show Plane
             <br />
 
           </div>
@@ -114,6 +133,8 @@ class App extends Component {
               </button>
           </div>
         </div>
+
+        {/* Visualization Instructions and Description */}
         <div className='description'>
           <div className='description-title'>
             Explanation and Directions
@@ -150,4 +171,4 @@ density altitude.
 
 }
 
-export default App;
+export default PressureVis;

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import *  as d3 from 'd3';
 
-
+// Unused component that graphs historical wind
+// Requires a CSV data sheet with lots of metars
 class HistoricalWind extends Component {
   componentDidMount() {
     this.createGraph()

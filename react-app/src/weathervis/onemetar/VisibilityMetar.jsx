@@ -38,6 +38,7 @@ class Visibility extends Component {
 
 
 
+    // Axis bottom
     svg.append('line')
       .attr('x1', xScale(0))
       .attr('y1', height - 20)
@@ -48,6 +49,7 @@ class Visibility extends Component {
 
 
 
+    // Axis Labels
     svg.selectAll('label')
       .data([0, 1, 2, 4, 6, 8, 10])
       .enter()
@@ -57,6 +59,8 @@ class Visibility extends Component {
       .attr('y', d => height - 6)
       .text(d => d + 'sm')
 
+
+    // Axis Ticks
     svg.selectAll('ticks')
       .data([0, 1, 2, 4, 6, 8, 10])
       .enter()
@@ -69,7 +73,7 @@ class Visibility extends Component {
       .attr('stroke-width', 1)
 
 
-    // Cloud
+    // Cloud (GRay Area)
     svg.append('rect')
       .attr('x', xScale(vis))
       .attr('y', 0)
@@ -77,7 +81,8 @@ class Visibility extends Component {
       .attr('height', height - 20)
       .attr('fill', '#616161')
 
-    // Blue Ski
+    // Blue Sky
+    // Slightly transparent to see underlying ticks
     svg.append('rect')
       .attr('x', xScale(0))
       .attr('y', 0)

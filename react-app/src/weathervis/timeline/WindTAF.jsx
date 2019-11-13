@@ -10,22 +10,21 @@ function drawWind(forecast, svg, xScale, maxX, maxY, timeFunc) {
 
     forecast = [...forecast]
     forecast.push({
-        from: {
+        start: {
             hour: -2
         },
         sknt: forecast[forecast.length - 1 ].sknt,
         gust: forecast[forecast.length - 1 ].gust,
     })
 
-    // debugger
+    // debuggers
     var line = d3.line()
         .x(function(d) { 
-            let time = d.from ? d.from : d.start;
+            let time = d.start;
             if (time.hour === -2) {
                 return xScale(maxX);
             }
         
-            // console.log(d.from.hour, timeFunc(d.from.hour))
             return xScale(timeFunc(time)); })
         .y(function(d) { return yScale(d.sknt); })
         .curve(d3.curveMonotoneX) // apply smoothing to the line

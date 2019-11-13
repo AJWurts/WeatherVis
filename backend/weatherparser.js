@@ -123,7 +123,10 @@ function parseWeather(text) {
         if (j === 1) break;
         if (weather_ && weather_.length >= 2 && weather_.length <= 5 && !weather_.includes("SM") && !weather_.includes("SKC")) {
             let regexed = weather_regex.exec(weather_);
-            current.weather.push(parseWAbbv(regexed));
+            let parsedWeather = parseWAbbv(regexed)
+            if (parsedWeather !== null) {
+                current.weather.push(parsedWeather);
+            }
         }
         j--;
     } while (weather_.length === 0 || !weather_.includes("SM") || j < 0)
@@ -159,4 +162,4 @@ function parseClouds(text) {
 }
 
 
-module.exports = { parseClouds, parseVis, parseWeather, parseWind }
+module.exports = { parseWAbbv, parseClouds, parseVis, parseWeather, parseWind }

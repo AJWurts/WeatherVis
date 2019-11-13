@@ -205,35 +205,35 @@ class Wind extends Component {
 
   }
 
-  drawSpeedRings = (svg, speedScale) => {
+  drawSpeedRings = (svg, speedScale, maxSpeed) => {
 
-    var labels = [4, 8, 16, 24, 36, 48, 60];
+    // var labels = [4, 8, 16, 24, 36, 48, 60];
+    var speed = 2;
+
+    // Draws Speed Ring Labels until it passes the maxSpeed
+    while (speed < maxSpeed) {
+      svg.append('circle')
+        .attr('cx', d => 500 / 2)
+        .attr('cy', d => 500 / 2)
+        .attr('stroke', '#00000022')
+        .attr('r', speedScale(speed))
+        .attr('fill', 'none')
+
       
-    svg.selectAll('speedRings')
-      .data(labels)
-      .enter()
-      .append('circle')
-      .attr('cx', d => 500 / 2)
-      .attr('cy', d => 500 / 2)
-      .attr('stroke', '#00000022')
-      .attr('r', d => speedScale(d))
-      .attr('fill', 'none')
-
-    svg.selectAll('speedRingLabels')
-      .data(labels)
-      .enter()
-      .append('text')
-      .attr('text-anchor', 'middle')
-      .attr('x', d => 500 / 2 + this.calcX(165, speedScale(d)))
-      .attr('y', d => 500 / 2 + this.calcY(165, speedScale(d)))
-      .text((d, i) => {
-        if (i == labels.length - 1) {
-          return d + 'kts'
-        } else {
-          return d;
-        }
+      svg.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('x', 500 / 2 + this.calcX(165, speedScale(speed)))
+        .attr('y',  500 / 2 + this.calcY(165, speedScale(speed)))
+        .text((d, i) => {
+       
+          return speed.toFixed(0);        
       })
       .attr('font-size', 13)
+
+      // Rate of increase for labels
+      speed = speed * 2
+
+    } 
 
   }
 
@@ -306,18 +306,22 @@ class Wind extends Component {
       .attr('font-size', 20)
       .attr('text-anchor', 'middle')
 
-    let maxSpeed = 60;
+      
+    this.maxGust = d3.max(this.props.metars, d => +d.gust);
+    this.maxWind = d3.max(this.props.metars, d => +d.sknt);
+
+    let maxSpeed = Math.max(60, 
+      this.maxWind, 
+      this.maxGust) + 10;
     var speedScale = d3.scalePow()
       .exponent(0.5)
       .domain([0, maxSpeed])
       .range([0, (500 / 3) * 0.95])
 
-    this.maxGust = d3.max(this.props.metars, d => d.gust);
-    this.maxWind = d3.max(this.props.metars, d => d.sknt);
 
 
     this.drawOldWind(svg, this.props.metars, speedScale);
-    this.drawSpeedRings(svg, speedScale);
+    this.drawSpeedRings(svg, speedScale, maxSpeed);
 
     this.drawMaxWindRing(svg, this.maxWind, speedScale, 'blue')
     this.drawMaxWindRing(svg, this.maxGust, speedScale, 'orange');

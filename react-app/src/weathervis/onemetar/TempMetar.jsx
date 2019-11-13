@@ -71,10 +71,11 @@ class Temp extends Component {
     var width = this.props.width || 155;
     var height = this.props.height || 200
 
+    // Adding padding to top and bottom
     let min = Math.min(temp, dew) - 8;
     let max = Math.max(temp, dew) + 8;
     let range = max - min + 16;
-    // console.log(min, max);
+
     var tempScale = d3.scaleLinear()
       .domain([min, max])
       .range([height * 0.78, 20])
@@ -82,13 +83,6 @@ class Temp extends Component {
 
     this.drawTemps(svg, tempScale, 60);
 
-    // svg.append('text')
-    //   .attr('x', 5)
-    //   .attr('y', 13)
-    //   .text(`Temp: ${(temp < 0 ? 'M' : '') + this.pad(Math.abs(temp), 2)}/${(dew < 0 ? 'M' : "") + this.pad(Math.abs(dew), 2)}`)
-    //   .attr('text-anchor', 'start')
-    //   .attr('fill', 'black')
-    //   .attr('font-size', 18)
 
     // Celsius
     // Labels
@@ -114,14 +108,16 @@ class Temp extends Component {
       .attr('stroke', (d, i) => (d % 5) == 0 ? "black" : '#00000000')
 
     // Fahrenheit -------------------
+    // Changes tick size based on difference between temp and dew point
     if (range > 25) {
       var tickMod = 10;
     } else {
       tickMod = 5;
     }
+
     let minF = this.cToF(min).toFixed(0);
     let maxF = this.cToF(max).toFixed(0);
-    // console.log(minF, maxF);
+
     let fScale = d3.scaleLinear()
       .domain([+minF, +maxF])
       .range([height * 0.78, 20])
@@ -160,13 +156,15 @@ class Temp extends Component {
       .attr('stroke', 'black')
 
 
+
+    // Legend ---------------------
     svg.append("text")
       .attr('x', 30)
       .attr('y', 190)
-      // .attr('transform', `translate(130,5) rotate(-90) translate(-175, 0)`)
       .text(`Dew Point: ${this.cToF(dew).toFixed(1)}F`)
       .attr('font-size', 15)
 
+    // Dew point dot
     svg.append('circle')
       .attr('cx', 20)
       .attr('cy', 185)
@@ -176,12 +174,11 @@ class Temp extends Component {
     svg.append("text")
       .attr('x', 30)
       .attr('y', 175)
-      // .attr('transform', `translate(150,5) rotate(-90) translate(-175, 0)`)
       .text(`Temp: ${this.cToF(temp).toFixed(1)}F`)
-      // .attr('font-weight', 'bold')
       .attr('font-size', 15)
 
 
+    // Temp Dot
     svg
       .append('circle')
       .attr('cx', 20)

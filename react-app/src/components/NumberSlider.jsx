@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css'
 
-
+// Customizable Number Slider
+// Can be vertical or horizontal with variable max and min.
 class NumberSlider extends Component {
     constructor(props) {
         super(props);

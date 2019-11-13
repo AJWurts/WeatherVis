@@ -1,9 +1,9 @@
-import Wind from './wind.jsx';
-import Visibility from './visibility';
+import Wind from './WindMetar.jsx';
+import Visibility from './VisibilityMetar';
 import CloudLayersVis from './CloudLayersVis';
-import Temp from './temp.jsx';
-import Percip from './percip.jsx';
-import Pressure from './pressure.jsx';
+import Temp from './TempMetar.jsx';
+import Percip from './PercipMetar.jsx';
+import Pressure from './PressureMetar.jsx';
 import SelectableMetar from './SelectableMetar.jsx';
 
 

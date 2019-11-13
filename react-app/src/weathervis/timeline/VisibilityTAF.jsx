@@ -10,27 +10,27 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
     // Adds filler data to make visibility graph cover the entire graph
     forecast = [...forecast];
     forecast.unshift({
-        from: {
+        start: {
             hour: -1
         },
         vsby: 0
     })
     forecast.push({
-        from: {
+        start: {
             hour: -2
         },
         vsby: forecast[forecast.length - 1].vsby
     })
 
     forecast.push({
-        from: {
+        start: {
             hour: -2
         },
         vsby: 0
     })
 
     forecast.push({
-        from: {
+        start: {
             hour: -1
         },
         vsby: 0
@@ -38,15 +38,13 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
 
     var line = d3.line()
         .x(function (d) {
-            if (!d.from) {
-                return xScale(timeFunc(d.start));
-            }
-            if (d.from.hour === -1) {
+
+            if (d.start.hour === -1) {
                 return xScale(0);
-            } else if (d.from.hour === -2) {
+            } else if (d.start.hour === -2) {
                 return xScale(maxX);
             } else {
-                return xScale(timeFunc(d.from));
+                return xScale(timeFunc(d.start));
             }
         })
         .y(function (d, i) {

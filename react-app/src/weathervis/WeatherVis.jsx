@@ -10,7 +10,7 @@ import {
   Pressure,
   SelectableMetar
 } from './onemetar';
-import TimeLine from './timeline/timeline';
+import TimeLine from './timeline';
 import { LabelValue, SearchBox } from '../components';
 
 import './weathervis.css';

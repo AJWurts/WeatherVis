@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import *  as d3 from 'd3';
 import { LabelValue } from '../../components';
+
+// Both constants used for converting from METAR to readable text
 const COVER_KEY = {
   "SKC": 0,
   "NCD": 0,
@@ -43,6 +45,11 @@ class CloudLayerVis extends Component {
     var xScale = d3.scaleLinear()
       .domain([0, 48])
       .range([minX, maxX])
+
+    // Clouds are defined on a scale from 0 to 48
+    // Each value in the list defines a cloud
+    // Not included values are blank
+    // Hard coded cloud cover cloud amounts
     if (cloud.cover === 0) {
       return;
     } else if (cloud.cover === 1) {
@@ -66,6 +73,8 @@ class CloudLayerVis extends Component {
         [0, 48]
       ]
     }
+
+
 
     // Clouds
     svg.selectAll('clouds' + cloud.alt)
@@ -93,12 +102,14 @@ class CloudLayerVis extends Component {
 
   }
 
+  // Pads numbers to look more like original METAR
   pad = (num, size) => {
     var s = "000000000" + num;
     return s.substr(s.length - size);
   }
 
   createGraph = () => {
+    // Runs everytime visual changes
     const node = this.node;
     var svg = d3.select(node);
     svg.selectAll('*').remove();
@@ -118,8 +129,9 @@ class CloudLayerVis extends Component {
       .range([height * 0.95, height * 0.05])
 
 
+    // Draws only label for 30k ft
     svg.selectAll('label')
-      .data([30000])//d3.range(0, MAX_ALT + 1, 3000))
+      .data([30000])
       .enter()
       .append('text')
       .attr('text-anchor', 'end')
@@ -133,6 +145,7 @@ class CloudLayerVis extends Component {
         }
       })
 
+    // Draws only label tick for 30kft
     svg.selectAll("labelTicks")
       .data([30000])//)d3.range(0, MAX_ALT + 1, 3000))
       .enter()
@@ -145,7 +158,7 @@ class CloudLayerVis extends Component {
       .attr('stroke-width', 1)
 
 
-    // Vertical Line
+    // Left Side edge Vertical Line
     svg.append('line')
       .attr('x1', 140)
       .attr('y1', yScale(MAX_ALT) - 10)
@@ -154,7 +167,7 @@ class CloudLayerVis extends Component {
       .attr('stroke', 'black')
       .attr('stroke-width', 1)
 
-    // Horizontal Line
+    // Bottom edge Horizontal Line
     svg.append('line')
       .attr('x1', 140)
       .attr('y1', yScale(0))
@@ -184,10 +197,10 @@ class CloudLayerVis extends Component {
       }
 
       // Format string to display above graphic
-
       stringClouds += metar['skyc' + i] + this.pad((+metar['skyl' + i]) / 100, 3) + ' '
 
 
+      // Push data onto levels to be fed into draw cloud
       levels.push({
         alt: metar['skyl' + i],
         cover: COVER_KEY[metar['skyc' + i]],
@@ -201,7 +214,7 @@ class CloudLayerVis extends Component {
         svg, cloud, 140, width, yScale
       )
     })
-
+    
     this.setState({
       stringClouds: stringClouds
     })

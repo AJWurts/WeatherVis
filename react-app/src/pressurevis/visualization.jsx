@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import * as d3 from 'd3';
 import { AirplaneIcon } from '../components';
 
+
+// Plane Density Altitude.
 const PLANE_ALT = 3000;
 
 class PressureGraph extends Component {
@@ -26,6 +28,7 @@ class PressureGraph extends Component {
 
 
     onUpdateHover = (clientY) => {
+        // Updates visual on visualization to compare True vs Density altitude.
         let bbox = this.svg.getBoundingClientRect()
 
         let svg = d3.select(this.svg);
@@ -38,6 +41,7 @@ class PressureGraph extends Component {
 
         svg.selectAll(".hover").remove()
 
+        // Adds Dashed Line Ac
         svg.append('path')
             .attr('d', `M 0,${yVal + 20} l 500,0`)
             .attr('class', 'd3add hover')
@@ -46,6 +50,7 @@ class PressureGraph extends Component {
             .attr('stroke-dasharray', '5,5')
 
 
+        // Draws white rectangle to make text more visible
         svg.append('rect')
             .attr('class', 'hover hoverbox')
             .attr('x', 0)
@@ -54,13 +59,14 @@ class PressureGraph extends Component {
             .attr('height', 20)
             .attr('fill', '#FFFFFFEE')
 
-
+        // Draws True Altitude Text
         svg.append('text')
             .attr('class', 'd3add hover hovertext')
             .attr('x', 10)
             .attr('y', yVal + 14)
             .text('True Alt: ' + this.invTrueAltScale(yVal + 20).toFixed(0) + 'ft')
-
+ 
+        // Draws Density Altitude Text
         svg.append('text')
             .attr('class', 'd3add hover hovertext')
             .attr('x', 500 - 10)
@@ -72,10 +78,7 @@ class PressureGraph extends Component {
     }
 
     onMouseMove = (event) => {
-
         this.onUpdateHover(event.clientY);
-
-
     }
 
     drawAirplane = () => {
@@ -90,6 +93,7 @@ class PressureGraph extends Component {
     }
 
     createGraph = (props) => {
+        // Function runs everytime page visual changes.
         let svg = d3.select(this.svg);
         svg.selectAll('.d3add').remove()
 
@@ -99,10 +103,13 @@ class PressureGraph extends Component {
 
         var { temperature, humidity, pressure } = props;
         // console.log(temperature, humidity, pressure)
+
+        // Calculates Min and Max Altitude and creates linear scale between
         let minAlt = (29.92 - pressure) * 1000
 
         let minDAlt = (120 * (temperature - 15)) + minAlt
 
+        // Scales for True Alt, Pres Alt, and Inverse of both
         this.trueAltScale = d3.scaleLinear()
             .domain([0, 10000])
             .range([height, 0])
@@ -120,6 +127,7 @@ class PressureGraph extends Component {
             .range([minDAlt, minDAlt + 10000])
 
 
+        // Draws True Altitude
         svg.selectAll(".truealt")
             .data(d3.range(0, 10001, 1000))
             .enter()
@@ -132,6 +140,7 @@ class PressureGraph extends Component {
             .attr('stroke', 'black')
             .attr('stroke-width', 3)
 
+        // Draws True Altitude Labels
         svg.selectAll('.truealtlabel')
             .data(d3.range(0, 10001, 1000))
             .enter()
@@ -142,6 +151,7 @@ class PressureGraph extends Component {
             .text(d => d + "ft")
             .attr('font-size', '20px')
 
+        // Draws Pressure Altitude
         svg.selectAll('.pressurealt')
             .data(d3.range(-10000, 100001, 1000))
             .enter()
@@ -154,6 +164,7 @@ class PressureGraph extends Component {
             .attr('stroke', 'blue')
             .attr('stroke-width', 3)
 
+        // Draws Pressure Altitude Labels
         svg.selectAll('.pressurealtlabel')
             .data(d3.range(-10000, 20000, 1000))
             .enter()
@@ -174,7 +185,7 @@ class PressureGraph extends Component {
                 <svg
                     onPointerMove={this.onMouseMove}
                     onTouchMove={this.onTouchMove}
-                    ref={svg => this.svg = svg}
+                    ref={svg => this.svg = svg} 
                     viewBox="0 0 500 500"
                     style={{ touchAction: 'none' }}>
 
