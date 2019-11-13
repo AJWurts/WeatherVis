@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { InputLabel, NumberSlider } from '../components';
-import PressureGraph from './Visualization';
+import PressureGraph from './Visualization.jsx';
 
 import './pressurevis.css';
 
