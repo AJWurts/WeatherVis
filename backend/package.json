@@ -25,6 +25,11 @@
     "deploy": "gcloud app deploy --no-promote"
   },
   "author": "Alexander Wurts",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/AJWurts/WeatherVis.git"
+  },
+  "license" : "MIT",
   "engines": {
     "node": ">=10.0.0"
   }
