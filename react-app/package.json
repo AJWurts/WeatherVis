@@ -2,6 +2,12 @@
   "name": "react-app",
   "version": "0.1.0",
   "private": true,
+  "author": "Alexander Wurts",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/AJWurts/WeatherVis.git"
+  },
+  "license" : "MIT",
   "dependencies": {
     "axios": ">=0.18.1",
     "d3": "^5.12.0",
