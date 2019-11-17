@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import *  as d3 from 'd3';
+import { withCookies, Cookies } from 'react-cookie';
 import {
   Wind,
   Visibility,
@@ -18,11 +19,12 @@ import './weathervis.css';
 class WeatherVis extends Component {
   constructor(props) {
     super(props);
+    const { cookies } = props;
 
     this.state = {
       metar: null,
       taf: null,
-      airport: "KBED",
+      airport: cookies.get('airport') || "KBED",
       tafErrorMessage: 'Loading TAF...',
       metarErrorMessage: 'Loading METAR...',
       isMobile: false
@@ -117,6 +119,9 @@ class WeatherVis extends Component {
           tafErrorMessage: "No TAF available"
         })
       })
+
+    const { cookies } = this.props;
+    cookies.set('airport', ident, { path: '/', maxAge: 315360000 });
   }
 
   //
@@ -161,7 +166,7 @@ class WeatherVis extends Component {
 
     return (
       <div className='top-bar'>
-        <SearchBox onClick={this.onSearch} />
+        <SearchBox onClick={this.onSearch} value={ this.state.airport } />
         <div style={{ margin: '5px', overflow: 'visible' }}>
 
           {metar ?
@@ -222,4 +227,4 @@ class WeatherVis extends Component {
   }
 }
 
-export default WeatherVis;
+export default withCookies(WeatherVis);
