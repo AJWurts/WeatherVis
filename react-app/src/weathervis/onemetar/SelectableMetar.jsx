@@ -29,7 +29,7 @@ class SelectableMetar extends Component {
     // Wind
     rawMetar.push({
       key: 'metarwind',
-      'val': this.pad(metar.drct, 3) + "" + this.pad(metar.sknt, 2) + (metar.gust > 0 ? "G" + this.pad(metar.gust, 2) : "" + "KT")
+      'val': this.pad(metar.drct, 3) + "" + this.pad(metar.sknt, 2) + ((metar.gust > 0 ? ("G" + this.pad(metar.gust, 2)) : "") + "KT")
     })
 
     // Visibility
@@ -53,7 +53,7 @@ class SelectableMetar extends Component {
     let cloudStr = ""
     let i = 1;
     while (metar['skyc' + i]) {
-      if (metar['skyc' + i] == 'CLR' || metar['skyc' + i] == 'SKC') {
+      if (metar['skyc' + i] === 'CLR' || metar['skyc' + i] === 'SKC') {
         cloudStr += metar['skyc' + i]
       } else {
         cloudStr += metar['skyc' + i] + this.pad(metar['skyl' + i] / 100, 3) + " "

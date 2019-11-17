@@ -26,7 +26,7 @@ class PressureVis extends Component {
     }
   }
 
-  //  Handles Window Resizing for Mobile 
+  //  Handles Window Resizing for Mobile
   handleWindowResize = () => {
     this.setState({ isMobile: window.innerWidth < 715 });
   }
@@ -59,7 +59,7 @@ class PressureVis extends Component {
   }
 
   render() {
-    var { dataOne, dataTwo, isPlaneVisible, isMobile } = this.state;
+    var { dataOne, isPlaneVisible, isMobile } = this.state;
 
     return (
       <div style={{ margin: '10px' }}>

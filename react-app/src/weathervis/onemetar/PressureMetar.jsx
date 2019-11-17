@@ -37,7 +37,7 @@ class Pressure extends Component {
     return hpa
   }
 
-  // Draws barometer needle at top left 
+  // Draws barometer needle at top left
   // Then translates and rotates into place
   displayNeedle = (svg, baroScale) => {
 
@@ -63,14 +63,6 @@ class Pressure extends Component {
     const node = this.node;
     var svg = d3.select(node);
     svg.selectAll('*').remove();
-
-
-    if (!this.props.metar[0].alti) {
-      return;
-    } else {
-      var temp = this.props.metar.tmpf || 5;
-      var dew = this.props.metar.dwpf || 5;
-    }
 
     var width = 200;
     var height = 200
@@ -162,7 +154,7 @@ class Pressure extends Component {
     var { width, height } = this.props;
     return (
       <div>
-        {this.props.metar[0].alti ?  
+        {this.props.metar[0].alti ?
         <LabelValue
           className='selectable pressure'
           label={"Pressure"}

@@ -28,16 +28,14 @@ class Temp extends Component {
 
 
 
-    var tempCircle =
-      svg.append('circle')
-
-        .attr('cx', x)
-        .attr('cy', d => tempScale(this.props.metar[0].tmpf))
-        .attr('r', 5)
-        .attr('fill',  '#FF0000')
+    svg.append('circle')
+      .attr('cx', x)
+      .attr('cy', d => tempScale(this.props.metar[0].tmpf))
+      .attr('r', 5)
+      .attr('fill',  '#FF0000')
 
 
-    if (this.props.metar[0].tmpf == this.props.metar[0].dwpf) {
+    if (this.props.metar[0].tmpf === this.props.metar[0].dwpf) {
       dewCircle.attr('stroke-width', 5)
         .attr('stroke', 'blue')
     }
@@ -61,14 +59,13 @@ class Temp extends Component {
 
 
 
-    if (this.props.metar[0].tmpf == undefined) {
+    if (this.props.metar[0].tmpf === undefined) {
       return;
     } else {
       var temp = this.props.metar[0].tmpf;
       var dew = this.props.metar[0].dwpf;
     }
 
-    var width = this.props.width || 155;
     var height = this.props.height || 200
 
     // Adding padding to top and bottom
@@ -92,7 +89,7 @@ class Temp extends Component {
       .append('text')
       .attr('x', 38)
       .attr('y', d => tempScale(d) + 5)
-      .attr('fill', (d, i) => (d % 5) == 0 ? "black" : 'null')
+      .attr('fill', (d, i) => (d % 5) === 0 ? "black" : 'null')
       .attr('text-anchor', 'end')
       .text(d => d + "C")
 
@@ -105,7 +102,7 @@ class Temp extends Component {
       .attr('y1', d => tempScale(d))
       .attr('x2', 45)
       .attr('y2', d => tempScale(d))
-      .attr('stroke', (d, i) => (d % 5) == 0 ? "black" : 'null')
+      .attr('stroke', (d, i) => (d % 5) === 0 ? "black" : 'null')
 
     // Fahrenheit -------------------
     // Changes tick size based on difference between temp and dew point
@@ -128,7 +125,7 @@ class Temp extends Component {
       .append('text')
       .attr('x', 88)
       .attr('y', d => fScale(d) + 5)
-      .attr('fill', (d, i) => (d % tickMod) == 0 ? "black" : '#00000000')
+      .attr('fill', (d, i) => (d % tickMod) === 0 ? "black" : '#00000000')
       .attr('text-anchor', 'start')
       .text(d => d + "F")
 
@@ -142,7 +139,7 @@ class Temp extends Component {
       .attr('y1', d => fScale(d))
       .attr('x2', 75)
       .attr('y2', d => fScale(d))
-      .attr('stroke', (d, i) => (d % tickMod) == 0 ? "black" : '#00000000')
+      .attr('stroke', (d, i) => (d % tickMod) === 0 ? "black" : '#00000000')
 
 
     svg.selectAll("axisbars")

@@ -82,7 +82,7 @@ class Wind extends Component {
   drawArrow = (svg, dir, speed, maxSpeed, color) => {
 
     // If Variable set speed to 0 so arrow doesnt show anything
-    if (dir == 'VRB') {
+    if (dir === 'VRB') {
       dir = 360;
       speed = 0;
     } else {
@@ -145,7 +145,7 @@ class Wind extends Component {
 
   processWind = (metar, speedScale) => {
     let { drct, sknt } = metar;
-    if (drct == 'VRB') {
+    if (drct === 'VRB') {
       drct = 360;
       // speed = 0;
     } else {
@@ -297,7 +297,7 @@ class Wind extends Component {
       .attr('x', d => 250 + this.calcX(165, speedScale(d)))
       .attr('y', d => 250 + this.calcY(165, speedScale(d)))
       .text((d, i) => {
-        if (i == labels.length - 1) {
+        if (i === labels.length - 1) {
           return d + 'kts'
         } else {
           return d;
@@ -310,7 +310,7 @@ class Wind extends Component {
   drawRunwayWind = (svg, heading, variation, yCoord) => {
 
     // Draw a single runway wind indicator in bottom left
-    if (this.props.metar[0].drct == 'VRB') {
+    if (this.props.metar[0].drct === 'VRB') {
       return;
     }
 
@@ -383,11 +383,11 @@ class Wind extends Component {
         alreadyDrawn[runways[i].direction] = true;
         alreadyDrawn[direction] = true;
       }
-      
+
     }
 
     for (let i = 0; i < runways.length; i++) {
-  
+
 
     }
 
@@ -410,7 +410,7 @@ class Wind extends Component {
       this.interval = setInterval(() => this.rotateAnimation(((0) - this.state.angle) / 10, 0), 50)
 
     });
-    var { drct, sknt, gust } = this.props.metar[0];
+    var { sknt, gust } = this.props.metar[0];
 
 
 
@@ -470,7 +470,7 @@ class Wind extends Component {
       <div style={{ textAlign: 'start' }}>
         <div>
           <LabelValue className='selectable metarwind' label={"Wind"} value={gust ?
-            `${drct == "VRB" ? "Variable" : this.pad(drct, 3)} at ${sknt} knots (${(sknt * 1.15077945).toFixed(0)}mph) gusting ${gust} knots (${(gust * 1.15077945).toFixed(0)}mph)`
+            `${drct === "VRB" ? "Variable" : this.pad(drct, 3)} at ${sknt} knots (${(sknt * 1.15077945).toFixed(0)}mph) gusting ${gust} knots (${(gust * 1.15077945).toFixed(0)}mph)`
             : `${this.pad(drct, 3)} at ${sknt} knots (${(sknt * 1.15077945).toFixed(0)}mph)`} />
         </div>
 

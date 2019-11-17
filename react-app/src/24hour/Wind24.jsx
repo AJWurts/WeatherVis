@@ -65,7 +65,7 @@ class Wind extends Component {
 
   processWind = (drct, sknt, speedScale) => {
 
-    if (drct == 'VRB') {
+    if (drct === 'VRB') {
       drct = 360;
     }
 
@@ -92,9 +92,9 @@ class Wind extends Component {
 
       svg.append('line')
         .attr('x1', x1)
-        .attr('x2', gx1 != 250 ? gx1 : x1)
+        .attr('x2', gx1 !== 250 ? gx1 : x1)
         .attr('y1', y1)
-        .attr('y2', gy1 != 250 ? gy1 : y1)
+        .attr('y2', gy1 !== 250 ? gy1 : y1)
         .attr('stroke-width', 3)
         .attr('stroke', d3.interpolateGreys((i / winds.length)))
 
@@ -106,9 +106,9 @@ class Wind extends Component {
         .attr('cy', d => d[1])
         .attr('r', 5)
         .attr('fill', (d, j) => {
-          if (j == 0) {
+          if (j === 0) {
             return d3.interpolateBlues((i / winds.length));
-          } else if (d[0] == 250 && d[1] == 250) {
+          } else if (d[0] === 250 && d[1] === 250) {
             return 'none'
           } else {
             return d3.interpolateOranges((i / winds.length));
@@ -169,7 +169,7 @@ class Wind extends Component {
 
         d3.select('.tooltiplabel')
           .text(d => {
-            if (color == 'orange') {
+            if (color === 'orange') {
               return "Max Gust";
             } else {
               return "Max Wind";
@@ -178,7 +178,7 @@ class Wind extends Component {
 
         d3.select('.tooltipvalue')
           .text(d => {
-            if (color == 'orange') {
+            if (color === 'orange') {
               return that.maxGust + 'kts';
             } else {
               return that.maxWind + 'kts';
@@ -248,7 +248,7 @@ class Wind extends Component {
       .attr('x', 438)
       .style('font-size', '12px')
       .text('Now')
-    
+
 
     // Multiline Text because I dont know how to do it any other way
     svg.append('text')
@@ -272,10 +272,6 @@ class Wind extends Component {
       .attr('text-anchor', 'middle')
 
       .text('Ago')
-
-
-
-    
   }
 
   drawSpeedRings = (svg, speedScale, maxSpeed) => {
@@ -292,21 +288,21 @@ class Wind extends Component {
         .attr('r', speedScale(speed))
         .attr('fill', 'none')
 
-      
+
       svg.append('text')
         .attr('text-anchor', 'middle')
         .attr('x', 500 / 2 + this.calcX(165, speedScale(speed)))
         .attr('y',  500 / 2 + this.calcY(165, speedScale(speed)))
         .text((d, i) => {
-       
-          return speed.toFixed(0);        
+
+          return speed.toFixed(0);
       })
       .attr('font-size', 13)
 
       // Rate of increase for labels
       speed = speed * 2
 
-    } 
+    }
 
   }
 
@@ -379,12 +375,12 @@ class Wind extends Component {
       .attr('font-size', 20)
       .attr('text-anchor', 'middle')
 
-      
+
     this.maxGust = d3.max(this.props.metars, d => +d.gust);
     this.maxWind = d3.max(this.props.metars, d => +d.sknt);
 
-    let maxSpeed = Math.max(60, 
-      this.maxWind, 
+    let maxSpeed = Math.max(60,
+      this.maxWind,
       this.maxGust) + 10;
     var speedScale = d3.scalePow()
       .exponent(0.5)

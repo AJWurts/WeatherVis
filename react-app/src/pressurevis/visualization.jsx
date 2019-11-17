@@ -7,11 +7,6 @@ import { AirplaneIcon } from '../components';
 const PLANE_ALT = 3000;
 
 class PressureGraph extends Component {
-    constructor(props) {
-        super(props);
-    }
-
-
     UNSAFE_componentWillReceiveProps(props) {
 
         this.createGraph(props)
@@ -65,7 +60,7 @@ class PressureGraph extends Component {
             .attr('x', 10)
             .attr('y', yVal + 14)
             .text('True Alt: ' + this.invTrueAltScale(yVal + 20).toFixed(0) + 'ft')
- 
+
         // Draws Density Altitude Text
         svg.append('text')
             .attr('class', 'd3add hover hovertext')
@@ -101,8 +96,7 @@ class PressureGraph extends Component {
         let width = 500
 
 
-        var { temperature, humidity, pressure } = props;
-        // console.log(temperature, humidity, pressure)
+        var { temperature, pressure } = props;
 
         // Calculates Min and Max Altitude and creates linear scale between
         let minAlt = (29.92 - pressure) * 1000
@@ -185,7 +179,7 @@ class PressureGraph extends Component {
                 <svg
                     onPointerMove={this.onMouseMove}
                     onTouchMove={this.onTouchMove}
-                    ref={svg => this.svg = svg} 
+                    ref={svg => this.svg = svg}
                     viewBox="0 0 500 500"
                     style={{ touchAction: 'none' }}>
 
