@@ -7,13 +7,14 @@
     "type": "git",
     "url": "git://github.com/AJWurts/WeatherVis.git"
   },
-  "license" : "MIT",
+  "license": "MIT",
   "dependencies": {
     "axios": ">=0.18.1",
     "d3": "^5.12.0",
     "mixin-deep": ">=1.3.2",
     "rc-slider": "^8.7.1",
     "react": "^16.11.0",
+    "react-cookie": "^4.0.1",
     "react-dom": "^16.11.0",
     "react-responsive": "^8.0.1",
     "react-router-dom": "^5.1.2",

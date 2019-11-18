@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withCookies, Cookies } from 'react-cookie';
 import Wind from './Wind24';
 import { SearchBox } from '../components';
 import axios from 'axios';
@@ -7,9 +8,10 @@ import axios from 'axios';
 class TestPage extends Component {
     constructor(props) {
         super(props);
+        const { cookies } = props;
 
         this.state = {
-            airport: "KBED",
+            airport: cookies.get('airport') || "KBED",
             metars: null,
             metarErrorMessage: "Loading METAR...",
             width: 500,
@@ -80,6 +82,9 @@ class TestPage extends Component {
                     tafErrorMessage: "No TAF available"
                 })
             })
+
+        const { cookies } = this.props;
+        cookies.set('airport', ident, { path: '/', maxAge: 315360000 });
     }
 
 
@@ -87,7 +92,7 @@ class TestPage extends Component {
     render() {
         return (
             <div>
-                <SearchBox onClick={this.onSearch} />
+                <SearchBox onClick={this.onSearch} value={ this.state.airport } />
                 {this.state.metars ?
                     <Wind metars={this.state.metars} width={this.state.width} height={this.state.width} />
                     : null}
@@ -97,4 +102,4 @@ class TestPage extends Component {
 
 }
 
-export default TestPage;
+export default withCookies(TestPage);
