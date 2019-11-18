@@ -190,7 +190,7 @@ class CloudLayerVis extends Component {
     for (let i = 1; i <= 4; i++) {
 
       if (!COVER_KEY[metar['skyc' + i]]) {
-        if (metar['skyc' + i] == 'CLR' || metar['skyc' + i] == 'SKC') {
+        if (metar['skyc' + i] === 'CLR' || metar['skyc' + i] === 'SKC') {
           stringClouds += metar['skyc' + i]
         }
         continue;
@@ -214,7 +214,7 @@ class CloudLayerVis extends Component {
         svg, cloud, 140, width, yScale
       )
     })
-    
+
     this.setState({
       stringClouds: stringClouds
     })

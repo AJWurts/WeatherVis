@@ -5,12 +5,6 @@ import 'rc-slider/assets/index.css'
 // Customizable Number Slider
 // Can be vertical or horizontal with variable max and min.
 class NumberSlider extends Component {
-    constructor(props) {
-        super(props);
-    }
-
-
-
     onChange = (new_value) => {
         this.props.onChange(this.props.keyVal, new_value);
     }
@@ -42,5 +36,3 @@ class NumberSlider extends Component {
 
 
 export default NumberSlider
-
-

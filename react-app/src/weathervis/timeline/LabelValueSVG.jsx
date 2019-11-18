@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 
 function LabelValueSVG(props) {
     let height = 600;
-    let { x, y, label, width } = props;
+    let { y, label, width } = props;
     return (
         <g>
             <rect y={y * height} x={0} width={width || 100} height="5%" fill='rgb(170, 170, 170)' />

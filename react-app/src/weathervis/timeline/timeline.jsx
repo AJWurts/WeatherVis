@@ -24,7 +24,7 @@ function timeFunc(start) {
             if (full_time.day === start.day) {
 
                 result = (time - startHour);
-            } else { // (full_time.day > start.day) 
+            } else { // (full_time.day > start.day)
                 result = (24 - startHour) + time
             }
             return result
@@ -84,7 +84,7 @@ class TimeLine extends Component {
         if (data.end.day === data.start.day) {
 
             maxTime = (data.end.hour - data.start.hour);
-        } else { // (full_time.day > start.day) 
+        } else { // (full_time.day > start.day)
             maxTime = (24 - data.start.hour) + data.end.hour
         }
 
@@ -224,7 +224,7 @@ class TimeLine extends Component {
 
     }
     render() {
-        var { width, height } = this.props;
+        var { height } = this.props;
         return (
             <div style={{ width: '1055px' }} ref={outer => this.outer = outer}>
                 <svg style={{ width: '1055px', height: '600px' }} ref={outside_svg => this.outer_svg = outside_svg} onMouseMove={this.onMouseMove}>
@@ -239,8 +239,8 @@ class TimeLine extends Component {
                             </svg>
                             <LabelValueSVG y={0.25} label="Visibility" />
                             <svg style={{ display: 'block' }}
-                             y="30%" 
-                             ref={node => this.visNode = node} 
+                             y="30%"
+                             ref={node => this.visNode = node}
                              height={(height || 100)}
                               width="1055px">
                             </svg>

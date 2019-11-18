@@ -19,21 +19,21 @@ function drawWind(forecast, svg, xScale, maxX, maxY, timeFunc) {
 
     // debuggers
     var line = d3.line()
-        .x(function(d) { 
+        .x(function(d) {
             let time = d.start;
             if (time.hour === -2) {
                 return xScale(maxX);
             }
-        
+
             return xScale(timeFunc(time)); })
         .y(function(d) { return yScale(d.sknt); })
         .curve(d3.curveMonotoneX) // apply smoothing to the line
         ;
 
-    
+
     // Wind Speed Data
-    var path = svg.append("path")
-        .datum(forecast) // 10. Binds data to the line 
+    svg.append("path")
+        .datum(forecast) // 10. Binds data to the line
         .attr("d", line)
         .attr('fill', 'none')
         .attr('stroke-width', '3px')
@@ -42,9 +42,9 @@ function drawWind(forecast, svg, xScale, maxX, maxY, timeFunc) {
     line = line.y(d => {
         return yScale(d.gust)
     })
-    
 
-    var gust = svg.append("path")
+
+    svg.append("path")
         .datum(forecast)
         .attr("d", line)
         .attr('fill', 'none')

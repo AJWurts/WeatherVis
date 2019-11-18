@@ -22,7 +22,7 @@ class SearchBox extends Component {
   }
 
   onKeyPress = (event) => {
-    if (event.key == 'Enter') {
+    if (event.key === 'Enter') {
       this.onClick(event);
     }
   }

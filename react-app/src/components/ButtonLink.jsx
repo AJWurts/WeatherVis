@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
-import {
-    Link
-} from "react-router-dom";
+import React from 'react';
+import { Link } from "react-router-dom";
 import './button.css';
+
 // Create Button that Links to other page.
 function ButtonLink(props) {
     return (
