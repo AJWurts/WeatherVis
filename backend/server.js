@@ -5,6 +5,8 @@ const axios = require('axios');
 const app = express()
 const parsers = require('./weatherparser.js')
 const runwayData = require('./RunwayData.js')
+const airportData = require('./airportdata');
+const addsClient = require('./addsclient');
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -15,18 +17,18 @@ app.use(cors());
 function metarTextToJson(text) {
   let metar = {}
   metar.raw = text
-  
+
   // Test Metar
   // text = "KBED 081656Z 19006KT 1/2SM R11/6000VP6000FT -RA BR OVC006 33/M12 A2986 RMK AO2 RAE19B46 CIG 004V008 PRESFR SLP135 P0000 T00500050"
- 
- 
+
+
   // Remove RMK and past
 
   text = text.match(/(.*)(RMK)+/)[0]
 
   // Wind
   let wind = text.match(/([0-9]{3}|VRB)([0-9]{2,3})G{0,1}([0-9]{0,3})KT/);
-  
+
   if (wind) {
     metar.drct = wind[1] === "VRB" ? wind[1] : +wind[1];
     metar.sknt = +wind[2];
@@ -38,10 +40,10 @@ function metarTextToJson(text) {
   }
 
 
-  // Pressure 
+  // Pressure
 
   let pressure = text.match(/A([0-9]{4})/);
-  
+
   metar.alti = pressure ? pressure[1] : 0 ;
 
   let slp = text.match(/SLP([0-9]{3})/);
@@ -143,7 +145,7 @@ function processFrom(text) {
 function processTempo(text) {
   let startStop = /([0-9]{2})([0-9]{2})\/([0-9]{2})([0-9]{2})/;
   let time = text.match(startStop);
-  // TEMPO 1813/1815 4SM -SHRA 
+  // TEMPO 1813/1815 4SM -SHRA
   current = {}
   current.start = {
     day: +time[1],
@@ -238,19 +240,10 @@ function tafsTextToJson(text) {
 
 }
 
-function processK(text) {
-  if (text.slice(0, 1) === "K") {
-    return text;
-  } else if (text.length == 3) {
-    return "K" + text;
-  } else {
-    return text;
-  }
-}
 
 // App routing to get newestMetar for given airport ident
 app.get('/api/newestMetar/:ident', (req, res, next) => {
-  let airportLetters = processK(req.params.ident);
+  let airportLetters = airportData.resolveIdent(req.params.ident);
   console.log(airportLetters)
 
   axios.get(`https://www.aviationweather.gov/metar/data?ids=${airportLetters}&format=raw&hours=0&taf=on`)
@@ -278,7 +271,7 @@ app.get('/api/newestMetar/:ident', (req, res, next) => {
 });
 
 app.get('/api/recentMETARs/:ident', (req, res, next) => {
-  let airportLetters = processK(req.params.ident);
+  let airportLetters = airportData.resolveIdent(req.params.ident);
   let hours = req.query.hours || 5;
   axios.get(`https://www.aviationweather.gov/metar/data?ids=${airportLetters}&format=raw&hours=${hours}`)
     .then(result => {
@@ -315,7 +308,7 @@ app.get('/api/recentMETARs/:ident', (req, res, next) => {
 
 // Handle get TAF for ident
 app.get('/api/newestTAFS/:ident', (req, res, next) => {
-  let airportLetters = processK(req.params.ident);
+  let airportLetters = airportData.resolveIdent(req.params.ident);
   axios.get(`https://www.aviationweather.gov/metar/data?ids=${airportLetters}&format=raw&hours=0&taf=on`)
     .then(result => {
       var text = result.data;
@@ -338,6 +331,18 @@ app.get('/api/newestTAFS/:ident', (req, res, next) => {
 });
 
 
+// Return TAFs within a radius of the airport
+app.get('/api/nearestTAFS/:ident/:radius(\\d+)?', (req, res, next) => {
+  let airportLetters = airportData.resolveIdent(req.params.ident);
+
+  airportData.getCoordinates(airportLetters)
+    .then(coord => {
+      addsClient.nearbyTafs(coord.lat, coord.lon, req.params.radius)
+        .then(tafs => {
+          res.json(tafs)
+        });
+    });
+});
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
