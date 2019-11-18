@@ -65,11 +65,11 @@ var drawCloud = (svg, cloud, minX, maxX, yScale) => {
 
 }
 
-var pad = (num, size) => {
-    // Pads numbers
-    var s = "000000000" + num;
-    return s.substr(s.length - size);
-}
+// var pad = (num, size) => {
+//     // Pads numbers
+//     var s = "000000000" + num;
+//     return s.substr(s.length - size);
+// }
 
 function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
     let yScale = d3.scaleLinear()
@@ -108,10 +108,11 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
             let level = divs[i][j];
 
             // Calculates end of cloud. So the drawCloud function know what size to work with
+            var endTime;
             if (i === divs.length - 1) {
-                var endTime = maxX;
+                endTime = maxX;
             } else {
-                var endTime = divs[i+1][0].time
+                endTime = divs[i+1][0].time
             }
 
             for (let k = 0; k < endTime - level.time; k++) {

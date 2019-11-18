@@ -59,7 +59,7 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
 
 
     // Plot vsby based on forecast and fake data
-    var path = svg.append("path")
+   svg.append("path")
         .datum(forecast) // 10. Binds data to the line 
         .attr("d", line)
         .attr('fill', '#33c6f8')

@@ -68,8 +68,8 @@ class Pressure extends Component {
     if (!this.props.metar[0].alti) {
       return;
     } else {
-      var temp = this.props.metar.tmpf || 5;
-      var dew = this.props.metar.dwpf || 5;
+      // var temp = this.props.metar.tmpf || 5;
+      // var dew = this.props.metar.dwpf || 5;
     }
 
     var width = 200;

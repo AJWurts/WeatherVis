@@ -32,19 +32,19 @@ function drawWind(forecast, svg, xScale, maxX, maxY, timeFunc) {
 
     
     // Wind Speed Data
-    var path = svg.append("path")
+    svg.append("path")
         .datum(forecast) // 10. Binds data to the line 
         .attr("d", line)
         .attr('fill', 'none')
         .attr('stroke-width', '3px')
         .attr('stroke', '#2244aa')
 
+    // Gust Graphing
     line = line.y(d => {
         return yScale(d.gust)
     })
     
-
-    var gust = svg.append("path")
+    svg.append("path")
         .datum(forecast)
         .attr("d", line)
         .attr('fill', 'none')

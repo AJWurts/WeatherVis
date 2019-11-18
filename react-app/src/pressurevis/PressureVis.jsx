@@ -16,11 +16,6 @@ class PressureVis extends Component {
         humidity: 50,
         pressure: 29.92,
       },
-      dataTwo: {
-        temperature: 15,
-        humidity: 50,
-        pressure: 29.92,
-      },
       isMobile: false,
       isPlaneVisible: false
     }
@@ -59,7 +54,7 @@ class PressureVis extends Component {
   }
 
   render() {
-    var { dataOne, dataTwo, isPlaneVisible, isMobile } = this.state;
+    var { dataOne, isPlaneVisible, isMobile } = this.state;
 
     return (
       <div style={{ margin: '10px' }}>

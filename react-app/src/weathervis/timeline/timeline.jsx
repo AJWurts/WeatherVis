@@ -39,12 +39,7 @@ function timeFunc(start) {
 }
 
 class TimeLine extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            tafAge: ""
-        }
-    }
+
     componentDidMount() {
         this.createGraph()
 
@@ -122,12 +117,8 @@ class TimeLine extends Component {
 
         let diff = new Date() - tafDate
         let hours = diff / 3.6e6;
-        let minutes = Math.round(hours - Math.floor(hours) / 60);
-        // this.setState({
-        //     tafAge: `TAF released ${Math.floor(hours)}:${minutes} hours ago`
-        // })
-        // // this.tafAge = `TAF released ${hours}:${minutes} hours ago`
-        this.state.tafAge = `TAF released ${Math.floor(hours)}:${("" + minutes).padStart(2, "0")} hours ago`
+        // let minutes = Math.round(hours - Math.floor(hours) / 60);
+       
 
         var outer_svg = d3.select(this.outer_svg)
 

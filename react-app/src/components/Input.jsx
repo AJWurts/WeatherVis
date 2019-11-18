@@ -3,9 +3,7 @@ import React, { Component } from 'react';
 
 // Input with Label
 class InputLabel extends Component {
-    constructor(props) {
-        super(props);
-    }
+
 
     onChange = (event) => {
         console.log(event);

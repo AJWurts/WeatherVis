@@ -7,9 +7,7 @@ import { AirplaneIcon } from '../components';
 const PLANE_ALT = 3000;
 
 class PressureGraph extends Component {
-    constructor(props) {
-        super(props);
-    }
+
 
 
     UNSAFE_componentWillReceiveProps(props) {

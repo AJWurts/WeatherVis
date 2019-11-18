@@ -65,7 +65,7 @@ class Wind extends Component {
 
   processWind = (drct, sknt, speedScale) => {
 
-    if (drct == 'VRB') {
+    if (drct === 'VRB') {
       drct = 360;
     }
 
@@ -92,9 +92,9 @@ class Wind extends Component {
 
       svg.append('line')
         .attr('x1', x1)
-        .attr('x2', gx1 != 250 ? gx1 : x1)
+        .attr('x2', gx1 !== 250 ? gx1 : x1)
         .attr('y1', y1)
-        .attr('y2', gy1 != 250 ? gy1 : y1)
+        .attr('y2', gy1 !== 250 ? gy1 : y1)
         .attr('stroke-width', 3)
         .attr('stroke', d3.interpolateGreys((i / winds.length)))
 
@@ -106,9 +106,9 @@ class Wind extends Component {
         .attr('cy', d => d[1])
         .attr('r', 5)
         .attr('fill', (d, j) => {
-          if (j == 0) {
+          if (j === 0) {
             return d3.interpolateBlues((i / winds.length));
-          } else if (d[0] == 250 && d[1] == 250) {
+          } else if (d[0] === 250 && d[1] === 250) {
             return 'none'
           } else {
             return d3.interpolateOranges((i / winds.length));
@@ -122,7 +122,7 @@ class Wind extends Component {
   }
 
   calcY = function (direction, length) {
-    length = length == null ? (500 / 3) : length;
+    length = length === null ? (500 / 3) : length;
     var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
 
     let y = Math.sin(angle) * (length);
@@ -131,7 +131,7 @@ class Wind extends Component {
   }
 
   calcX = (direction, length) => {
-    length = length == null ? (500 / 3) : length;
+    length = length === null ? (500 / 3) : length;
 
     var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
 
@@ -169,7 +169,7 @@ class Wind extends Component {
 
         d3.select('.tooltiplabel')
           .text(d => {
-            if (color == 'orange') {
+            if (color === 'orange') {
               return "Max Gust";
             } else {
               return "Max Wind";
@@ -178,7 +178,7 @@ class Wind extends Component {
 
         d3.select('.tooltipvalue')
           .text(d => {
-            if (color == 'orange') {
+            if (color === 'orange') {
               return that.maxGust + 'kts';
             } else {
               return that.maxWind + 'kts';
