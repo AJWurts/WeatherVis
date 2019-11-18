@@ -161,7 +161,7 @@ class Wind extends Component {
 
   // Trig Stuff ---------
   calcY = function (direction, length) {
-    length = length === null ? (this.props.height / 3) : length;
+    length = length == null ? (this.props.height / 3) : length;
     var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
     let y = Math.sin(angle) * (length);
 
@@ -169,12 +169,10 @@ class Wind extends Component {
   }
 
   calcX = (direction, length) => {
-    length = length === null ? (this.props.width / 3) : length;
-
+    length = length == null ? (this.props.width / 3) : length;
     var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
-
     let x = Math.cos(angle) * (length);
-
+    
     return x;
   }
 
@@ -416,7 +414,12 @@ class Wind extends Component {
       .data(compass)
       .enter()
       .append('text')
-      .attr('x', d => 250 + this.calcX(d.dir) - 6)
+      .attr('x', d => {
+        console.log(d);
+        let res = 250 + this.calcX(d.dir) - 6
+        console.log(res);
+        return res;
+      })
       .attr('y', d => 250 + this.calcY(d.dir) + 6)
       .text(d => d.label)
       .attr('font-size', 18)
