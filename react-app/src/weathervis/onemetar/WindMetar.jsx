@@ -415,9 +415,7 @@ class Wind extends Component {
       .enter()
       .append('text')
       .attr('x', d => {
-        console.log(d);
         let res = 250 + this.calcX(d.dir) - 6
-        console.log(res);
         return res;
       })
       .attr('y', d => 250 + this.calcY(d.dir) + 6)
