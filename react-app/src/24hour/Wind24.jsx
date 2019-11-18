@@ -122,7 +122,7 @@ class Wind extends Component {
   }
 
   calcY = function (direction, length) {
-    length = length == null ? (500 / 3) : length;
+    length = length === null ? (500 / 3) : length;
     var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
 
     let y = Math.sin(angle) * (length);
@@ -131,7 +131,7 @@ class Wind extends Component {
   }
 
   calcX = (direction, length) => {
-    length = length == null ? (500 / 3) : length;
+    length = length === null ? (500 / 3) : length;
 
     var angle = ((direction + this.state.angle) / 10) * (2 * Math.PI / 36) - (Math.PI / 2);
 

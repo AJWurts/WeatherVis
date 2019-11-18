@@ -20,19 +20,20 @@ class Temp extends Component {
 
     var dewCircle =
       svg.append('circle')
-
         .attr('cx', x)
-        .attr('cy', d => tempScale(this.props.metar[0].dwpf))
+        .attr('cy', tempScale(this.props.metar[0].dwpf))
         .attr('r', 5)
         .attr('fill', '#0000FF')
 
 
 
+
     svg.append('circle')
+
       .attr('cx', x)
       .attr('cy', d => tempScale(this.props.metar[0].tmpf))
       .attr('r', 5)
-      .attr('fill',  '#FF0000')
+      .attr('fill', '#FF0000')
 
 
     if (this.props.metar[0].tmpf === this.props.metar[0].dwpf) {
@@ -66,6 +67,7 @@ class Temp extends Component {
       var dew = this.props.metar[0].dwpf;
     }
 
+    // var width = this.props.width || 155;
     var height = this.props.height || 200
 
     // Adding padding to top and bottom

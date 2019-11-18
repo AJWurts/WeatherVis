@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 
 // Input with Label
 class InputLabel extends Component {
+
+
     onChange = (event) => {
         console.log(event);
         this.props.onChange(this.props.keyVal, event.target.value);

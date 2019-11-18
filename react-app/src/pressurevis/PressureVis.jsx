@@ -16,11 +16,6 @@ class PressureVis extends Component {
         humidity: 50,
         pressure: 29.92,
       },
-      dataTwo: {
-        temperature: 15,
-        humidity: 50,
-        pressure: 29.92,
-      },
       isMobile: false,
       isPlaneVisible: false
     }

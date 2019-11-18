@@ -1,5 +1,7 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import {
+    Link
+} from "react-router-dom";
 import './button.css';
 
 // Create Button that Links to other page.
