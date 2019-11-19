@@ -77,13 +77,16 @@ class TimeLine extends Component {
         this.time = timeFunc(data.start, data.end)
         let maxTime;
         if (data.end.day === data.start.day) {
-
+            // Within 1 day 
             maxTime = (data.end.hour - data.start.hour);
-        } else { // (full_time.day > start.day)
+        } else if (data.end.day - data.start.day === 2) {
+            // More than one day difference
+            maxTime = 24 + (24 - data.start.hour) + data.end.hour
+        } else {
+            // One day Difference
             maxTime = (24 - data.start.hour) + data.end.hour
         }
 
-        // console.log(data.start, data.end)
 
         this.maxTime = maxTime;
         let widthScale = d3.scaleLinear()
@@ -118,7 +121,7 @@ class TimeLine extends Component {
         let diff = new Date() - tafDate
         let hours = diff / 3.6e6;
         // let minutes = Math.round(hours - Math.floor(hours) / 60);
-       
+
 
         var outer_svg = d3.select(this.outer_svg)
 
@@ -178,10 +181,8 @@ class TimeLine extends Component {
 
         if (this.last_data && this.last_data.start && this.last_data.start.hour !== previous_data.start.hour) {
             let cloudStr = ""
-            for (let j = 5; j >= 0; j--) {
-                if (previous_data['skyc' + j]) {
-                    cloudStr += previous_data['skyc' + j] + " " + pad(previous_data['skyl' + j] / 100, 3) + " "
-                }
+            for (let j = 0; j  < previous_data.clouds.length; j++) {
+                    cloudStr += previous_data.clouds[j].cover + "" +previous_data.clouds[j].base  + "ft "
             }
             d3.select('.clouds')
                 .text(cloudStr)
@@ -227,24 +228,24 @@ class TimeLine extends Component {
                             ref={node => this.vcNode = node}
                             height={(height || 100) + 'px'}
                             width="1055px">
-                            </svg>
-                            <LabelValueSVG y={0.25} label="Visibility" />
-                            <svg style={{ display: 'block' }}
-                             y="30%"
-                             ref={node => this.visNode = node}
-                             height={(height || 100)}
-                              width="1055px">
-                            </svg>
-                            <LabelValueSVG y={0.48} label="Wind" />
-                            <svg style={{ display: 'block' }} y="55%" ref={node => this.windNode = node} height={(height || 100)} width='100%'>
+                        </svg>
+                        <LabelValueSVG y={0.25} label="Visibility" />
+                        <svg style={{ display: 'block' }}
+                            y="30%"
+                            ref={node => this.visNode = node}
+                            height={(height || 100)}
+                            width="1055px">
+                        </svg>
+                        <LabelValueSVG y={0.48} label="Wind" />
+                        <svg style={{ display: 'block' }} y="55%" ref={node => this.windNode = node} height={(height || 100)} width='100%'>
                         </svg>
                         <LabelValueSVG y={0.75} label="Weather" />
                         <svg style={{ display: 'block' }} y="80%" ref={node => this.weatherNode = node} height={(height || 100)} width='100%'>
-                                </svg>
-                            </g>
                         </svg>
-                    </div>
-                );
+                    </g>
+                </svg>
+            </div>
+        );
     }
 }
 
