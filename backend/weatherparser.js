@@ -147,7 +147,7 @@ function parseTAF(json) {
             stdJSON['forecast'][i][stdKey] = convFunc(json['forecast'][i][key])
         }
 
-        forecastToRaw
+        // Need to convert the data to the raw format to display
 
 
     }
