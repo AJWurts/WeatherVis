@@ -102,19 +102,19 @@ function parseTAF(json) {
             key: 'type',
         },
         wind_dir_degrees: {
-            conv: (d) => parseInt(d[0]),
+            conv: (d) => d ? parseInt(d[0]) : null,
             key: 'drct'
         },
         wind_speed_kt: {
-            conv: (d) => parseInt(d[0]),
+            conv: (d) => d ?  parseInt(d[0]) : null,
             key: 'sknt',
         },
         wind_gust_kt: {
-            conv: (d) => d ? parseInt(d[0]) : 0,
+            conv: (d) => d ? parseInt(d[0]) : null,
             key: 'gust',
         },
         visibility_statute_mi: {
-            conv: (d) => parseFloat(d[0]),
+            conv: (d) => d ? parseFloat(d[0]) : null,
             key: 'vsby',
         },
         wx_string: {
@@ -145,8 +145,9 @@ function parseTAF(json) {
             let convFunc = forecastKeyConv[key].conv
 
             stdJSON['forecast'][i][stdKey] = convFunc(json['forecast'][i][key])
-
         }
+
+        forecastToRaw
 
 
     }
@@ -165,10 +166,10 @@ function parseMultipleTAF(tafs) {
 }
 
 function parseDate(date) {
-    let re = /([0-9]{2})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z/
+    let re = /([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z/
     let data = re.exec(date)
     return {
-        year: parseInt('20' + data[1]),
+        year: parseInt(data[1]),
         month: parseInt(data[2]),
         day: parseInt(data[3]),
         hour: parseInt(data[4]),
