@@ -309,25 +309,11 @@ app.get('/api/recentMETARs/:ident', (req, res, next) => {
 // Handle get TAF for ident
 app.get('/api/newestTAFS/:ident', (req, res, next) => {
   let airportLetters = airportData.resolveIdent(req.params.ident);
-  axios.get(`https://www.aviationweather.gov/metar/data?ids=${airportLetters}&format=raw&hours=0&taf=on`)
-    .then(result => {
-      var text = result.data;
 
-      let start = text.search(/<!-- Data starts here -->/)
-      let end = text.search(/<!-- Data ends here -->/)
-
-      let searchString = text.slice(start, end);
-      let search = searchString.match(/<code>(.*)<\/code>.*\n.*<code>(.*)<\/code>/);
-      if (!search) {
-        res.status(404).send();
-      } else {
-        let tafs_json = tafsTextToJson(search[2]);
-        res.json(tafs_json);
-      }
-    }).catch(err => {
-      console.error("newestTAFS Error: ", err);
-      res.sendStatus(400);
-    })
+  addsClient.stationTaf(airportLetters)
+    .then(tafs => {
+      res.json(tafs)
+    });
 });
 
 
