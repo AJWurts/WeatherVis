@@ -113,132 +113,13 @@ function metarTextToJson(text) {
 }
 
 // Process a FM line in a TAF
-function processFrom(text) {
-  let from = /FM([0-9]{2})([0-9]{2})([0-9]{2})/;
-  ///----- FROM -----///
-  current = {}
-  from_ = from.exec(text)
-  if (from_) {
-    current.from = {
-      day: +from_[1],
-      hour: +from_[2],
-      minute: +from_[3],
-      raw: from_[0]
-    }
-    current.start = {
-      day: +from_[1],
-      hour: +from_[2],
-      minute: +from_[3],
-      raw: from_[0]
-    }
 
-  }
-  current = { ...current, ...parsers.parseWind(text) }
-  current = { ...current, ...parsers.parseVis(text) }
-  current = { ...current, ...parsers.parseWeather(text) }
-  current = { ...current, ...parsers.parseClouds(text) }
-
-  return current;
-}
 
 // Process a TEMPO, known for time less than an hour
-function processTempo(text) {
-  let startStop = /([0-9]{2})([0-9]{2})\/([0-9]{2})([0-9]{2})/;
-  let time = text.match(startStop);
-  // TEMPO 1813/1815 4SM -SHRA
-  current = {}
-  current.start = {
-    day: +time[1],
-    hour: +time[2]
-  }
 
-  current.end = {
-    day: +time[3],
-    hour: +time[4]
-  }
-  current = { ...current, ...parsers.parseWind(text) }
-  current = { ...current, ...parsers.parseVis(text) }
-  current = { ...current, ...parsers.parseWeather(text) }
-  current = { ...current, ...parsers.parseClouds(text) }
-  return current
-}
 
 // Process becoming
-function processBecoming(text) {
-  let timeRegex = /([0-9]{2})([0-9]{2})/;
-  let times = timeRegex.exec(text);
-  let current = {}
-  current.start = times[1];
-  current.end = times[2];
 
-
-
-}
-
-// Process TAF data from AWC text
-function tafsTextToJson(text) {
-  text = text.replace(/&nbsp;&nbsp;/g, '')
-  let tafs = {}
-
-  let released = /([0-9]{2})([0-9]{2})([0-9]{2})Z/g
-  let created = released.exec(text)
-  tafs.released = {
-    day: +created[1],
-    hour: +created[2],
-    minute: +created[3],
-    combined: created[0]
-  }
-
-  let startStop = /([0-9]{2})([0-9]{2})\/([0-9]{2})([0-9]{2})/;
-  let time = text.match(startStop);
-  tafs.start = {
-    day: +time[1],
-    hour: +time[2]
-  }
-
-  tafs.end = {
-    day: +time[3],
-    hour: +time[4]
-  }
-
-  tafs.raw = text
-  let textsplit = text.split('<br\/>')
-  tafs.forecast = []
-
-  let current = {}
-  current.raw = textsplit[0]
-
-  let header = /(K[0-z]{3}|FM|TEMPO|BECMG|PROB)/;
-
-
-  // Splits rows by <br/> and works line by line processing weather
-  // each line usually consist of either FM, TEMPO or BECMG
-  for (let i = 0; i < textsplit.length; i++) {
-    text = textsplit[i]
-    current = {}
-    current.raw = textsplit[i]
-    let header_ = header.exec(text);
-    current.type = header_[1];
-
-    // Depending on Section Name process differently
-    if (current.type === 'TEMPO' || text.includes("TEMPO")) {
-      tafs.forecast.push({ ...current, ...processTempo(current.raw) });
-
-    } else if (current.type === 'FM' || current.type.includes('K')) {
-      if (current.type !== 'FM') {
-        current.from = tafs.start;
-        current.start = tafs.start;
-      }
-      current.type = "FM"; // Overrides K*** type to From type
-      tafs.forecast.push({ ...current, ...processFrom(current.raw) });
-    } else if (current.type === 'BECMG') {
-      tafs.forecast.push({ ...current, ...processBecoming(current.raw) });
-    }
-  }
-
-  return tafs
-
-}
 
 
 // App routing to get newestMetar for given airport ident
@@ -314,6 +195,7 @@ app.get('/api/newestTAFS/:ident', (req, res, next) => {
     .then(coord => {
       addsClient.stationTaf(airportLetters)
         .then(tafs => {
+          tafs = parsers.parseMultipleTAF(tafs);
           res.json(tafs)
         });
     });
@@ -328,6 +210,7 @@ app.get('/api/nearestTAFS/:ident/:radius(\\d+)?', (req, res, next) => {
     .then(coord => {
       addsClient.nearbyTafs(coord.lat, coord.lon, req.params.radius)
         .then(tafs => {
+          tafs = parsers.parseMultipleTAF(tafs);
           res.json(tafs)
         });
     });
