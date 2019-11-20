@@ -71,54 +71,54 @@ function parseTAF(json) {
     let keyConv = {
         // XML JSON: Std JSON
         raw_text: {
-            conv: (d) => d[0],
+            conv: (d) => d,
             key: 'raw'
         },
         issue_time: {
-            conv: d => parseDate(d[0]),
+            conv: d => parseDate(d),
             key: 'released'
         },
         valid_time_from: {
-            conv: d => parseDate(d[0]),
+            conv: d => parseDate(d),
             key: 'start'
         },
         valid_time_to: {
-            conv: d => parseDate(d[0]),
+            conv: d => parseDate(d),
             key: 'end'
         }
     }
 
     let forecastKeyConv = {
         fcst_time_from: {
-            conv: (d) => parseDate(d[0]),
+            conv: (d) => parseDate(d),
             key: 'start',
         },
         fcst_time_to: {
-            conv: (d) => parseDate(d[0]),
+            conv: (d) => parseDate(d),
             key: 'end'
         },
         change_indicator: {
-            conv: d => d ? d[0] : null,
+            conv: d => d ? d : null,
             key: 'type',
         },
         wind_dir_degrees: {
-            conv: (d) => d ? parseInt(d[0]) : null,
+            conv: (d) => d ? parseInt(d) : null,
             key: 'drct'
         },
         wind_speed_kt: {
-            conv: (d) => d ?  parseInt(d[0]) : null,
+            conv: (d) => d ?  parseInt(d) : null,
             key: 'sknt',
         },
         wind_gust_kt: {
-            conv: (d) => d ? parseInt(d[0]) : null,
+            conv: (d) => d ? parseInt(d) : null,
             key: 'gust',
         },
         visibility_statute_mi: {
-            conv: (d) => d ? parseFloat(d[0]) : null,
+            conv: (d) => d ? parseFloat(d) : null,
             key: 'vsby',
         },
         wx_string: {
-            conv: (d) => d ? parseWeather(d[0]) : [],
+            conv: (d) => d ? parseWeather(d) : [],
             key: 'weather'
         },
         sky_condition: {

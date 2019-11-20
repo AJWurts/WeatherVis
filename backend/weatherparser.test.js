@@ -23,24 +23,24 @@ test('parseDate', () => {
 
 test('parseTAF', () => {
     let xmlJSON = {
-        raw_text: ["KBOS 191735Z 1918/2024 11004KT 3SM BR VCSH OVC008 FM192100 05004KT P6SM BKN010 FM192300 35004KT P6SM BKN020 FM200200 34005KT P6SM BKN035 FM200500 35007KT 6SM BR VCSH BKN008 FM201500 35011KT 3SM BR VCSH OVC008 FM202100 33010KT 4SM BR VCSH OVC015"],
-        station_id: ["KBOS"],
-        issue_time: ["2019-11-19T17:35:00Z"],
-        bulletin_time: ["2019-11-19T17:35:00Z"],
-        valid_time_from: ["2019-11-19T18:00:00Z"],
-        valid_time_to: ["2019-11-21T00:00:00Z"],
-        latitude: ["42.37"],
-        longitude: ["-71.02"],
-        elevation_m: ["6.0"],
+        raw_text: "KBOS 191735Z 1918/2024 11004KT 3SM BR VCSH OVC008 FM192100 05004KT P6SM BKN010 FM192300 35004KT P6SM BKN020 FM200200 34005KT P6SM BKN035 FM200500 35007KT 6SM BR VCSH BKN008 FM201500 35011KT 3SM BR VCSH OVC008 FM202100 33010KT 4SM BR VCSH OVC015",
+        station_id: "KBOS",
+        issue_time: "2019-11-19T17:35:00Z",
+        bulletin_time: "2019-11-19T17:35:00Z",
+        valid_time_from: "2019-11-19T18:00:00Z",
+        valid_time_to: "2019-11-21T00:00:00Z",
+        latitude: "42.37",
+        longitude: "-71.02",
+        elevation_m: "6.0",
         forecast: [
             {
-                fcst_time_from: ["2019-11-19T18:00:00Z"],
-                fcst_time_to: ["2019-11-19T21:00:00Z"],
-                wind_dir_degrees: ["110"],
-                change_indicator: ['FM'],
-                wind_speed_kt: ["4"],
-                visibility_statute_mi: ["3.0"],
-                wx_string: ["BR VCSH"],
+                fcst_time_from: "2019-11-19T18:00:00Z",
+                fcst_time_to: "2019-11-19T21:00:00Z",
+                wind_dir_degrees: "110",
+                change_indicator: 'FM',
+                wind_speed_kt: "4",
+                visibility_statute_mi: "3.0",
+                wx_string: "BR VCSH",
                 sky_condition: [
                     {
                         $: {
