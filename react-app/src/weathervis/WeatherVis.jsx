@@ -64,7 +64,7 @@ class WeatherVis extends Component {
       .then(result => {
 
         this.setState({
-          taf: result.data,
+          taf: result.data[0],
           tafErrorMessage: ''
         })
       }).catch(err => {
@@ -90,7 +90,6 @@ class WeatherVis extends Component {
   onSearch = (ident) => {
     axios.get(`/api/recentMETARs/${ident}`)
       .then(result => {
-        console.log(result.data)
 
         this.setState({
           metar: result.data.metars,
@@ -109,7 +108,7 @@ class WeatherVis extends Component {
     axios.get(`/api/newestTAFS/${ident}`)
       .then(result => {
         this.setState({
-          taf: result.data,
+          taf: result.data[0],
           tafErrorMessage: ''
         })
       }).catch(err => {
@@ -208,7 +207,7 @@ class WeatherVis extends Component {
               <div>
                 <LabelValue
                   label={"TAF"}
-                  value={this.state.taf.forecast[0].raw.slice(0, 22)} />
+                  value={this.state.taf.raw.slice(0, 22)} />
                 <LabelValue
                   label="Released"
                   value={tafAge} />

@@ -56,6 +56,7 @@ app.get('/api/newestTAFS/:ident', (req, res, next) => {
 
   addsClient.stationTaf(airportLetters)
     .then(tafs => {
+      tafs = parsers.parseMultipleTAF(tafs);
       res.json(tafs)
     });
 });
@@ -69,6 +70,7 @@ app.get('/api/nearestTAFS/:ident/:radius(\\d+)?', (req, res, next) => {
     .then(coord => {
       addsClient.nearbyTafs(coord.lat, coord.lon, req.params.radius)
         .then(tafs => {
+          tafs = parsers.parseMultipleTAF(tafs);
           res.json(tafs)
         });
     });
