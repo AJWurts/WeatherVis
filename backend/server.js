@@ -22,6 +22,7 @@ app.get('/api/newestMetar/:ident', (req, res, next) => {
   addsClient.newestMetar(airportLetters)
     .then(metar => {
       if(metar){
+        metar = parsers.parseMETAR(metar);
         res.json(metar)
       }
       else {
@@ -40,6 +41,7 @@ app.get('/api/recentMETARs/:ident', (req, res, next) => {
   addsClient.recentMetar(airportLetters, hours)
     .then(metar => {
       if(metar){
+        metar = parsers.parseMultipleMETAR(metar)
         res.json(metar)
       }
       else {

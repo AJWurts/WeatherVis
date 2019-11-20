@@ -1,3 +1,6 @@
+/// Weather Parsing from XML to JSON
+
+/// Constants for Weather Transform
 const KEY = {
     BC: 'patchy',
     BL: 'blowing',
@@ -41,6 +44,8 @@ const MODIFIERS = {
     'E': 'ended'
 }
 
+
+// Utility Functions
 function parseSkyCondition(cloudArray) {
     // If no clouds reported
     if (!cloudArray) {
@@ -67,6 +72,81 @@ function parseSkyCondition(cloudArray) {
 
     return clouds;
 }
+
+function parseDate(date) {
+    let re = /([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z/
+    let data = re.exec(date)
+    return {
+        year: parseInt(data[1]),
+        month: parseInt(data[2]),
+        day: parseInt(data[3]),
+        hour: parseInt(data[4]),
+        minute: parseInt(data[5]),
+        second: parseInt(data[6])
+    }
+}
+
+function parseWAbbv(weather) {
+    let re = /(([+|-]{0,1})([A-Z]{2}){1,2})/;
+    weather = re.exec(weather);
+
+    let result = {
+        text: ""
+    };
+    result.raw = weather[0];
+    let isValid = false;
+    if (weather[2] && MODIFIERS[weather[2]]) {
+        result.text += MODIFIERS[weather[2]] + ' ';
+        isValid = true;
+    }
+    if (weather[1] && weather[1].length > 3) {
+
+        if (weather[2]) {
+            var val1 = weather[1].slice(1, 3);
+            var val2 = weather[1].slice(3, 5);
+        } else {
+            var val1 = weather[1].slice(0, 2);
+            var val2 = weather[1].slice(2, 4);
+        }
+        if (KEY[val1] && KEY[val2]) {
+            result.text += KEY[val1] + " " + KEY[val2]
+            isValid = true;
+        }
+    } else if (weather[3] && KEY[weather[3]]) {
+        result.text += ' ' + KEY[weather[3]];
+        isValid = true;
+    }
+    if (isValid) {
+        return result;
+    } else {
+        return null;
+    }
+}
+
+function parseWeather(weather) {
+    // If no weather return empty list
+    if (!weather) {
+        return []
+    }
+
+    let stdWeather = []
+
+    /* Final Format
+    weather: [
+        {
+            text: "Heavy Rain",
+            raw: "+RA" 
+        },
+        ...
+    ]
+    */
+
+    let splitWeather = weather.split(' ')
+
+    return splitWeather.map(parseWAbbv);
+}
+
+// TAF PARSING
 function parseTAF(json) {
     let keyConv = {
         // XML JSON: Std JSON
@@ -165,88 +245,95 @@ function parseMultipleTAF(tafs) {
     return multiple;
 }
 
-function parseDate(date) {
-    let re = /([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z/
-    let data = re.exec(date)
-    return {
-        year: parseInt(data[1]),
-        month: parseInt(data[2]),
-        day: parseInt(data[3]),
-        hour: parseInt(data[4]),
-        minute: parseInt(data[5]),
-        second: parseInt(data[6])
-    }
-}
 
+// METAR PARSING
+function parseMETAR(json) {
 
-function parseWAbbv(weather) {
-    let re = /(([+|-]{0,1})([A-Z]{2}){1,2})/;
-    weather = re.exec(weather);
-
-    let result = {
-        text: ""
-    };
-    result.raw = weather[0];
-    let isValid = false;
-    if (weather[2] && MODIFIERS[weather[2]]) {
-        result.text += MODIFIERS[weather[2]] + ' ';
-        isValid = true;
-    }
-    if (weather[1] && weather[1].length > 3) {
-
-        if (weather[2]) {
-            var val1 = weather[1].slice(1, 3);
-            var val2 = weather[1].slice(3, 5);
-        } else {
-            var val1 = weather[1].slice(0, 2);
-            var val2 = weather[1].slice(2, 4);
-        }
-        if (KEY[val1] && KEY[val2]) {
-            result.text += KEY[val1] + " " + KEY[val2]
-            isValid = true;
-        }
-    } else if (weather[3] && KEY[weather[3]]) {
-        result.text += ' ' + KEY[weather[3]];
-        isValid = true;
-    }
-    if (isValid) {
-        return result;
-    } else {
-        return null;
-    }
-}
-
-
-
-
-
-function parseWeather(weather) {
-    // If no weather return empty list
-    if (!weather) {
-        return []
-    }
-
-    let stdWeather = []
-
-    /* Final Format
-    weather: [
-        {
-            text: "Heavy Rain",
-            raw: "+RA" 
+    let keyConv = {
+        // XML JSON: Std JSON
+        raw_text: {
+            conv: (d) => d,
+            key: 'raw'
         },
-        ...
-    ]
-    */
+        station_id: {
+            conv: (d) => d,
+            key: 'airport'
+        },
+        observation_time: {
+            conv: d => d ? parseDate(d) : null,
+            key: 'valid'
+        },
+        temp_c: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'tmpf',
+        },
+        dewpoint_c: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'dwpf',
+        },
 
-    let splitWeather = weather.split(' ')
+        wind_dir_degrees: {
+            conv: (d) => d ? parseInt(d) : null,
+            key: 'drct'
+        },
+        wind_speed_kt: {
+            conv: (d) => d ?  parseInt(d) : null,
+            key: 'sknt',
+        },
+        wind_gust_kt: {
+            conv: (d) => d ? parseInt(d) : null,
+            key: 'gust',
+        },
+        visibility_statute_mi: {
+            conv: (d) => d ? parseFloat(d) : null,
+            key: 'vsby',
+        },
+        altim_in_hg: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'alti',
+        },
+        sea_level_pressure_mb: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'mslp',
+        },
+        flight_category: {
+            conv: d => d ? d : null,
+            key: 'flightcat',
+        },
+        precip_in: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'percip',
+        },
+        wx_string: {
+            conv: (d) => d ? parseWeather(d) : [],
+            key: 'weather'
+        },
+        sky_condition: {
+            conv: (value) => value ? parseSkyCondition(value) : [],
+            key: 'clouds',
+        }
+    }
 
-    return splitWeather.map(parseWAbbv);
+    let stdJSON = {}
+    for (let key in keyConv) {
+        let stdKey = keyConv[key].key
+        let convFunc = keyConv[key].conv
+        stdJSON[stdKey] = convFunc(json[key])
+    }
+
+
+    return stdJSON;
+    
 }
 
+function parseMultipleMETAR(metars) {
+    let multiple = [];
 
+    for (let i = 0; i < metars.length; i++) {
+        multiple.push(parseMETAR(metars[i]));
+    }
 
-function parseMETAR() {
-
+    return multiple;
 }
 
-module.exports = { parseDate, parseWeather, parseTAF, parseMultipleTAF, parseMETAR, parseSkyCondition }
+module.exports = { parseDate, parseWeather, parseSkyCondition, parseTAF, parseMultipleTAF, parseMETAR,  parseMultipleMETAR}

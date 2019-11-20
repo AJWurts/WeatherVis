@@ -77,7 +77,6 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
         .range([maxY, 0])
 
     // Iterates through taf and retrieves cloud cover and converts to format for easier displaying
-    console.log(forecast)
     let divs = [];
     for (let i = 0; i < forecast.length; i++) {
         let levels = [];
@@ -89,7 +88,10 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
                 time: timeFunc(forecast[i].start)
             })
         }
-        divs.push(levels);
+        if (levels.length !== 0) {
+            divs.push(levels);
+
+        }
     }
 
 
