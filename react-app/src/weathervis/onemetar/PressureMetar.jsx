@@ -51,7 +51,7 @@ class Pressure extends Component {
       .append('path')
       .attr('class', (d, i) => 'metar metar' + (this.props.metar.length - i - 1))
       .attr('d', ` m -5 0 l 5 75 l 5 -75 l -5 -5 z`)
-      .attr('transform', d => `translate(${this.props.width / 2} ${this.props.height / 2}) rotate(${baroScale(+d.alti / 100)})`)
+      .attr('transform', d => `translate(${this.props.width / 2} ${this.props.height / 2}) rotate(${baroScale(+d.alti)})`)
       .attr('fill', (d, i) => colorScale(i))
 
 
@@ -158,7 +158,7 @@ class Pressure extends Component {
         <LabelValue
           className='selectable pressure'
           label={"Pressure"}
-          value={+this.props.metar[0].alti / 100 + '"'} />
+          value={this.props.metar[0].alti.toFixed(2)+ '"'} />
           : null
         }
         <svg ref={node => this.node = node}

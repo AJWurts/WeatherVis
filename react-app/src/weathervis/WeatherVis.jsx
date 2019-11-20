@@ -49,8 +49,8 @@ class WeatherVis extends Component {
       .then(result => {
 
         this.setState({
-          metar: result.data.metars,
-          runways: result.data.runways,
+          metar: result.data,
+          // runways: result.data.runways,
           metarErrorMessage: ''
         })
       }).catch(err => {
@@ -92,7 +92,7 @@ class WeatherVis extends Component {
       .then(result => {
 
         this.setState({
-          metar: result.data.metars,
+          metar: result.data,
           airport: ident,
           runways: result.data.runways,
           metarErrorMessage: ''
@@ -131,7 +131,7 @@ class WeatherVis extends Component {
       tafErrorMessage,
       metarErrorMessage,
       isMobile } = this.state;
-
+      console.log(metar)
     if (metar) {
       let metarDate = new Date()
       metarDate.setUTCDate(metar[0].valid.day)
@@ -170,7 +170,7 @@ class WeatherVis extends Component {
 
           {metar ?
             <SelectableMetar label="Selectable Metar" onHover={this.handleMouseOver} onMouseLeave={this.handleMouseLeave} metar={metar[0]} /> : null}
-          {/* <LabelValue label={"Raw METAR"} value={metar[0].raw} /> : null} */}
+ 
           {metar ?
             <LabelValue label={"Raw METAR"} value={metar[0].raw} /> : null}
           {metarAge ?

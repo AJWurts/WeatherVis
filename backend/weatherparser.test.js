@@ -79,6 +79,23 @@ test('parseTAF', () => {
                     }
                 ]
             },
+            {
+                fcst_time_from: "2019-11-19T18:00:00Z",
+                fcst_time_to: "2019-11-19T21:00:00Z",
+                wind_dir_degrees: "110",
+                change_indicator: 'FM',
+                wind_speed_kt: "4",
+                visibility_statute_mi: "3.0",
+                wx_string: "BR VCSH",
+                sky_condition:
+                {
+                    $: {
+                        sky_cover: "OVC",
+                        cloud_base_ft_agl: "800"
+                    }
+                }
+
+            },
         ]
     }
 
@@ -95,6 +112,10 @@ test('parseTAF', () => {
     expect(stdJSON.forecast[0].clouds[0].base).toEqual(800)
     expect(stdJSON.forecast[0].weather[0].raw).toBe("BR")
     expect(stdJSON.forecast[0].weather[1].raw).toBe("VCSH")
+
+    expect(stdJSON.forecast[1].clouds[0].cover).toBe("OVC")
+    expect(stdJSON.forecast[1].clouds[0].base).toBe(800)
+
 
 
 })

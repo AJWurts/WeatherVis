@@ -39,7 +39,7 @@ class TestPage extends Component {
             .then(result => {
 
                 this.setState({
-                    metars: result.data.metars,
+                    metars: result.data,
                     metarErrorMessage: ''
                 })
             }).catch(err => {
@@ -57,7 +57,7 @@ class TestPage extends Component {
                 console.log(result.data)
 
                 this.setState({
-                    metars: result.data.metars,
+                    metars: result.data,
                     airport: ident,
                     metarErrorMessage: ''
                 })

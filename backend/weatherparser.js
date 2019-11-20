@@ -62,11 +62,16 @@ function parseSkyCondition(cloudArray) {
     ]
     */
     let clouds = []
-
     for (let i = 0; i < cloudArray.length; i++) {
         let cloud = {}
         cloud['cover'] = cloudArray[i]['$']['sky_cover']
         cloud['base'] = parseInt(cloudArray[i]['$']['cloud_base_ft_agl'])
+        clouds.push(cloud);
+    }
+    if (clouds.length === 0) {
+        let cloud = {}
+        cloud['cover'] = cloudArray['$']['sky_cover']
+        cloud['base'] = parseInt(cloudArray['$']['cloud_base_ft_agl'])
         clouds.push(cloud);
     }
 
