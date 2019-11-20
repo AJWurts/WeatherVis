@@ -5,20 +5,20 @@ const { parseDate, parseSkyCondition, parseWeather, parseTAF, parseMETAR } = req
 
 test('parseDate', () => {
     var date = parseDate('2019-11-19T17:35:00Z')
-    expect(date.hour).toBeCloseTo(17)
-    expect(date.minute).toBeCloseTo(35)
-    expect(date.second).toBeCloseTo(0)
-    expect(date.year).toBeCloseTo(2019)
-    expect(date.month).toBeCloseTo(11)
-    expect(date.day).toBeCloseTo(19)
+    expect(date.hour).toEqual(17)
+    expect(date.minute).toEqual(35)
+    expect(date.second).toEqual(0)
+    expect(date.year).toEqual(2019)
+    expect(date.month).toEqual(11)
+    expect(date.day).toEqual(19)
 
     var date = parseDate('2019-11-19T15:25:00Z')
-    expect(date.hour).toBeCloseTo(15)
-    expect(date.minute).toBeCloseTo(25)
-    expect(date.second).toBeCloseTo(0)
-    expect(date.year).toBeCloseTo(2019)
-    expect(date.month).toBeCloseTo(11)
-    expect(date.day).toBeCloseTo(19)
+    expect(date.hour).toEqual(15)
+    expect(date.minute).toEqual(25)
+    expect(date.second).toEqual(0)
+    expect(date.year).toEqual(2019)
+    expect(date.month).toEqual(11)
+    expect(date.day).toEqual(19)
 })
 
 test('parseTAF', () => {
