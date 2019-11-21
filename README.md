@@ -26,19 +26,20 @@ This app visualizes the weather and allows anyone to search for an airport and s
 #### Return: 
 * Singular METAR Object  
 #### Example: /api/newestMETAR/KBOS
-
-       
        {
             raw: "KBOS 041554Z 32019G25KT 10SM BKN032 BKN042 16/07 A2998 
                   RMK AO2 PK WND 32029/1516 SLP152 T01610067", string -> raw METAR
+            airport: "KBOS", String -> Airport ident
             drct: 320,      number -> wind direction true
             sknt: 19,       number -> wind speed in knots
             gust: 25,       number -> wind gust speed in knots
-            alti: "2998",   string -> altimeter setting
-            mslp: "152",    string -> sea level pressure, 3 characters need to add 4 based on value
+            alti: 29.988122,   float -> altimeter  in inHg
+            mslp: 1013.at,    float -> sea level pressure in millibars
             vsby: 10,       number -> visibility in statute miles
-            tmpf: 16,       number -> temperature in celsius
-            dwpf: 7,        number -> dew point in celsius
+            tmpf: 16,       float -> temperature in celsius
+            dwpf: 7,        float -> dew point in celsius
+            flightcat: "VFR", string -> Flight Category can be VFR, IFR, MVFR, LIFR
+            percip: null,   number -> amount of percipitation in inches
             valid: {
                 year: 2019, number -> year
                 month: 10,  number -> month where january is 0
@@ -72,9 +73,31 @@ This app visualizes the weather and allows anyone to search for an airport and s
     * Default: 5
     * Example: 5, 10, 20, 30, 40
 #### Return
-* Multiple METAR objects sorted by valid date. See example METAR in /api/newestMETAR/
+* Multiple METAR objects sorted by valid date. See example METAR in /api/newestMETAR/ 
 
-
+            {
+                metars: [ List of METAR Objects ],  
+                runways: [ 
+                {
+                    name: "04L/22R",                String -> Runway Name
+                    name_remark: null,              String -> name remarks
+                    length: 7864,                   number -> Runway length in ft
+                    length_remark: null,            String -> length remarks
+                    width: 150,                     number -> Runway width in ft
+                    width_remark: null,             String -> width remarks
+                    surface_type_condition: "ASPH-E",               String -> runway type
+                    surface_type_condition_remark: null,            String -> condition remarks
+                    surface_treatment: "GRVD",                      String -> Surface Treatment
+                    surface_treatment_remark: null,                 String -> treatment remarks
+                    pavement_classification_number: "90 /F/C/W/T",  String -> classification number
+                    pavement_classification_number_remark: null,    String -> classification remarks
+                    edge_light_intensity: "HIGH",                   String -> Lighting type
+                    edge_light_intensity_remark: null,              String -> light remarks
+                    direction: 40                                   number -> direction of one rwy direction. +180 for second
+                },
+                ... Multiple
+                ]
+            }
 
 
 ### Most recent METAR for airport: /api/newestTAFS/{airport ident}
