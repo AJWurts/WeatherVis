@@ -1,7 +1,7 @@
 # Weather Visualization using METARs and TAFs
 By Alexander Wurts
 ## Slack
-Join the [Slack](https://weathervisworkspace.slack.com) to see how you can contribute.
+Join the [Flock](weathervis.flock.com), a group chat platform, to see how you can contribute.
 
 ## Data Source
 Data retrieved live from aviation weather services, parsed and displayed to the user.  
