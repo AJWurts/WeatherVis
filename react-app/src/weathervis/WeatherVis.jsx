@@ -49,8 +49,8 @@ class WeatherVis extends Component {
       .then(result => {
 
         this.setState({
-          metar: result.data,
-          // runways: result.data.runways,
+          metar: result.data.metars,
+          runways: result.data.runways,
           metarErrorMessage: ''
         })
       }).catch(err => {
@@ -92,7 +92,7 @@ class WeatherVis extends Component {
       .then(result => {
 
         this.setState({
-          metar: result.data,
+          metar: result.data.metars,
           airport: ident,
           runways: result.data.runways,
           metarErrorMessage: ''
