@@ -23,7 +23,10 @@ app.get('/api/newestMetar/:ident', (req, res, next) => {
     .then(metar => {
       if(metar){
         metar = parsers.parseMETAR(metar);
-        res.json(metar)
+        runwayData.addRwysToMETAR(metar, airportLetters)
+          .then(rwyMetar => {
+            res.json(rwyMetar);
+          });
       }
       else {
         res.status(404).send();
@@ -42,7 +45,10 @@ app.get('/api/recentMETARs/:ident', (req, res, next) => {
     .then(metar => {
       if(metar){
         metar = parsers.parseMultipleMETAR(metar)
-        res.json(metar)
+        runwayData.addRwysToMETAR({metars: metar}, airportLetters)
+          .then(rwyMetar => {
+            res.json(rwyMetar);
+          });
       }
       else {
         res.status(404).send();
