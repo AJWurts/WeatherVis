@@ -14,7 +14,7 @@ const AddsClient = {
   },
 
   newestMetar(airportId) {
-    return this._metarRequest(`stationString=${airportId}&hoursBeforeNow=1`)
+    return this._metarRequest(`stationString=${airportId}&hoursBeforeNow=5&mostRecent=true`)
   },
 
   recentMetar(airportId, hours) {
