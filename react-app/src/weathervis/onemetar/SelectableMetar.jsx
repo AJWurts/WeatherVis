@@ -51,14 +51,13 @@ class SelectableMetar extends Component {
 
 
     let cloudStr = ""
-    let i = 1;
-    while (metar['skyc' + i]) {
-      if (metar['skyc' + i] === 'CLR' || metar['skyc' + i] === 'SKC') {
-        cloudStr += metar['skyc' + i]
+    for (let i = 0; i < metar.clouds.length; i++) {
+      if (metar.clouds[i].cover === 'CLR' || metar.clouds[i].cover === 'SKC') {
+        cloudStr += metar.clouds[i].cover
       } else {
-        cloudStr += metar['skyc' + i] + this.pad(metar['skyl' + i] / 100, 3) + " "
+        cloudStr += metar.clouds[i].cover + this.pad(metar.clouds[i].base / 100, 3) + " "
       }
-      i++;
+   
     }
     rawMetar.push({
       key: "metarclouds",
@@ -70,15 +69,15 @@ class SelectableMetar extends Component {
       key: 'temp',
       'val':
         (metar.tmpf < 0 ? 'M' : '') + // Adds M of negative
-        this.pad(Math.abs(metar.tmpf), 2) + "/" +
+        this.pad(Math.abs(Math.round(metar.tmpf)), 2) + "/" +
         (metar.dwpf < 0 ? 'M' : '') + // Adds M of negative
-        this.pad(Math.abs(metar.dwpf), 2)
+        this.pad(Math.abs(Math.round(metar.dwpf)), 2)
     })
 
     if (metar.alti !== 0) {
       rawMetar.push({
         key: 'pressure',
-        val: "A" + metar.alti
+        val: "A" + Math.round(metar.alti * 100)
       })
     }
 

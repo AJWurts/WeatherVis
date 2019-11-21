@@ -2,7 +2,7 @@ const axios = require('axios');
 
 function RunwayData() {
 
-  function getRunways(airportID) {
+  this.getRunways = function (airportID) {
     return axios.get(`https://api.aeronautical.info/dev/?airport=${airportID}&include=runways`)
       .then(result => {
         let airdata = result.data;
@@ -15,10 +15,10 @@ function RunwayData() {
         console.error(err);
         return null
       })
-  }
+  },
 
   this.addRwysToMETAR = function (metar, airportID) {
-    return getRunways(airportID)
+    return this.getRunways(airportID)
       .then(result => {
         if (result) {
           for (let i = 0; i < result.length; i++) {
@@ -29,7 +29,7 @@ function RunwayData() {
             result[i].direction = +direction * 10;
           }
           metar.runways = result;
-          
+
           return metar
         } else {
           console.log("Failed to Retrieve Data")

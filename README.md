@@ -76,7 +76,7 @@ Example: /api/newestTAFS/KSLN
                 {
                     raw: "KSLN 041540Z 0416/0512 12007KT 6SM -RA BKN007 OVC035 ",
                     type: "FM",                 string -> forecast block type. Fields specific to given type
-                    from: {
+                    start: {
                         day: 4,                 number -> day in month
                         hour: 16                number -> hour in day UTC
                     },

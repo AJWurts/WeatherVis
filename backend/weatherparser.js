@@ -1,3 +1,6 @@
+/// Weather Parsing from XML to JSON
+
+/// Constants for Weather Transform
 const KEY = {
     BC: 'patchy',
     BL: 'blowing',
@@ -40,7 +43,58 @@ const MODIFIERS = {
     'B': 'began',
     'E': 'ended'
 }
+
+
+// Utility Functions
+function parseSkyCondition(cloudArray) {
+    // If no clouds reported
+    if (!cloudArray) {
+        return [];
+    }
+    // Final Format
+    /*
+    clouds: [
+        {
+            cover: "CLR",
+            base: "4000"
+        },
+        ...
+    ]
+    */
+    let clouds = []
+    for (let i = 0; i < cloudArray.length; i++) {
+        let cloud = {}
+        cloud['cover'] = cloudArray[i]['$']['sky_cover']
+        cloud['base'] = parseInt(cloudArray[i]['$']['cloud_base_ft_agl'])
+        clouds.push(cloud);
+    }
+    if (clouds.length === 0) {
+        let cloud = {}
+        cloud['cover'] = cloudArray['$']['sky_cover']
+        cloud['base'] = parseInt(cloudArray['$']['cloud_base_ft_agl'])
+        clouds.push(cloud);
+    }
+
+    return clouds;
+}
+
+function parseDate(date) {
+    let re = /([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z/
+    let data = re.exec(date)
+    return {
+        year: parseInt(data[1]),
+        month: parseInt(data[2]),
+        day: parseInt(data[3]),
+        hour: parseInt(data[4]),
+        minute: parseInt(data[5]),
+        second: parseInt(data[6])
+    }
+}
+
 function parseWAbbv(weather) {
+    let re = /(([+|-]{0,1})([A-Z]{2}){1,2})/;
+    weather = re.exec(weather);
+
     let result = {
         text: ""
     };
@@ -74,92 +128,217 @@ function parseWAbbv(weather) {
     }
 }
 
+function parseWeather(weather) {
+    // If no weather return empty list
+    if (!weather) {
+        return []
+    }
 
-function parseVis(text) {
-    let vis = /([0-9]{0,1})[ ]{1}((P{0,1})([0-9]{0,1})[\/]{0,1}([0-9]{1,2})SM)/
-    let vis_ = vis.exec(text)
+    let stdWeather = []
 
-    let current = {};
-    if (vis_) {
-        if (vis[1]) {
-            current.vsby = (+vis[1]) + (+vis[5]) / (+vis[6])
-        } else if (vis[3] && vis[2].includes('/')) {
-            current.vsby = (+vis[3]) / (+vis[4]);
-        } else if (vis_[3] === 'P') {
-            current.vsby = 10
-        } else {
-          current.vsby = +vis_[5]
+    /* Final Format
+    weather: [
+        {
+            text: "Heavy Rain",
+            raw: "+RA" 
+        },
+        ...
+    ]
+    */
+
+    let splitWeather = weather.split(' ')
+
+    return splitWeather.map(parseWAbbv);
+}
+
+// TAF PARSING
+function parseTAF(json) {
+    let keyConv = {
+        // XML JSON: Std JSON
+        raw_text: {
+            conv: (d) => d,
+            key: 'raw'
+        },
+        issue_time: {
+            conv: d => parseDate(d),
+            key: 'released'
+        },
+        valid_time_from: {
+            conv: d => parseDate(d),
+            key: 'start'
+        },
+        valid_time_to: {
+            conv: d => parseDate(d),
+            key: 'end'
         }
     }
 
+    let forecastKeyConv = {
+        fcst_time_from: {
+            conv: (d) => parseDate(d),
+            key: 'start',
+        },
+        fcst_time_to: {
+            conv: (d) => parseDate(d),
+            key: 'end'
+        },
+        change_indicator: {
+            conv: d => d ? d : null,
+            key: 'type',
+        },
+        wind_dir_degrees: {
+            conv: (d) => d ? parseInt(d) : null,
+            key: 'drct'
+        },
+        wind_speed_kt: {
+            conv: (d) => d ?  parseInt(d) : null,
+            key: 'sknt',
+        },
+        wind_gust_kt: {
+            conv: (d) => d ? parseInt(d) : null,
+            key: 'gust',
+        },
+        visibility_statute_mi: {
+            conv: (d) => d ? parseFloat(d) : null,
+            key: 'vsby',
+        },
+        wx_string: {
+            conv: (d) => d ? parseWeather(d) : [],
+            key: 'weather'
+        },
+        sky_condition: {
+            conv: (value) => parseSkyCondition(value),
+            key: 'clouds',
+        }
+    }
 
-    return current;
+    let stdJSON = {}
+
+    for (let key in keyConv) {
+        let stdKey = keyConv[key].key
+        let convFunc = keyConv[key].conv
+        stdJSON[stdKey] = convFunc(json[key])
+    }
+
+    stdJSON['forecast'] = []
+
+    for (let i = 0; i < json.forecast.length; i++) {
+        stdJSON['forecast'].push({})
+        for (let key in forecastKeyConv) {
+
+            let stdKey = forecastKeyConv[key].key
+            let convFunc = forecastKeyConv[key].conv
+
+            stdJSON['forecast'][i][stdKey] = convFunc(json['forecast'][i][key])
+        }
+
+        // Need to convert the data to the raw format to display
+
+
+    }
+
+    return stdJSON;
 }
 
-function parseWind(text) {
-    let wind = /([0-9]{3}|VRB)([0-9]{1,3})G{0,1}([0-9]{0,3})KT/;
-    let current = {};
-    let wind_ = wind.exec(text);
-    if (wind_) {
-        current.drct = wind_[1] === "VRB" ? wind_[1] : +wind_[1];
-        current.sknt = +wind_[2];
-        current.gust = wind_.length === 4 ? +wind_[3] : '';
+function parseMultipleTAF(tafs) {
+    let multiple = [];
+
+    for (let i = 0; i < tafs.length; i++) {
+        multiple.push(parseTAF(tafs[i]));
+    }
+
+    return multiple;
+}
+
+
+// METAR PARSING
+function parseMETAR(json) {
+
+    let keyConv = {
+        // XML JSON: Std JSON
+        raw_text: {
+            conv: (d) => d,
+            key: 'raw'
+        },
+        station_id: {
+            conv: (d) => d,
+            key: 'airport'
+        },
+        observation_time: {
+            conv: d => d ? parseDate(d) : null,
+            key: 'valid'
+        },
+        temp_c: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'tmpf',
+        },
+        dewpoint_c: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'dwpf',
+        },
+
+        wind_dir_degrees: {
+            conv: (d) => d ? parseInt(d) : null,
+            key: 'drct'
+        },
+        wind_speed_kt: {
+            conv: (d) => d ?  parseInt(d) : null,
+            key: 'sknt',
+        },
+        wind_gust_kt: {
+            conv: (d) => d ? parseInt(d) : null,
+            key: 'gust',
+        },
+        visibility_statute_mi: {
+            conv: (d) => d ? parseFloat(d) : null,
+            key: 'vsby',
+        },
+        altim_in_hg: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'alti',
+        },
+        sea_level_pressure_mb: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'mslp',
+        },
+        flight_category: {
+            conv: d => d ? d : null,
+            key: 'flightcat',
+        },
+        precip_in: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'percip',
+        },
+        wx_string: {
+            conv: (d) => d ? parseWeather(d) : [],
+            key: 'weather'
+        },
+        sky_condition: {
+            conv: (value) => value ? parseSkyCondition(value) : [],
+            key: 'clouds',
+        }
+    }
+
+    let stdJSON = {}
+    for (let key in keyConv) {
+        let stdKey = keyConv[key].key
+        let convFunc = keyConv[key].conv
+        stdJSON[stdKey] = convFunc(json[key])
     }
 
 
-    return current;
-}
-
-function parseWeather(text) {
+    return stdJSON;
     
-    let weather_regex = /(([+|-]{0,1})([A-Z]{2}){1,2})/;
-    let current = {};
-    let current_split = text.split(' ');
-    let j = current_split.length - 1;
-    let weather_;
-    current.weather = [];
-    do {
-        weather_ = current_split[j];
-        if (j === 1) break;
-        if (weather_ && weather_.length >= 2 && weather_.length <= 5 && !weather_.includes("SM") && !weather_.includes("SKC")) {
-            let regexed = weather_regex.exec(weather_);
-            let parsedWeather = parseWAbbv(regexed)
-            if (parsedWeather !== null) {
-                current.weather.push(parsedWeather);
-            }
-        }
-        j--;
-    } while (weather_.length === 0 || !weather_.includes("SM") || j < 0)
-
-
-    return current;
 }
 
-function parseClouds(text) {
-    let current = {};
-    let current_split = text.split(' ');
-    let cloud_;
-    j = current_split.length - 1;
-    let layer_count = 1;
-    do {
-        if (j === 0) break;
-        cloud_ = current_split[j];
-        
+function parseMultipleMETAR(metars) {
+    let multiple = [];
 
-        if (cloud_ && cloud_.length === 6) {
-            current['skyc' + layer_count] = cloud_.slice(0, 3);
-            current['skyl' + layer_count] = +cloud_.slice(3, 7) * 100;
-            layer_count++;
-        }
-        j--;
-    } while (cloud_.length === 0 || cloud_.length >= 6)
-
-    if (!current['skyc1']) {
-      current['skyc1'] = 'SKC'
-      current['skyl1'] = 100000 
+    for (let i = 0; i < metars.length; i++) {
+        multiple.push(parseMETAR(metars[i]));
     }
-    return current
+
+    return multiple;
 }
 
-
-module.exports = { parseWAbbv, parseClouds, parseVis, parseWeather, parseWind }
+module.exports = { parseDate, parseWeather, parseSkyCondition, parseTAF, parseMultipleTAF, parseMETAR,  parseMultipleMETAR}

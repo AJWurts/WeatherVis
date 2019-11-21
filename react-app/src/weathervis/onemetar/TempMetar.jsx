@@ -63,8 +63,8 @@ class Temp extends Component {
     if (this.props.metar[0].tmpf === undefined) {
       return;
     } else {
-      var temp = this.props.metar[0].tmpf;
-      var dew = this.props.metar[0].dwpf;
+      var temp = Math.round(this.props.metar[0].tmpf);
+      var dew = Math.round(this.props.metar[0].dwpf);
     }
 
     // var width = this.props.width || 155;
@@ -203,7 +203,7 @@ class Temp extends Component {
     var { tmpf, dwpf } = this.props.metar[0];
     return (
       <div style={{ textAlign: 'start' }}>
-        <LabelValue className='selectable temp' label={"Temp"} value={`${(tmpf < 0 ? 'M' : '') + this.pad(Math.abs(tmpf), 2)}/${(dwpf < 0 ? 'M' : "") + this.pad(Math.abs(dwpf), 2)}`} />
+        <LabelValue className='selectable temp' label={"Temp"} value={`${(tmpf < 0 ? 'M' : '') + this.pad(Math.abs(Math.round(tmpf)), 2)}/${(dwpf < 0 ? 'M' : "") + this.pad(Math.abs(Math.round(dwpf)), 2)}`} />
         <svg ref={node => this.node = node} width={width || 155} height={height || 200}>
         </svg>
       </div>

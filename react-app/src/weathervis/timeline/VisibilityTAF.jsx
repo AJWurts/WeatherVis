@@ -3,7 +3,7 @@ import *  as d3 from 'd3';
 function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
 
     let yScale = d3.scaleLinear()
-        .domain([0, 12])
+        .domain([0, 7])
         .range([maxY, 0])
 
 
@@ -66,7 +66,7 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
         // .attr('stroke', '#2244aa')
 
     svg.selectAll('visibility')
-        .data([0, 5, 10])
+        .data([0, 3, 6])
         .enter()
         .append('text')
         .attr('x', 5)

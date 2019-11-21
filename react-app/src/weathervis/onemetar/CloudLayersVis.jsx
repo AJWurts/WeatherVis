@@ -33,6 +33,7 @@ class CloudLayerVis extends Component {
   }
   componentDidMount() {
     this.createGraph()
+    console.log("Metar Cloud Layer Vis Mounting")
   }
 
   UNSAFE_componentWillReceiveProps(props) {
@@ -187,50 +188,50 @@ class CloudLayerVis extends Component {
       // }
     ]
     let stringClouds = "";
-    for (let i = 1; i <= 4; i++) {
-
-      if (!COVER_KEY[metar['skyc' + i]]) {
-        if (metar['skyc' + i] === 'CLR' || metar['skyc' + i] === 'SKC') {
-          stringClouds += metar['skyc' + i]
+    for (let i = 0; i < metar.clouds.length; i++) {
+      if (!COVER_KEY[metar.clouds[i].cover]) {
+        if (metar.clouds[i].cover === 'CLR' || metar.clouds[i].cover === 'SKC') {
+          stringClouds += metar.clouds[i].cover
         }
         continue;
       }
 
-      // Format string to display above graphic
-      stringClouds += metar['skyc' + i] + this.pad((+metar['skyl' + i]) / 100, 3) + ' '
+
+        // Format string to display above graphic
+        stringClouds += metar.clouds[i].cover + this.pad((+metar.clouds[i].base) / 100, 3) + ' '
 
 
-      // Push data onto levels to be fed into draw cloud
-      levels.push({
-        alt: metar['skyl' + i],
-        cover: COVER_KEY[metar['skyc' + i]],
-        actual: metar['skyc' + i]
+        // Push data onto levels to be fed into draw cloud
+        levels.push({
+          alt: metar.clouds[i].base,
+          cover: COVER_KEY[metar.clouds[i].cover],
+          actual: metar.clouds[i].cover
+        })
+      }
+
+      levels.forEach(cloud => {
+
+        this.drawCloud(
+          svg, cloud, 140, width, yScale
+        )
       })
+
+      this.setState({
+        stringClouds: stringClouds
+      })
+
     }
 
-    levels.forEach(cloud => {
-
-      this.drawCloud(
-        svg, cloud, 140, width, yScale
-      )
-    })
-
-    this.setState({
-      stringClouds: stringClouds
-    })
-
+    render() {
+      var { width, height } = this.props;
+      return (
+        <div style={{ textAlign: 'start' }}>
+          <LabelValue className='selectable metarclouds' label={"Clouds"} value={this.state.stringClouds ? this.state.stringClouds : ""} />
+          <svg ref={node => this.node = node} width={width || 500} height={height || 500}>
+          </svg>
+        </div>
+      );
+    }
   }
 
-  render() {
-    var { width, height } = this.props;
-    return (
-      <div style={{ textAlign: 'start' }}>
-        <LabelValue className='selectable metarclouds' label={"Clouds"} value={this.state.stringClouds ? this.state.stringClouds : ""} />
-        <svg ref={node => this.node = node} width={width || 500} height={height || 500}>
-        </svg>
-      </div>
-    );
-  }
-}
-
-export default CloudLayerVis;
+  export default CloudLayerVis;

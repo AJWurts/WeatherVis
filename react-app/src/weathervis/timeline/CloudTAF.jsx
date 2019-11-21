@@ -27,19 +27,19 @@ var drawCloud = (svg, cloud, minX, maxX, yScale) => {
     } else if (cloud.cover === 1) {
         clouds = [
             // [5, 20], [28, 43]
-            [12,36],
+            [12, 36],
         ]
     } else if (cloud.cover === 2) {
         clouds = [
-            [4, 20], [28,44]
+            [4, 20], [28, 44]
         ]
     } else if (cloud.cover === 3) {
         clouds = [
-            [2, 22], [26,46]
+            [2, 22], [26, 46]
         ]
     } else if (cloud.cover === 4) {
         clouds = [
-            [-4,52]
+            [-4, 52]
         ]
     } else if (cloud.cover === 5) {
         clouds = [
@@ -48,12 +48,12 @@ var drawCloud = (svg, cloud, minX, maxX, yScale) => {
     }
 
     // Clouds
-    svg.selectAll('clouds' + cloud.alt)
+    svg.selectAll('clouds' + cloud.base)
         .data(clouds)
         .enter()
         .append('rect')
         .attr('x', d => xScale(d[0]))
-        .attr('y', yScale(+cloud.alt + 1000)) //- (yScale(0) - yScale(1000)))
+        .attr('y', yScale(+cloud.base + 1000)) //- (yScale(0) - yScale(1000)))
         .attr('width', d => {
             return xScale(d[1]) - xScale(d[0])
         })
@@ -80,27 +80,20 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
     let divs = [];
     for (let i = 0; i < forecast.length; i++) {
         let levels = [];
-        let skyi = 1;
-        if (forecast[i].skyl2) {
-            while (forecast[i]['skyc' + skyi]) {
-
-                levels.push({
-                    cover: COVER_KEY[forecast[i]['skyc' + skyi]],
-                    alt: +forecast[i]['skyl' + skyi],
-                    time: timeFunc(forecast[i].start)
-                })
-                skyi++;
-            }
-            divs.push(levels)
-        } else if (forecast[i]['skyl1']) {
+        
+        for (let cloudIndex = 0; cloudIndex < forecast[i].clouds.length; cloudIndex++) {
             levels.push({
-                cover: COVER_KEY[forecast[i]['skyc' + skyi]],
-                alt: +forecast[i]['skyl' + skyi],
-                time: timeFunc(forecast[i].start),
+                cover: COVER_KEY[forecast[i].clouds[cloudIndex].cover],
+                base: forecast[i].clouds[cloudIndex].base,
+                time: timeFunc(forecast[i].start)
             })
-            divs.push(levels)
+        }
+        if (levels.length !== 0) {
+            divs.push(levels);
+
         }
     }
+
 
 
     for (let i = 0; i < divs.length; i++) {
@@ -113,7 +106,7 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
             if (i === divs.length - 1) {
                 endTime = maxX;
             } else {
-                endTime = divs[i+1][0].time
+                endTime = divs[i + 1][0].time
             }
 
             for (let k = 0; k < endTime - level.time; k++) {
