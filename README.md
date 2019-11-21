@@ -72,7 +72,7 @@ This app visualizes the weather and allows anyone to search for an airport and s
     * Default: 5
     * Example: 5, 10, 20, 30, 40
 #### Return
-*     Return: Multiple METAR objects sorted by valid date. See example METAR in /api/newestMETAR/
+* Multiple METAR objects sorted by valid date. See example METAR in /api/newestMETAR/
 
 
 
@@ -151,10 +151,7 @@ This app visualizes the weather and allows anyone to search for an airport and s
                         ... -> Multiple layers
                     ],
             },
-                {
-                    
-                }
-                Will be multiple of different types,
+                ... Includes multiple forecast items
 
             ]
         }
