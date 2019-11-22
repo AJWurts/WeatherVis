@@ -1,0 +1,19 @@
+---
+repos:
+- repo: git://github.com/pre-commit/pre-commit-hooks
+  rev: v2.4.0
+  hooks:
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: check-yaml
+    - id: check-merge-conflict
+- repo: git://github.com/pre-commit/mirrors-eslint
+  rev: v6.6.0
+  hooks:
+    - id: eslint
+      additional_dependencies:
+        - eslint@^5.4.0
+        - eslint-config-airbnb@^17.1.0
+        - eslint-plugin-import@^2.14.0
+        - eslint-plugin-jsx-a11y@^6.1.1
+        - eslint-plugin-react@^7.11.1
