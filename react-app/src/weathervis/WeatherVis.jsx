@@ -60,7 +60,7 @@ class WeatherVis extends Component {
         })
       })
 
-    axios.get(`/api/newestTAFS/${this.state.airport}`)
+    axios.get(`/api/nearbyTAFS/${this.state.airport}`)
       .then(result => {
 
         this.setState({
@@ -203,21 +203,7 @@ class WeatherVis extends Component {
             </div>}
           {!taf ? <div style={{ fontSize: 30 }}>{tafErrorMessage}</div> :
 
-            <div width="1055px" style={{ overflow: 'scroll' }}>
-              <div>
-                <LabelValue
-                  label={"TAF"}
-                  value={this.state.taf.raw.slice(0, 22)} />
-                <LabelValue
-                  label="Released"
-                  value={tafAge} />
-                <LabelValue
-                  label="Directions"
-                  value={"Hover or Tap on charts to see data for selected time."} />
-                <LabelValue
-                  value="On mobile turn phone sideways for better quality." />
-              </div>
-              <TimeLine data={taf} metar={metar} />
+            <MultiTaf tafs={tafs} metar={metar[0]}
             </div>}
         </div>
 

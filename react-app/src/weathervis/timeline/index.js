@@ -1,4 +1,4 @@
-import Timeline from './timeline.jsx';
+import MultiTAF from './MultiTAF.jsx';
 
 
-export default Timeline;
+export default MultiTAF;
