@@ -79,6 +79,7 @@ app.get('/api/nearestTAFS/:ident/:radius(\\d+)?', (req, res, next) => {
             addsClient.nearbyTafs(coord.lat, coord.lon, req.params.radius)
                 .then(tafs => {
                     tafs = parsers.parseMultipleTAF(tafs);
+
                     res.json(tafs)
                 });
         }).catch(error => {

@@ -35,7 +35,7 @@ const AddsClient = {
 
     _tafRequest(query) {
         return new Promise((resolve, reject) => {
-            axios.get(`${this.baseUrl}dataSource=tafs&hoursBeforeNow=1&timeType=valid&${query}`)
+            axios.get(`${this.baseUrl}dataSource=tafs&hoursBeforeNow=5&timeType=issue&${query}`)
                 .then(result => {
                     var text = result.data;
                     xml2js.parseStringPromise(text, { explicitArray: false }).then(parsed => {
@@ -67,7 +67,6 @@ const AddsClient = {
                 .then(result => {
                     var text = result.data;
                     xml2js.parseStringPromise(text, { explicitArray: false }).then(parsed => {
-                        console.log(parsed.response.data.Station);
                         resolve(parsed.response.data.Station);
                     })
                 }).catch(error => {

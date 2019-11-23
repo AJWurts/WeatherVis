@@ -11,7 +11,7 @@ import {
   Pressure,
   SelectableMetar
 } from './onemetar';
-import TimeLine from './timeline';
+import MultiTAF from './timeline';
 import { LabelValue, SearchBox } from '../components';
 
 import './weathervis.css';
@@ -63,13 +63,12 @@ class WeatherVis extends Component {
   onSearch = (ident) => {
     axios.get(`api/nearestAirports/${ident}`)
       .then(result => {
-        console.log(result.data);
         this.setState({
           nearestAirports: result.data
         })
       }).catch(error => {
         console.error(error);
-        
+
       })
     axios.get(`/api/recentMETARs/${ident}`)
       .then(result => {
@@ -88,11 +87,21 @@ class WeatherVis extends Component {
         })
       })
 
-    axios.get(`/api/newestTAFS/${ident}`)
+    axios.get(`/api/nearestTAFS/${ident}`)
       .then(result => {
-       
+        let searchedIdentTAFS = []
+        let otherTAFS = []
+        for (let i = 0; i < result.data.length; i++) {
+
+          if (result.data[i].airport === ident) {
+            searchedIdentTAFS.push(result.data[i]);
+          } else {
+            otherTAFS.push(result.data[i]);
+          }
+        }
+        
         this.setState({
-          taf: result.data[0],
+          taf: searchedIdentTAFS.concat(otherTAFS),
           tafErrorMessage: ''
         })
       }).catch(err => {
@@ -131,29 +140,16 @@ class WeatherVis extends Component {
     }
 
 
-    if (taf) {
-      let tafDate = new Date()
-      tafDate.setUTCDate(taf.released.day)
-      tafDate.setUTCHours(taf.released.hour, taf.released.minute)
-
-      let diff = new Date() - tafDate
-      let hours = diff / 3.6e6;
-      let minutes = (hours - Math.floor(hours)) * 60
-      let minRound = Math.round(minutes)
-
-
-      var tafAge = `${Math.floor(hours)}:${("" + minRound).padStart(2, "0")} minutes ago`
-    }
 
 
     return (
       <div className='top-bar'>
-        <SearchBox onClick={this.onSearch} value={ this.state.airport } nearestAirports={nearestAirports} />
+        <SearchBox onClick={this.onSearch} value={this.state.airport} nearestAirports={nearestAirports} />
         <div style={{ margin: '5px', overflow: 'visible' }}>
 
           {metar ?
             <SelectableMetar label="Selectable Metar" onHover={this.handleMouseOver} onMouseLeave={this.handleMouseLeave} metar={metar[0]} /> : null}
- 
+
           {metar ?
             <LabelValue label={"Raw METAR"} value={metar[0].raw} /> : null}
           {metarAge ?
@@ -186,11 +182,11 @@ class WeatherVis extends Component {
             </div>}
           {!taf ? <div style={{ fontSize: 30 }}>{tafErrorMessage}</div> :
 
-            <MultiTaf tafs={tafs} metar={metar[0]}
-            </div>}
+            <MultiTAF tafs={taf} metar={metar ? metar[0] : null} />
+          }
         </div>
 
-      </div>
+      </div >
     );
   }
 }

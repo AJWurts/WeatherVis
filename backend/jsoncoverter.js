@@ -147,8 +147,15 @@ function parseWeather(weather) {
     */
 
     let splitWeather = weather.split(' ')
+    let parsedWeather = []
+    for (let i = 0; i < splitWeather.length; i++) {
+        let parsed = parseWAbbv(splitWeather[i]);
+        if (parsed) {
+            parsedWeather.push(parsed);
+        }
 
-    return splitWeather.map(parseWAbbv);
+    }
+    return parsedWeather;
 }
 
 // TAF PARSING
@@ -158,6 +165,10 @@ function parseTAF(json) {
         raw_text: {
             conv: (d) => d,
             key: 'raw'
+        },
+        station_id: {
+            conv: (d) => d,
+            key: 'airport'
         },
         issue_time: {
             conv: d => parseDate(d),

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import Timeline from '.';
+import TimeLine from './timeline.jsx';
+
+import LabelValue from '../../components/LabelValue.jsx';
 
 class MultiTAF extends Component {
     constructor(props) {
@@ -10,18 +12,56 @@ class MultiTAF extends Component {
         };
     }
 
+    onTafClick = (index) => {
+        this.setState({
+            tafIndexVisible: index
+        })
+    }
+
     render() {
 
-        var { tafs, metar } = props;
+        var { tafs, metar } = this.props;
+        console.log(tafs[0])
         return (
             <div>
+                <div>
+                    {tafs ?
+                        <div>
+                            <span className='normal'>
+                                Nearest TAFS
+                            </span>
+
+                            {tafs.map((taf, index) => {
+                                return <button key={index} onClick={() => this.onTafClick(index)} style={{ verticalAlign: 'middle', padding: '5px 10px' }} className='button'>
+                                    {taf.airport}
+                                </button>
+                            })}
+                        </div> : null}
+                </div>
+                       
                 {tafs ?
                     tafs.map((taf, index) => {
-                        return <div width="1055px" style={{ overflow: 'scroll' }}>
+                        if (index !== this.state.tafIndexVisible)
+                            return;
+                        if (taf) {
+                            let tafDate = new Date()
+                            tafDate.setUTCDate(taf.released.day)
+                            tafDate.setUTCHours(taf.released.hour, taf.released.minute)
+
+                            let diff = new Date() - tafDate
+                            let hours = diff / 3.6e6;
+                            let minutes = (hours - Math.floor(hours)) * 60
+                            let minRound = Math.round(minutes)
+
+
+                            var tafAge = `${Math.floor(hours)}:${("" + minRound).padStart(2, "0")} minutes ago`
+                        }
+                        return <div key={index} width="1055px" style={{ overflow: 'scroll' }}>
+
                             <div>
                                 <LabelValue
                                     label={"TAF"}
-                                    value={this.state.taf.raw.slice(0, 22)} />
+                                    value={taf.raw.slice(0, 22)} />
                                 <LabelValue
                                     label="Released"
                                     value={tafAge} />
@@ -33,7 +73,8 @@ class MultiTAF extends Component {
                             </div>
                             <TimeLine data={taf} metar={metar} />
                         </div>
-                            : null}
+                    })
+                    : null}
             </div>
         );
     }
