@@ -44,7 +44,7 @@ class SearchBox extends Component {
           Airport Search:
         </div>
         <input onChange={this.onChange}
-          style={{ height: '20px', width: '50px', fontSize: '18px', borderRadius: '20px', border: 'none', padding: '5px', verticalAlign: 'middle' }} value={this.state.input} placeholder={this.props.value} />
+          style={{ height: '20px', width: '80px', fontSize: '18px', borderRadius: '20px', border: 'none', padding: '5px', verticalAlign: 'middle', textAlign: 'center' }} value={this.state.input} placeholder={this.props.value} />
         <button onClick={this.onClick} style={{ verticalAlign: 'middle', padding: '5px 25px' }} className='button'>
           Search
         </button>
