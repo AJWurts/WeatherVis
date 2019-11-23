@@ -15,6 +15,7 @@ import TimeLine from './timeline';
 import { LabelValue, SearchBox } from '../components';
 
 import './weathervis.css';
+import { cpus } from 'os';
 
 class WeatherVis extends Component {
   constructor(props) {
@@ -27,7 +28,8 @@ class WeatherVis extends Component {
       airport: cookies.get('airport') || "KBED",
       tafErrorMessage: 'Loading TAF...',
       metarErrorMessage: 'Loading METAR...',
-      isMobile: false
+      isMobile: false,
+      nearestAirports: null
     }
   }
 
@@ -45,36 +47,7 @@ class WeatherVis extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    axios.get(`/api/recentMETARs/${this.state.airport}`)
-      .then(result => {
-
-        this.setState({
-          metar: result.data.metars,
-          runways: result.data.runways,
-          metarErrorMessage: ''
-        })
-      }).catch(err => {
-        this.setState({
-          metar: null,
-          metarErrorMessage: "Could not find airport. Try again."
-        })
-      })
-
-    axios.get(`/api/newestTAFS/${this.state.airport}`)
-      .then(result => {
-
-        this.setState({
-          taf: result.data[0],
-          tafErrorMessage: ''
-        })
-      }).catch(err => {
-        this.setState({
-          taf: null,
-          tafErrorMesssage: 'No TAF available'
-        })
-      })
-
-
+    this.onSearch(this.state.airport);
   }
 
   handleMouseOver = (key) => {
@@ -88,6 +61,16 @@ class WeatherVis extends Component {
   }
 
   onSearch = (ident) => {
+    axios.get(`api/nearestAirports/${ident}`)
+      .then(result => {
+        console.log(result.data);
+        this.setState({
+          nearestAirports: result.data
+        })
+      }).catch(error => {
+        console.error(error);
+        
+      })
     axios.get(`/api/recentMETARs/${ident}`)
       .then(result => {
 
@@ -107,6 +90,7 @@ class WeatherVis extends Component {
 
     axios.get(`/api/newestTAFS/${ident}`)
       .then(result => {
+       
         this.setState({
           taf: result.data[0],
           tafErrorMessage: ''
@@ -130,8 +114,8 @@ class WeatherVis extends Component {
       airport, runways,
       tafErrorMessage,
       metarErrorMessage,
-      isMobile } = this.state;
-      console.log(metar)
+      isMobile,
+      nearestAirports } = this.state;
     if (metar) {
       let metarDate = new Date()
       metarDate.setUTCDate(metar[0].valid.day)
@@ -145,7 +129,6 @@ class WeatherVis extends Component {
 
       var metarAge = `${("" + minRound).padStart(2, "0")} minutes ago`
     }
-
 
 
     if (taf) {
@@ -165,7 +148,7 @@ class WeatherVis extends Component {
 
     return (
       <div className='top-bar'>
-        <SearchBox onClick={this.onSearch} value={ this.state.airport } />
+        <SearchBox onClick={this.onSearch} value={ this.state.airport } nearestAirports={nearestAirports} />
         <div style={{ margin: '5px', overflow: 'visible' }}>
 
           {metar ?
