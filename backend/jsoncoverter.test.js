@@ -196,5 +196,6 @@ test('parseStation', () => {
     expect(stdJSON.name).toEqual("PORTSMOUTH/PEASE")
     expect(stdJSON.state).toEqual('NH')
     expect(stdJSON.country).toEqual("US")
+    expect(stdJSON.typeList[0]).toEqual("METAR")
 
 });
