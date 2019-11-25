@@ -386,6 +386,10 @@ function parseStation(json) {
             conv: (d) => d ? d : null,
             key: 'country',
         },
+        site_type: {
+            conv: (d) => d ? Object.keys(d) : [],
+            key: "typeList"
+        }
 
     }
 
@@ -403,6 +407,7 @@ function parseStation(json) {
         </site_type>
         }
         */
+
     let stdJSON = {}
     for (let key in keyConv) {
         let stdKey = keyConv[key].key

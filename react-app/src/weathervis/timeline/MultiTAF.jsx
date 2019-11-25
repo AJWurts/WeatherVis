@@ -21,7 +21,6 @@ class MultiTAF extends Component {
     render() {
 
         var { tafs, metar } = this.props;
-        console.log(tafs[0])
         return (
             <div>
                 <div>
@@ -54,7 +53,7 @@ class MultiTAF extends Component {
                             let minRound = Math.round(minutes)
 
 
-                            var tafAge = `${Math.floor(hours)}:${("" + minRound).padStart(2, "0")} minutes ago`
+                            var tafAge = `${Math.floor(hours)}:${("" + minRound).padStart(2, "0")} hours ago`
                         }
                         return <div key={index} width="1055px" style={{ overflow: 'scroll' }}>
 

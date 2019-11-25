@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 // Search Box
@@ -51,13 +52,16 @@ class SearchBox extends Component {
         {nearestAirports ?
           <div>
             <span style={{ display: 'inline-block', fontSize: '22px', margin: '0px 8px', verticalAlign: 'middle', color: 'white' }}>
-              Nearest Airports
+              Nearest Stations
             </span>
 
             {nearestAirports.map((airport, index) => {
-              return <button key={index} onClick={() => this.onAirportClick(airport)} style={{ verticalAlign: 'middle', padding: '5px 10px', marginTop: "5px" }} className='button'>
-                {airport.airport}: {airport.name.toLowerCase() + ", " + airport.state}
+              return <Tooltip title={airport.name + ", " + airport.state}>
+
+              <button key={index} onClick={() => this.onAirportClick(airport)} style={{ verticalAlign: 'middle', padding: '5px 10px', marginTop: "5px" }} className='button'>
+                {airport.airport}
               </button>
+              </Tooltip>
             })}
           </div> : null}
 
