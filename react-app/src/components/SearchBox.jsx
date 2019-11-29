@@ -56,7 +56,7 @@ class SearchBox extends Component {
 
             {nearestAirports.map((airport, index) => {
               return <button key={index} onClick={() => this.onAirportClick(airport)} style={{ verticalAlign: 'middle', padding: '5px 10px', marginTop: "5px" }} className='button'>
-                {airport.airport}: {airport.name.toLowerCase() + ", " + airport.state}
+                {airport.airport}: {airport.name.toLowerCase()}, {airport.state}
               </button>
             })}
           </div> : null}
