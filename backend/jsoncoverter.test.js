@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-const { parseDate, parseSkyCondition, parseWeather, parseTAF, parseMETAR } = require('./weatherparser.js');
+const { parseDate, parseSkyCondition, parseWeather, parseTAF, parseMETAR, parseStation } = require('./jsoncoverter.js');
 
 test('parseDate', () => {
     var date = parseDate('2019-11-19T17:35:00Z')
@@ -24,14 +24,12 @@ test('parseDate', () => {
 
 test("parseSkyCondition", () => {
     let conditions = parseSkyCondition(
-        [
-            {
-                $: {
-                    sky_cover: "OVC",
-                    cloud_base_ft_agl: "800"
-                }
+        [{
+            $: {
+                sky_cover: "OVC",
+                cloud_base_ft_agl: "800"
             }
-        ]
+        }]
     )
     expect(conditions.length).toEqual(1)
     expect(conditions[0].cover).toBe('OVC')
@@ -61,8 +59,7 @@ test('parseTAF', () => {
         latitude: "42.37",
         longitude: "-71.02",
         elevation_m: "6.0",
-        forecast: [
-            {
+        forecast: [{
                 fcst_time_from: "2019-11-19T18:00:00Z",
                 fcst_time_to: "2019-11-19T21:00:00Z",
                 wind_dir_degrees: "110",
@@ -70,14 +67,12 @@ test('parseTAF', () => {
                 wind_speed_kt: "4",
                 visibility_statute_mi: "3.0",
                 wx_string: "BR VCSH",
-                sky_condition: [
-                    {
-                        $: {
-                            sky_cover: "OVC",
-                            cloud_base_ft_agl: "800"
-                        }
+                sky_condition: [{
+                    $: {
+                        sky_cover: "OVC",
+                        cloud_base_ft_agl: "800"
                     }
-                ]
+                }]
             },
             {
                 fcst_time_from: "2019-11-19T18:00:00Z",
@@ -87,8 +82,7 @@ test('parseTAF', () => {
                 wind_speed_kt: "4",
                 visibility_statute_mi: "3.0",
                 wx_string: "BR VCSH",
-                sky_condition:
-                {
+                sky_condition: {
                     $: {
                         sky_cover: "OVC",
                         cloud_base_ft_agl: "800"
@@ -139,8 +133,7 @@ test('parseMETAR', () => {
             auto_station: "TRUE"
         },
         wx_string: "-RA",
-        sky_condition: [
-            {
+        sky_condition: [{
                 $: {
                     sky_cover: "BKN",
                     cloud_base_ft_agl: "800"
@@ -179,3 +172,30 @@ test('parseMETAR', () => {
     expect(stdJSON.weather[0].raw).toBe("-RA")
 
 })
+
+
+
+test('parseStation', () => {
+    let exampleStation = {
+        station_id: 'KPSM',
+        latitude: '43.07',
+        longitude: '-70.82',
+        elevation_m: '31.0',
+        site: 'PORTSMOUTH/PEASE',
+        state: 'NH',
+        country: 'US',
+        site_type: { METAR: '', TAF: '' }
+    }
+
+    let stdJSON = parseStation(exampleStation);
+
+    expect(stdJSON.airport).toEqual('KPSM')
+    expect(stdJSON.lat).toBe(43.07)
+    expect(stdJSON.lon).toBe(-70.82)
+    expect(stdJSON.elevation).toBe(31.0)
+    expect(stdJSON.name).toEqual("PORTSMOUTH/PEASE")
+    expect(stdJSON.state).toEqual('NH')
+    expect(stdJSON.country).toEqual("US")
+    expect(stdJSON.typeList[0]).toEqual("METAR")
+
+});

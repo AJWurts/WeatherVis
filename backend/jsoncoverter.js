@@ -147,8 +147,15 @@ function parseWeather(weather) {
     */
 
     let splitWeather = weather.split(' ')
+    let parsedWeather = []
+    for (let i = 0; i < splitWeather.length; i++) {
+        let parsed = parseWAbbv(splitWeather[i]);
+        if (parsed) {
+            parsedWeather.push(parsed);
+        }
 
-    return splitWeather.map(parseWAbbv);
+    }
+    return parsedWeather;
 }
 
 // TAF PARSING
@@ -158,6 +165,10 @@ function parseTAF(json) {
         raw_text: {
             conv: (d) => d,
             key: 'raw'
+        },
+        station_id: {
+            conv: (d) => d,
+            key: 'airport'
         },
         issue_time: {
             conv: d => parseDate(d),
@@ -191,7 +202,7 @@ function parseTAF(json) {
             key: 'drct'
         },
         wind_speed_kt: {
-            conv: (d) => d ?  parseInt(d) : null,
+            conv: (d) => d ? parseInt(d) : null,
             key: 'sknt',
         },
         wind_gust_kt: {
@@ -287,7 +298,7 @@ function parseMETAR(json) {
             key: 'drct'
         },
         wind_speed_kt: {
-            conv: (d) => d ?  parseInt(d) : null,
+            conv: (d) => d ? parseInt(d) : null,
             key: 'sknt',
         },
         wind_gust_kt: {
@@ -333,7 +344,7 @@ function parseMETAR(json) {
 
 
     return stdJSON;
-    
+
 }
 
 function parseMultipleMETAR(metars) {
@@ -346,4 +357,85 @@ function parseMultipleMETAR(metars) {
     return multiple;
 }
 
-module.exports = { parseDate, parseWeather, parseSkyCondition, parseTAF, parseMultipleTAF, parseMETAR,  parseMultipleMETAR}
+
+/// STATION PARSING
+function parseStation(json) {
+    let keyConv = {
+        // XML JSON: Std JSON
+
+        station_id: {
+            conv: (d) => d,
+            key: 'airport'
+        },
+        latitude: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'lat'
+        },
+        longitude: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'lon',
+        },
+        elevation_m: {
+            conv: d => d ? parseFloat(d) : null,
+            key: 'elevation',
+        },
+        site: {
+            conv: (d) => d ? d : null,
+            key: 'name'
+        },
+        state: {
+            conv: (d) => d ? d : null,
+            key: 'state',
+        },
+        country: {
+            conv: (d) => d ? d : null,
+            key: 'country',
+        },
+        site_type: {
+            conv: (d) => d ? Object.keys(d) : [],
+            key: "typeList"
+        }
+
+    }
+
+
+    /*<station_id>KBKF</station_id>
+        <latitude>39.72</latitude>
+        <longitude>-104.75</longitude>
+        <elevation_m>1726.0</elevation_m>
+        <site>BUCKLEY ANGB/DEN</site>
+        <state>CO</state>
+        <country>US</country>
+        <site_type>
+        <METAR/>
+        <TAF/>
+        </site_type>
+        }
+        */
+
+    let stdJSON = {}
+    for (let key in keyConv) {
+        let stdKey = keyConv[key].key
+        let convFunc = keyConv[key].conv
+        stdJSON[stdKey] = convFunc(json[key])
+    }
+
+
+    return stdJSON;
+
+}
+
+
+function parseMultipleStations(json) {
+
+    let multiple = [];
+
+    for (let i = 0; i < json.length; i++) {
+        multiple.push(parseStation(json[i]));
+    }
+
+    return multiple;
+
+}
+
+module.exports = { parseDate, parseWeather, parseSkyCondition, parseTAF, parseMultipleTAF, parseMETAR, parseMultipleMETAR, parseStation, parseMultipleStations }

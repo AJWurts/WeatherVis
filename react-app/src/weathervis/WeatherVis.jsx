@@ -11,10 +11,11 @@ import {
   Pressure,
   SelectableMetar
 } from './onemetar';
-import TimeLine from './timeline';
+import MultiTAF from './timeline';
 import { LabelValue, SearchBox } from '../components';
 
 import './weathervis.css';
+import { cpus } from 'os';
 
 class WeatherVis extends Component {
   constructor(props) {
@@ -27,7 +28,8 @@ class WeatherVis extends Component {
       airport: cookies.get('airport') || "KBED",
       tafErrorMessage: 'Loading TAF...',
       metarErrorMessage: 'Loading METAR...',
-      isMobile: false
+      isMobile: false,
+      nearestAirports: null
     }
   }
 
@@ -45,36 +47,7 @@ class WeatherVis extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    axios.get(`/api/recentMETARs/${this.state.airport}`)
-      .then(result => {
-
-        this.setState({
-          metar: result.data.metars,
-          runways: result.data.runways,
-          metarErrorMessage: ''
-        })
-      }).catch(err => {
-        this.setState({
-          metar: null,
-          metarErrorMessage: "Could not find airport. Try again."
-        })
-      })
-
-    axios.get(`/api/newestTAFS/${this.state.airport}`)
-      .then(result => {
-
-        this.setState({
-          taf: result.data[0],
-          tafErrorMessage: ''
-        })
-      }).catch(err => {
-        this.setState({
-          taf: null,
-          tafErrorMesssage: 'No TAF available'
-        })
-      })
-
-
+    this.onSearch(this.state.airport);
   }
 
   handleMouseOver = (key) => {
@@ -88,6 +61,15 @@ class WeatherVis extends Component {
   }
 
   onSearch = (ident) => {
+    axios.get(`api/nearestAirports/${ident}`)
+      .then(result => {
+        this.setState({
+          nearestAirports: result.data
+        })
+      }).catch(error => {
+        console.error(error);
+
+      })
     axios.get(`/api/recentMETARs/${ident}`)
       .then(result => {
 
@@ -105,10 +87,21 @@ class WeatherVis extends Component {
         })
       })
 
-    axios.get(`/api/newestTAFS/${ident}`)
+    axios.get(`/api/nearestTAFS/${ident}`)
       .then(result => {
+        let searchedIdentTAFS = []
+        let otherTAFS = []
+        for (let i = 0; i < result.data.length; i++) {
+
+          if (result.data[i].airport === ident) {
+            searchedIdentTAFS.push(result.data[i]);
+          } else {
+            otherTAFS.push(result.data[i]);
+          }
+        }
+        
         this.setState({
-          taf: result.data[0],
+          taf: searchedIdentTAFS.concat(otherTAFS),
           tafErrorMessage: ''
         })
       }).catch(err => {
@@ -130,8 +123,8 @@ class WeatherVis extends Component {
       airport, runways,
       tafErrorMessage,
       metarErrorMessage,
-      isMobile } = this.state;
-      console.log(metar)
+      isMobile,
+      nearestAirports } = this.state;
     if (metar) {
       let metarDate = new Date()
       metarDate.setUTCDate(metar[0].valid.day)
@@ -148,29 +141,15 @@ class WeatherVis extends Component {
 
 
 
-    if (taf) {
-      let tafDate = new Date()
-      tafDate.setUTCDate(taf.released.day)
-      tafDate.setUTCHours(taf.released.hour, taf.released.minute)
-
-      let diff = new Date() - tafDate
-      let hours = diff / 3.6e6;
-      let minutes = (hours - Math.floor(hours)) * 60
-      let minRound = Math.round(minutes)
-
-
-      var tafAge = `${Math.floor(hours)}:${("" + minRound).padStart(2, "0")} minutes ago`
-    }
-
 
     return (
       <div className='top-bar'>
-        <SearchBox onClick={this.onSearch} value={ this.state.airport } />
+        <SearchBox onClick={this.onSearch} value={this.state.airport} nearestAirports={nearestAirports} />
         <div style={{ margin: '5px', overflow: 'visible' }}>
 
           {metar ?
             <SelectableMetar label="Selectable Metar" onHover={this.handleMouseOver} onMouseLeave={this.handleMouseLeave} metar={metar[0]} /> : null}
- 
+
           {metar ?
             <LabelValue label={"Raw METAR"} value={metar[0].raw} /> : null}
           {metarAge ?
@@ -203,25 +182,11 @@ class WeatherVis extends Component {
             </div>}
           {!taf ? <div style={{ fontSize: 30 }}>{tafErrorMessage}</div> :
 
-            <div width="1055px" style={{ overflow: 'scroll' }}>
-              <div>
-                <LabelValue
-                  label={"TAF"}
-                  value={this.state.taf.raw.slice(0, 22)} />
-                <LabelValue
-                  label="Released"
-                  value={tafAge} />
-                <LabelValue
-                  label="Directions"
-                  value={"Hover or Tap on charts to see data for selected time."} />
-                <LabelValue
-                  value="On mobile turn phone sideways for better quality." />
-              </div>
-              <TimeLine data={taf} metar={metar} />
-            </div>}
+            <MultiTAF tafs={taf} metar={metar ? metar[0] : null} />
+          }
         </div>
 
-      </div>
+      </div >
     );
   }
 }
