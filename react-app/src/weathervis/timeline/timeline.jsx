@@ -182,7 +182,7 @@ class TimeLine extends Component {
         if (this.last_data && this.last_data.start && this.last_data.start.hour !== previous_data.start.hour) {
             let cloudStr = ""
             for (let j = 0; j  < previous_data.clouds.length; j++) {
-                    cloudStr += previous_data.clouds[j].cover + "" +previous_data.clouds[j].base  + "ft "
+                    cloudStr += previous_data.clouds[j].cover + (previous_data.clouds[j].base ?  (previous_data.clouds[j].base  + "ft ") : "");
             }
             d3.select('.clouds')
                 .text(cloudStr)
@@ -210,7 +210,8 @@ class TimeLine extends Component {
             .attr('x', event.clientX)
 
         d3.select('.time')
-            .text(`${previous_data.raw}`)
+            .text(`${previous_data.start.month}/${previous_data.start.day
+            }/${previous_data.start.year} ${pad(previous_data.start.hour, 2)}:${pad(previous_data.start.minute, 2)}:00`)
             .attr('alignment-baseline', 'hanging')
 
 
