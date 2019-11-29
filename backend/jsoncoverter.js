@@ -140,7 +140,7 @@ function parseWeather(weather) {
     weather: [
         {
             text: "Heavy Rain",
-            raw: "+RA" 
+            raw: "+RA"
         },
         ...
     ]
@@ -252,13 +252,18 @@ function parseTAF(json) {
 }
 
 function parseMultipleTAF(tafs) {
-    let multiple = [];
+  let multiple = [];
 
-    for (let i = 0; i < tafs.length; i++) {
-        multiple.push(parseTAF(tafs[i]));
-    }
+  // Still do the right thing even if we were only given a single TAF.
+  if(!Array.isArray(tafs)) {
+    tafs = Array(tafs)
+  }
 
-    return multiple;
+  for (let i = 0; i < tafs.length; i++) {
+      multiple.push(parseTAF(tafs[i]));
+  }
+
+  return multiple;
 }
 
 

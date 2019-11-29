@@ -1,6 +1,6 @@
 # Weather Visualization using METARs and TAFs
 By Alexander Wurts
-## Slack
+## Flock aka Slack but better
 Join the [Flock](weathervis.flock.com), a group chat platform, to see how you can contribute.
 
 ## Data Source
