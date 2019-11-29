@@ -6,11 +6,11 @@ const AddsClient = {
   baseUrl: 'https://aviationweather.gov/adds/dataserver_current/httpparam?requestType=retrieve&format=xml&',
 
   stationTaf(airportId) {
-    return this._tafRequest(`stationString=${airportId}`)
+    return this._tafRequest(`stationString=${airportId}&mostRecentForEachStation=constraint`)
   },
 
   nearbyTafs(lat, lon, distance=50) {
-    return this._tafRequest(`radialDistance=${distance};${lon},${lat}`)
+    return this._tafRequest(`radialDistance=${distance};${lon},${lat}&mostRecentForEachStation=constraint`)
   },
 
   newestMetar(airportId) {
