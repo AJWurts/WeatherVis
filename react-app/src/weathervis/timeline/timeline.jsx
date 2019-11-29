@@ -187,8 +187,12 @@ class TimeLine extends Component {
             d3.select('.clouds')
                 .text(cloudStr)
 
+            let vis = previous_data.vsby;
+            if (previous_data.vsby === 6.21) {
+                vis = "P6";
+            } 
             d3.select('.vis')
-                .text(previous_data.vsby + "SM")
+                .text(vis + "SM")
 
             d3.select(".wind")
                 .text(`${previous_data.drct} at ${previous_data.sknt} KT ${previous_data.gust > 0 ? "gusting " + previous_data.gust : ""}`)
@@ -209,11 +213,11 @@ class TimeLine extends Component {
         d3.select('.ttbox')
             .attr('x', event.clientX)
 
+        var date = previous_data.start;
+        var utcDate = new Date(Date.UTC(date.year, date.month, date.day, date.hour, date.minute, date.second))
         d3.select('.time')
-            .text(`${previous_data.start.month}/${previous_data.start.day
-            }/${previous_data.start.year} ${pad(previous_data.start.hour, 2)}:${pad(previous_data.start.minute, 2)}:00`)
+            .text(utcDate.toUTCString())
             .attr('alignment-baseline', 'hanging')
-
 
     }
     render() {
@@ -222,7 +226,7 @@ class TimeLine extends Component {
             <div style={{ width: '1055px' }} ref={outer => this.outer = outer}>
                 <svg style={{ width: '1055px', height: '600px' }} ref={outside_svg => this.outer_svg = outside_svg} onMouseMove={this.onMouseMove}>
                     <g style={{ width: '1055px', height: "100%" }}>
-                        <LabelValueSVG y={0.00} label="Raw" />
+                        <LabelValueSVG y={0.00} label="Start" />
                         <LabelValueSVG y={0.05} label="Clouds" />
                         <svg style={{ display: 'block' }}
                             y="8%"

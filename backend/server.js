@@ -92,7 +92,6 @@ app.get('/api/nearestMETARs/:ident/:radius(\\d+)?', (req, res, next) => {
 
     airportData.getCoordinates(airportLetters)
         .then(coord => {
-            // console.log(coord);
             return addsClient.nearbyMetars(coord.lat, coord.lon, req.params.radius)
                 .then(metars => {
                     metars = parsers.parseMultipleMETAR(metars);
@@ -110,9 +109,9 @@ app.get('/api/nearestAirports/:ident/:radius(\\d+)?', (req, res, next) => {
         .then(coord => {
             return addsClient.nearbyStations(coord.lat, coord.lon, req.params.radius)
                 .then(stations => {
-                    // console.log(stations[0])
                     stations = parsers.parseMultipleStations(stations);
-                    // console.log(stations[0])
+
+                    // Filter out non-airports
                     let onlyAirports = []
                     for (let i = 0; i < stations.length; i++) {
                         for (let type = 0; type < stations[i].typeList.length; type++) {
