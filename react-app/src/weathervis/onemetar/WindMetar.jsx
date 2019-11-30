@@ -261,9 +261,10 @@ class Wind extends Component {
 
     data.forEach((d) => {
       svg.append('text')
-        .attr('transform', `translate(${250} ${250}) rotate(${d.trueHeading + this.state.angle}) translate(10 ${-d.scaledLength + 5}) rotate(180)`)
+        .attr('transform', `translate(${250} ${250}) rotate(${d.trueHeading + this.state.angle}) translate(0 ${-d.scaledLength + 5}) rotate(180)`)
         .attr('fill', 'white')
-        .text(((d.heading + 180) % 361) / 10)
+        .attr('text-anchor', 'middle')
+        .text((((d.heading + 180) % 361) / 10).toFixed())
 
     })
 
