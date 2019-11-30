@@ -234,7 +234,6 @@ function parseTAF(json) {
     stdJSON['forecast'] = []
 
     if (!Array.isArray(json.forecast)) {
-
         json.forecast = [json.forecast]
     }
 
@@ -261,7 +260,6 @@ function parseMultipleTAF(tafs) {
 
     // // Still do the right thing even if we were only given a single TAF.
     if (!Array.isArray(tafs)) {
-        console.log(tafs);
         tafs = [tafs]
     }
 
@@ -357,7 +355,7 @@ function parseMultipleMETAR(metars) {
     let multiple = [];
 
     if (!Array.isArray(metars)) {
-        multiple = Array(metars)
+        metars = [metars]
     }
 
 
@@ -442,7 +440,7 @@ function parseMultipleStations(json) {
     let multiple = [];
 
     if (!Array.isArray(json)) {
-        multiple = Array(json)
+        json = Array(json)
     }
 
 

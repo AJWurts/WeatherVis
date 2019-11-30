@@ -5,7 +5,7 @@ import { LabelValue } from '../../components';
 
 const compass = [
   {
-    dir: 0,
+    dir: 360,
     label: 'N'
   },
   {
@@ -87,7 +87,7 @@ class Wind extends Component {
       speed = 0;
     } else {
       // Flip arrow 180 so it points with the wind
-      dir = (dir + 180) % 360;
+      dir = (dir + 180) % 361;
     }
 
     var speedScale = d3.scalePow()
@@ -261,9 +261,9 @@ class Wind extends Component {
 
     data.forEach((d) => {
       svg.append('text')
-        .attr('transform', `translate(${250} ${250}) rotate(${d.trueHeading + this.state.angle}) translate(8 ${-d.scaledLength + 5}) rotate(180)`)
+        .attr('transform', `translate(${250} ${250}) rotate(${d.trueHeading + this.state.angle}) translate(10 ${-d.scaledLength + 5}) rotate(180)`)
         .attr('fill', 'white')
-        .text(((d.heading + 180) % 360) / 10)
+        .text(((d.heading + 180) % 361) / 10)
 
     })
 

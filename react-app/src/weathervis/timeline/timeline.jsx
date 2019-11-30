@@ -75,17 +75,23 @@ class TimeLine extends Component {
         }
 
         this.time = timeFunc(data.start, data.end)
-        let maxTime;
-        if (data.end.day === data.start.day) {
-            // Within 1 day 
-            maxTime = (data.end.hour - data.start.hour);
-        } else if (data.end.day - data.start.day === 2) {
-            // More than one day difference
-            maxTime = 24 + (24 - data.start.hour) + data.end.hour
-        } else {
-            // One day Difference
-            maxTime = (24 - data.start.hour) + data.end.hour
-        }
+        let start = new Date(Date.UTC(data.start.year, data.start.month - 1, data.start.day, data.start.hour, data.start.minute))
+        let end = new Date(Date.UTC(data.end.year, data.end.month - 1, data.end.day, data.end.hour, data.end.minute))
+    
+        let length = Math.abs(end - start) / 3600000;
+        
+        let maxTime = length;
+        console.log(maxTime)
+        // if (data.end.day === data.start.day) {
+        //     // Within 1 day 
+        //     maxTime = (data.end.hour - data.start.hour);
+        // } else if (data.end.day - data.start.day === 2) {
+        //     // More than one day difference
+        //     maxTime = 24 + (24 - data.start.hour) + data.end.hour
+        // } else {
+        //     // One day Difference
+        //     maxTime = (24 - data.start.hour) + data.end.hour
+        // }
 
 
         this.maxTime = maxTime;
@@ -214,9 +220,9 @@ class TimeLine extends Component {
             .attr('x', event.clientX)
 
         var date = previous_data.start;
-        var utcDate = new Date(Date.UTC(date.year, date.month, date.day, date.hour, date.minute, date.second))
+        var utcDate = new Date(Date.UTC(date.year, date.month - 1, date.day, date.hour, date.minute, date.second))
         d3.select('.time')
-            .text(utcDate.toUTCString())
+            .text(utcDate.toUTCString() + "(Z)")
             .attr('alignment-baseline', 'hanging')
 
     }
