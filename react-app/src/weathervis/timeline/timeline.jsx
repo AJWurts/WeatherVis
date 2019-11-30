@@ -195,7 +195,7 @@ class TimeLine extends Component {
 
             let vis = previous_data.vsby;
             if (previous_data.vsby === 6.21) {
-                vis = "P6";
+                vis = "Greater than 6";
             } 
             d3.select('.vis')
                 .text(vis + "SM")
