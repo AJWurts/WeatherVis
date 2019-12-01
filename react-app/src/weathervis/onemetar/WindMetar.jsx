@@ -315,13 +315,13 @@ class Wind extends Component {
 
     let dir = this.props.metar[0].drct;
     let spd = this.props.metar[0].sknt;
-    let angle = this.rads(Math.abs((((heading + variation) + 360 - dir) % 360)))
-    let headwind = Math.floor(Math.cos(angle) * spd);
-    let crosswind = -Math.floor(Math.sin(angle) * spd);
+    let angle = this.rads(Math.abs((((heading + variation) + 360 - dir) % 361)))
+    let headwind = Math.round(Math.cos(angle) * spd);
+    let crosswind = -Math.round(Math.sin(angle) * spd);
     svg.append("text")
       .attr('x', -35)
       .attr('y', yCoord)
-      .text(`${heading / 10}: `)
+      .text(`${((heading + 360) % 361 / 10).toFixed()}: `)
       .attr('color', 'black')
     if (headwind < 0) {
       svg.append('path')
