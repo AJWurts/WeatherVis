@@ -81,7 +81,6 @@ class TimeLine extends Component {
         let length = Math.abs(end - start) / 3600000;
         
         let maxTime = length;
-        console.log(maxTime)
         // if (data.end.day === data.start.day) {
         //     // Within 1 day 
         //     maxTime = (data.end.hour - data.start.hour);

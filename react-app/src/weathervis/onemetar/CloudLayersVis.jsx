@@ -33,7 +33,7 @@ class CloudLayerVis extends Component {
   }
   componentDidMount() {
     this.createGraph()
-    console.log("Metar Cloud Layer Vis Mounting")
+    // console.log("Metar Cloud Layer Vis Mounting")
   }
 
   UNSAFE_componentWillReceiveProps(props) {

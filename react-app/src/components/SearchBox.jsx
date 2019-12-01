@@ -56,7 +56,7 @@ class SearchBox extends Component {
             </span>
 
             {nearestAirports.map((airport, index) => {
-              return <Tooltip title={airport.name + ", " + airport.state}>
+              return <Tooltip key={index} title={airport.name + ", " + airport.state}>
 
               <button key={index} onClick={() => this.onAirportClick(airport)} style={{ verticalAlign: 'middle', padding: '5px 10px', marginTop: "5px" }} className='button'>
                 {airport.airport}
