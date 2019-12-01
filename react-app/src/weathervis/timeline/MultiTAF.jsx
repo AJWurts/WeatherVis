@@ -43,11 +43,10 @@ class MultiTAF extends Component {
                         if (index !== this.state.tafIndexVisible)
                             return;
                         if (taf) {
-                            let tafDate = new Date()
-                            tafDate.setUTCDate(taf.released.day)
-                            tafDate.setUTCHours(taf.released.hour, taf.released.minute)
+                            let tafDate = new Date(Date.UTC(taf.released.year, taf.released.month - 1, taf.released.day, taf.released.hour, taf.released.minute))
 
-                            let diff = new Date() - tafDate
+                       
+                            let diff = Math.abs(new Date() - tafDate)
                             let hours = diff / 3.6e6;
                             let minutes = (hours - Math.floor(hours)) * 60
                             let minRound = Math.round(minutes)

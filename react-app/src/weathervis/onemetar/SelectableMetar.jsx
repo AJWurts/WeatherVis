@@ -97,7 +97,7 @@ class SelectableMetar extends Component {
   render() {
     let metarData = this.metarToRaw(this.props.metar)
     return (
-      <div style={{ display: "inline-block", width: '100%' }}>
+      <div style={{ display: "inline-block"}}>
         {this.props.label ?
           <div className={this.props.className + ' normal'} >
             {this.props.label}

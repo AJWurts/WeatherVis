@@ -233,6 +233,10 @@ function parseTAF(json) {
 
     stdJSON['forecast'] = []
 
+    if (!Array.isArray(json.forecast)) {
+        json.forecast = [json.forecast]
+    }
+
     for (let i = 0; i < json.forecast.length; i++) {
         stdJSON['forecast'].push({})
         for (let key in forecastKeyConv) {
@@ -252,18 +256,18 @@ function parseTAF(json) {
 }
 
 function parseMultipleTAF(tafs) {
-  let multiple = [];
+    let multiple = [];
 
-  // Still do the right thing even if we were only given a single TAF.
-  if(!Array.isArray(tafs)) {
-    tafs = Array(tafs)
-  }
+    // // Still do the right thing even if we were only given a single TAF.
+    if (!Array.isArray(tafs)) {
+        tafs = [tafs]
+    }
 
-  for (let i = 0; i < tafs.length; i++) {
-      multiple.push(parseTAF(tafs[i]));
-  }
+    for (let i = 0; i < tafs.length; i++) {
+        multiple.push(parseTAF(tafs[i]));
+    }
 
-  return multiple;
+    return multiple;
 }
 
 
@@ -350,6 +354,11 @@ function parseMETAR(json) {
 function parseMultipleMETAR(metars) {
     let multiple = [];
 
+    if (!Array.isArray(metars)) {
+        metars = [metars]
+    }
+
+
     for (let i = 0; i < metars.length; i++) {
         multiple.push(parseMETAR(metars[i]));
     }
@@ -429,6 +438,11 @@ function parseStation(json) {
 function parseMultipleStations(json) {
 
     let multiple = [];
+
+    if (!Array.isArray(json)) {
+        json = Array(json)
+    }
+
 
     for (let i = 0; i < json.length; i++) {
         multiple.push(parseStation(json[i]));

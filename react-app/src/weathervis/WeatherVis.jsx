@@ -126,11 +126,10 @@ class WeatherVis extends Component {
       isMobile,
       nearestAirports } = this.state;
     if (metar) {
-      let metarDate = new Date()
-      metarDate.setUTCDate(metar[0].valid.day)
-      metarDate.setUTCHours(metar[0].valid.hour, metar[0].valid.minute)
+      let metarDate = new Date(Date.UTC(metar[0].valid.year, metar[0].valid.month - 1, metar[0].valid.day, metar[0].valid.hour, metar[0].valid.minute))
 
-      let diff = new Date() - metarDate
+
+      let diff = Math.abs(new Date() - metarDate)
       let hours = diff / 3.6e6;
       let minutes = (hours - Math.floor(hours)) * 60
       let minRound = Math.round(minutes)

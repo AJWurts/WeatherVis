@@ -75,17 +75,22 @@ class TimeLine extends Component {
         }
 
         this.time = timeFunc(data.start, data.end)
-        let maxTime;
-        if (data.end.day === data.start.day) {
-            // Within 1 day 
-            maxTime = (data.end.hour - data.start.hour);
-        } else if (data.end.day - data.start.day === 2) {
-            // More than one day difference
-            maxTime = 24 + (24 - data.start.hour) + data.end.hour
-        } else {
-            // One day Difference
-            maxTime = (24 - data.start.hour) + data.end.hour
-        }
+        let start = new Date(Date.UTC(data.start.year, data.start.month - 1, data.start.day, data.start.hour, data.start.minute))
+        let end = new Date(Date.UTC(data.end.year, data.end.month - 1, data.end.day, data.end.hour, data.end.minute))
+    
+        let length = Math.abs(end - start) / 3600000;
+        
+        let maxTime = length;
+        // if (data.end.day === data.start.day) {
+        //     // Within 1 day 
+        //     maxTime = (data.end.hour - data.start.hour);
+        // } else if (data.end.day - data.start.day === 2) {
+        //     // More than one day difference
+        //     maxTime = 24 + (24 - data.start.hour) + data.end.hour
+        // } else {
+        //     // One day Difference
+        //     maxTime = (24 - data.start.hour) + data.end.hour
+        // }
 
 
         this.maxTime = maxTime;
@@ -182,13 +187,17 @@ class TimeLine extends Component {
         if (this.last_data && this.last_data.start && this.last_data.start.hour !== previous_data.start.hour) {
             let cloudStr = ""
             for (let j = 0; j  < previous_data.clouds.length; j++) {
-                    cloudStr += previous_data.clouds[j].cover + "" +previous_data.clouds[j].base  + "ft "
+                    cloudStr += previous_data.clouds[j].cover + (previous_data.clouds[j].base ?  (previous_data.clouds[j].base  + "ft ") : "");
             }
             d3.select('.clouds')
                 .text(cloudStr)
 
+            let vis = previous_data.vsby;
+            if (previous_data.vsby === 6.21) {
+                vis = "Greater than 6";
+            } 
             d3.select('.vis')
-                .text(previous_data.vsby + "SM")
+                .text(vis + "SM")
 
             d3.select(".wind")
                 .text(`${previous_data.drct} at ${previous_data.sknt} KT ${previous_data.gust > 0 ? "gusting " + previous_data.gust : ""}`)
@@ -209,10 +218,11 @@ class TimeLine extends Component {
         d3.select('.ttbox')
             .attr('x', event.clientX)
 
+        var date = previous_data.start;
+        var utcDate = new Date(Date.UTC(date.year, date.month - 1, date.day, date.hour, date.minute, date.second))
         d3.select('.time')
-            .text(`${previous_data.raw}`)
+            .text(utcDate.toUTCString() + "(Z)")
             .attr('alignment-baseline', 'hanging')
-
 
     }
     render() {
@@ -221,7 +231,7 @@ class TimeLine extends Component {
             <div style={{ width: '1055px' }} ref={outer => this.outer = outer}>
                 <svg style={{ width: '1055px', height: '600px' }} ref={outside_svg => this.outer_svg = outside_svg} onMouseMove={this.onMouseMove}>
                     <g style={{ width: '1055px', height: "100%" }}>
-                        <LabelValueSVG y={0.00} label="Raw" />
+                        <LabelValueSVG y={0.00} label="Start" />
                         <LabelValueSVG y={0.05} label="Clouds" />
                         <svg style={{ display: 'block' }}
                             y="8%"

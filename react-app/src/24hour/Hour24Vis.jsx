@@ -54,7 +54,6 @@ class TestPage extends Component {
     onSearch = (ident) => {
         axios.get(`/api/recentMETARs/${ident}?hours=24`)
             .then(result => {
-                console.log(result.data)
 
                 this.setState({
                     metars: result.data.metars,

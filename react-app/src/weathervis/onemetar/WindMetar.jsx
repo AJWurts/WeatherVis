@@ -5,7 +5,7 @@ import { LabelValue } from '../../components';
 
 const compass = [
   {
-    dir: 0,
+    dir: 360,
     label: 'N'
   },
   {
@@ -87,7 +87,7 @@ class Wind extends Component {
       speed = 0;
     } else {
       // Flip arrow 180 so it points with the wind
-      dir = (dir + 180) % 360;
+      dir = (dir + 180) % 361;
     }
 
     var speedScale = d3.scalePow()
@@ -261,9 +261,10 @@ class Wind extends Component {
 
     data.forEach((d) => {
       svg.append('text')
-        .attr('transform', `translate(${250} ${250}) rotate(${d.trueHeading + this.state.angle}) translate(8 ${-d.scaledLength + 5}) rotate(180)`)
+        .attr('transform', `translate(${250} ${250}) rotate(${d.trueHeading + this.state.angle}) translate(0 ${-d.scaledLength + 5}) rotate(180)`)
         .attr('fill', 'white')
-        .text(((d.heading + 180) % 360) / 10)
+        .attr('text-anchor', 'middle')
+        .text((((d.heading + 180) % 361) / 10).toFixed())
 
     })
 
@@ -314,13 +315,13 @@ class Wind extends Component {
 
     let dir = this.props.metar[0].drct;
     let spd = this.props.metar[0].sknt;
-    let angle = this.rads(Math.abs((((heading + variation) + 360 - dir) % 360)))
-    let headwind = Math.floor(Math.cos(angle) * spd);
-    let crosswind = -Math.floor(Math.sin(angle) * spd);
+    let angle = this.rads(Math.abs((((heading + variation) + 360 - dir) % 361)))
+    let headwind = Math.round(Math.cos(angle) * spd);
+    let crosswind = -Math.round(Math.sin(angle) * spd);
     svg.append("text")
       .attr('x', -35)
       .attr('y', yCoord)
-      .text(`${heading / 10}: `)
+      .text(`${((heading + 360) % 361 / 10).toFixed()}: `)
       .attr('color', 'black')
     if (headwind < 0) {
       svg.append('path')
