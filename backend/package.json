@@ -24,7 +24,8 @@
     "test": "jest",
     "start": "node server.js",
     "watch": "nodemon server.js",
-    "deploy": "gcloud app deploy --no-promote"
+    "deploy": "gcloud app deploy",
+    "deploy_nopromote": "gcloud app deploy --no-promote"
   },
   "author": "Alexander Wurts",
   "repository": {
