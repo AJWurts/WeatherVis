@@ -8,7 +8,8 @@ const COVER_KEY = {
     "SCT": 2,
     "BKN": 3,
     "OVC": 4,
-    "VV": 5
+    "VV": 5,
+    "OVX": 5
 }
 
 
