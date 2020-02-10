@@ -58,12 +58,21 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
         ;
 
 
+    svg.append('rect')
+        .attr('x', xScale(0))
+        .attr('y', yScale(6.22))
+        .attr('width', 5000)
+        .attr('height', 300)
+        .attr('fill', 'gray');
+
     // Plot vsby based on forecast and fake data
    svg.append("path")
         .datum(forecast) // 10. Binds data to the line 
         .attr("d", line)
         .attr('fill', '#33c6f8')
         // .attr('stroke', '#2244aa')
+
+
 
     svg.selectAll('visibility')
         .data([0, 3, 6])
