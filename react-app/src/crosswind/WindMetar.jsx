@@ -575,7 +575,7 @@ class Wind extends Component {
   render() {
     var { width, height } = this.props;
     var { drct, sknt, gust } = this.props.metar[0];
-
+    console.log(drct);
     return (
       <div style={{ textAlign: 'start' }}>
         <div>
