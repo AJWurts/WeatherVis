@@ -15,7 +15,6 @@ import MultiTAF from './timeline';
 import { LabelValue, SearchBox } from '../components';
 
 import './weathervis.css';
-import { cpus } from 'os';
 
 class WeatherVis extends Component {
   constructor(props) {

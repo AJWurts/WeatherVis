@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import WeatherVis from './weathervis/WeatherVis.jsx';
 import PressureVis from './pressurevis/PressureVis';
 import TestPage from './24hour/Hour24Vis';
+import Crosswind from './crosswind/Crosswind';
 import { ButtonLink, AirplaneIcon } from './components';
 import {
     BrowserRouter as Router,
@@ -47,6 +48,10 @@ class App extends Component {
                     <Route path='/24hour'>
                         <TestPage />
                     </Route>
+                    <Route path='/crosswind'>
+                        <Crosswind />
+                    </Route>
+
                     <Route path='/'>
                         <WeatherVis />
                     </Route>
