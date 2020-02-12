@@ -33,11 +33,12 @@ class App extends Component {
                         <ButtonLink to='/pressure' text="Pressure Vis" />
                         <ButtonLink to='/24hour' text="24 Hour Data" />
                         <ButtonLink to='/code' text='Github Code Link' />
-                        <div style={{float: "right", borderRadius: "10px", backgroundColor: "white", padding: "2px 20px", fontSize: "14px", width: "300px", marginTop: "4px"}}>
-                        If you have any feedback or suggestions email alex@alexwurts.com.
+                            <div style={{ borderRadius: "10px", backgroundColor: "white", color: "black", padding: "2px 20px", fontSize: "14px", width: "300px", display: "inline-block" , textAlign: "start"}}>
+                                If you have any feedback or suggestions email alex@alexwurts.com.
+
+                        </div>
                     </div>
-                    </div>
-                   
+
                 </div>
 
                 {/* Page Switching */}
