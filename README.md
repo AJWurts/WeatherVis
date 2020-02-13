@@ -1,5 +1,9 @@
 # Weather Visualization using METARs and TAFs
 By Alexander Wurts
+
+## If you like this project please consider sponsoring me, so I can add more cool features. 
+[Sponsor Link](https://github.com/sponsors/AJWurts) - It's only a few bucks a month.
+
 ## Flock aka Slack but better
 Join the [Flock](weathervis.flock.com), a group chat platform, to see how you can contribute.
 
