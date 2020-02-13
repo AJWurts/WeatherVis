@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios';
 import { withCookies, Cookies } from 'react-cookie';
-
+import { TextField } from '@material-ui/core';
 import { LabelValue, SearchBox } from '../components';
 import WindMetar from './WindMetar';
 
@@ -69,33 +69,61 @@ class Crosswind extends React.Component {
     }
 
     handleDrag = (drct, spd) => {
-        console.log(drct, spd);
         if (isNaN(drct) || isNaN(spd)) {
             return;
         }
         this.setState({
             metar: [{
                 sknt: spd,
-                drct: drct ,
-                gust: 0
+                drct: drct,
             }]
         })
     }
 
     render() {
-        let { airport, metar, drct, knts, gust, runways, nearestAirports, isMobile } = this.state;
+        let { airport, metar, runways, nearestAirports, isMobile } = this.state;
         return (
             <div>
                 <SearchBox onClick={this.onSearch} value={airport} nearestAirports={nearestAirports} />
                 <LabelValue label="Airport" value={airport} />
                 {metar ?
-                    <WindMetar
-                        onDrag={this.handleDrag}
-                        airport={airport}
-                        runways={runways}
-                        metar={metar}
-                        width={isMobile ? 350 : 500}
-                        height={isMobile ? 350 : 500} /> : null
+                    <>
+                        <WindMetar
+                            onDrag={this.handleDrag}
+                            airport={airport}
+                            runways={runways}
+                            metar={metar}
+                            width={isMobile ? 350 : 500}
+                            height={isMobile ? 350 : 500} />
+                        <TextField
+                            id="standard-basic"
+                            label="Direction"
+                            // type="number"
+                            value={this.state.metar[0].drct}
+                            onChange={(e) => {
+                                this.setState({
+                                    metar: [{
+                                        drct: +e.target.value,
+                                        sknt: this.state.metar[0].sknt
+                                    }]
+                                })
+                            }}
+                        />
+                        <TextField
+                            id="standard-basic"
+                            label="Speed"
+                            type="number"
+                            value={this.state.metar[0].sknt}
+                            onChange={(e) => {
+                                this.setState({
+                                    metar: [{
+                                        sknt: +e.target.value,
+                                        drct: this.state.metar[0].drct
+                                    }]
+                                })
+                            }}
+                        />
+                    </> : null
                 }
 
             </div >

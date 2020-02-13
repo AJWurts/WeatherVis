@@ -80,27 +80,23 @@ class Wind extends Component {
   }
 
   // Given X and Y return dir and speed
-  drawCursorArrow = (svg, maxSpeed) => {
+  drawCursorArrow = (event) => {
     let x = d3.event.x;
     let y = d3.event.y - 298;
-
-    this.drawArrow2(svg, 250, 250, x, y);
 
     let xDiff = x - 250;
     let yDiff = (y - 250);
 
     let angle = (Math.atan((yDiff) / (xDiff)) * 180 / Math.PI + 360 + 90) % 360
     let dist = Math.sqrt((xDiff * xDiff) + (yDiff * yDiff));
-    // (80 / 160) * 60 = 30; sqrt(30) = 5.4
+    console.log("Distance: ", dist);
     dist = Math.pow(dist / 20, 2);
     if (xDiff < 0) {
       angle += 180;
     }
   
-    angle = (angle + 180) % 360
+    angle = (angle + 180) % 360;
     this.props.onDrag(angle, dist);
-
-    // this.props.onDrag()
   }
 
   drawArrow2 = (svg, x1, y1, x2, y2, color, pointerHeight) => {
@@ -108,18 +104,19 @@ class Wind extends Component {
     color = color || 'blue';
 
     // Tip Triangle
-    // IDK what I did, but it works so go with it
     let xDiff = x2 - x1;
     let yDiff = y2 - y1;
     let angle = Math.atan((yDiff) / (xDiff));
+    if (xDiff < 0) {
+      angle += Math.PI;
+    }
     let dist = Math.sqrt((xDiff * xDiff) + (yDiff * yDiff));
 
-    // console.log(xDiff, yDiff, angle, dist);
-    let xAltPtDelta = Math.cos(angle - Math.PI / 2) * 7;
-    let yAltPtDelta = Math.sin(angle - Math.PI / 2) * 7;
-    let radPtX = x1 + Math.cos(angle) * (dist - pHeight)
+    let xAltPtDelta = Math.cos(angle - Math.PI / 2) * 7; 
+    let yAltPtDelta = Math.sin(angle - Math.PI / 2) * 7; //
+    let radPtX = x1 + Math.cos(angle) * (dist - pHeight);
     let radPtY = y1 + Math.sin(angle) * (dist - pHeight);
-
+    
     svg.append('line')
       .attr('x1', x1)
       .attr('y1', y1)
@@ -149,7 +146,6 @@ class Wind extends Component {
       .on('mouseover', d => {
         d3.select('#arrowhead')
           .attr('fill', d => {
-            console.log(color, color + 50);
             return color + "A0";
           })
           .style("cursor", "pointer")
@@ -162,7 +158,6 @@ class Wind extends Component {
       }).on('mousemove', d => {
         if (this.state.moving) {
           this.drawCursorArrow(svg);
-
         }
       }).on('mouseup', d => {
         this.setState({ moving: false });
@@ -181,7 +176,7 @@ class Wind extends Component {
       // Flip arrow 180 so it points with the wind
       dir = (dir + 180) % 361;
     }
-
+    
     var speedScale = (val) => {
       return  Math.sqrt(val) / 8 * 160
     }
@@ -197,81 +192,9 @@ class Wind extends Component {
     let tipY = halfHeight + this.calcY(dir, length);
 
     this.drawArrow2(svg, halfWidth, halfHeight, tipX, tipY, color);
-    // // If Arrow is orange (gust) stop being from being too long
-
-
-    // // Tip Triangle
-    // // IDK what I did, but it works so go with it
-    // let theta = (((dir + this.state.angle) / 10) - 9) * (2 * Math.PI / 36) - (Math.PI / 2);
-    // let xAltPtDelta = Math.cos(theta) * (this.props.width / 4) * 0.06;
-    // let yAltPtDelta = Math.sin(theta) * (this.props.width / 4) * 0.06;
-    // let radPtX = halfWidth + this.calcX(dir, length - 20);
-    // let radPtY = halfWidth + this.calcY(dir, length - 20);
-
-    // svg.append('line')
-    //   .attr('x1', color === 'orange' ? halfWidth : halfWidth + (halfWidth - tipX))
-    //   .attr('y1', color === 'orange' ? halfWidth : halfWidth + (halfWidth - tipY))
-    //   .attr('x2', radPtX)
-    //   .attr('y2', radPtY)
-    //   .attr('stroke', color)
-    //   .attr('stroke-width', '5')
-
-    // let path = d3.path()
-
-    // path.moveTo(radPtX, radPtY)
-    // path.lineTo(radPtX - xAltPtDelta, radPtY - yAltPtDelta)
-    // path.lineTo(tipX, tipY)
-    // path.lineTo(radPtX + xAltPtDelta, radPtY + yAltPtDelta)
-    // path.lineTo(radPtX, radPtY)
-    // path.closePath()
-
-    // svg.append('path')
-    //   .attr('d', path.toString())
-    //   .attr('id', 'arrowhead')
-    //   .attr('fill', color)
-
-    // svg.append('circle')
-    //   .attr('cx', tipX)
-    //   .attr('cy', tipY)
-    //   .attr('r', 20)
-    //   .attr('opacity', 0)
-    //   .on('mouseover', d => {
-    //     console.log('mouseover');
-
-    //     d3.select('#arrowhead')
-    //       .attr('fill', d => {
-    //         console.log(color, color + 50);
-    //         return color + "A0";
-    //       })
-    //       .style("cursor", "pointer")
-    //   }).on('mouseout', d => {
-    //     d3.select('#arrowhead')
-    //       .attr('fill', color)
-    //       .style('cursor', 'default')
-    //   }).on('mousedown', d => {
-    //     console.log("Mouse Down");
-    //   }).on('mousemove', d => {
-    //     console.log("Mouse Move");
-    //     console.log(this.calcDirSpd(maxSpeed));
-    //   }).on('mouseup', d => {
-    //     console.log("Mouse Up");
-    //   })
   }
 
-  processWind = (metar, speedScale) => {
-    let { drct, sknt } = metar;
-    if (drct === 'VRB') {
-      drct = 360;
-      // speed = 0;
-    } else {
-      drct = (drct + 180) % 360;
-    }
 
-    return {
-      drct: drct,
-      sknt: speedScale(sknt)
-    }
-  }
 
   // Trig Stuff ---------
   calcY = function (direction, length) {
@@ -289,38 +212,7 @@ class Wind extends Component {
 
     return x;
   }
-  //////////////////////
-
-  // Runway Interaction
-  runwayHover = (runway) => {
-    runway = d3.selectAll(".runway" + (runway.heading % 180));
-    runway.attr('stroke', '#444444')
-  }
-
-  runwayHoverExit = (runway) => {
-    runway = d3.selectAll(".runway" + (runway.heading % 180));
-    runway.attr('stroke', '#000000')
-  }
-
-  rotateAnimation = (inc, end) => {
-    if (Math.abs(this.state.angle - end) < 2) {
-      this.setState({
-        angle: end
-      }, this.createGraph);
-      // console.log(end);
-      clearInterval(this.interval);
-      this.interval = null;
-    }
-    this.setState({
-      angle: this.state.angle + inc
-    });
-
-    this.createGraph();
-
-  }
-
-  ////////////////////////////////////
-
+ 
   drawRunways = (svg, runways, variation) => {
     const maxRwyLen = d3.max(runways, x => x.length)
     var data = [];
@@ -344,7 +236,6 @@ class Wind extends Component {
       .data(data)
       .enter()
       .append("line")
-      .attr('cursor', 'pointer')
       .attr('class', d => "runway" + (d.heading % 180))
       .attr('x1', d => 250 + this.calcX(d.trueHeading + 180, d.scaledLength))
       .attr('y1', d => 250 + this.calcY(d.trueHeading + 180, d.scaledLength))
@@ -352,26 +243,7 @@ class Wind extends Component {
       .attr('y2', d => 250)
       .attr('stroke', '#000000')
       .attr('stroke-width', 25)
-      .on('mouseover', d => {
-        if (!this.interval) {
-
-          this.runwayHover(d)
-        }
-      })
-      .on('mouseout', d => {
-        if (!this.interval) {
-          this.runwayHoverExit(d)
-        }
-      })
-      .on('click', d => {
-        d3.event.stopPropagation()
-        if (this.interval) {
-          clearInterval(this.interval)
-
-        }
-        this.interval = setInterval(() => this.rotateAnimation(((360 - d.trueHeading) - this.state.angle) / 10, 360 - d.trueHeading), 50)
-      })
-
+      
     data.forEach((d) => {
       svg.append('text')
         .attr('transform', `translate(${250} ${250}) rotate(${d.trueHeading + this.state.angle}) translate(0 ${-d.scaledLength + 5}) rotate(180)`)
@@ -512,10 +384,7 @@ class Wind extends Component {
     svg.selectAll('*').remove();
 
     svg.on('click', () => {
-      if (this.interval) {
-        clearInterval(this.interval)
-      }
-      this.interval = setInterval(() => this.rotateAnimation(((0) - this.state.angle) / 10, 0), 50)
+
 
       this.drawCursorArrow(svg);
 
@@ -551,9 +420,7 @@ class Wind extends Component {
       this.drawRunwayWinds(svg, this.props.runways);
     }
 
-    if (gust !== 0.01) {
-      this.drawArrow(svg, this.props.metar[0].drct, gust, max_speed, 'orange');
-    }
+    
     this.drawArrow(svg, this.props.metar[0].drct, sknt, max_speed, '#61a8c6');
 
     // Wind Direction Label
@@ -575,7 +442,6 @@ class Wind extends Component {
   render() {
     var { width, height } = this.props;
     var { drct, sknt, gust } = this.props.metar[0];
-    console.log(drct);
     return (
       <div style={{ textAlign: 'start' }}>
         <div>

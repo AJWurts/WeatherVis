@@ -31,6 +31,7 @@ class App extends Component {
                     </div>
                     <div style={{ display: 'inline-block' }}>
                         <ButtonLink to='/' text="METAR/TAF Vis" />
+                        <ButtonLink to='/crosswind' text="Crosswind Calculator" />
                         <ButtonLink to='/pressure' text="Pressure Vis" />
                         <ButtonLink to='/24hour' text="24 Hour Data" />
                         <ButtonLink to='/code' text='Github Code Link' />
