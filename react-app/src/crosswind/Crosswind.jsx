@@ -4,6 +4,7 @@ import { withCookies, Cookies } from 'react-cookie';
 import { TextField } from '@material-ui/core';
 import { LabelValue, SearchBox } from '../components';
 import WindMetar from './WindMetar';
+import RunwayViewer from './RunwayViewer';
 
 
 class Crosswind extends React.Component {
@@ -80,51 +81,87 @@ class Crosswind extends React.Component {
         })
     }
 
+    handleRunwayUpdate = (index, dir) => {
+        let rwys = this.state.runways;
+        rwys[index].direction = dir;
+        this.setState({
+            runways: rwys
+        })
+    }
+
     render() {
         let { airport, metar, runways, nearestAirports, isMobile } = this.state;
         return (
             <div>
                 <SearchBox onClick={this.onSearch} value={airport} nearestAirports={nearestAirports} />
-                <LabelValue label="Airport" value={airport} />
                 {metar ?
-                    <>
-                        <WindMetar
-                            onDrag={this.handleDrag}
-                            airport={airport}
-                            runways={runways}
-                            metar={metar}
-                            width={isMobile ? 350 : 500}
-                            height={isMobile ? 350 : 500} />
-                        <TextField
-                            id="standard-basic"
-                            label="Direction"
-                            // type="number"
-                            value={this.state.metar[0].drct}
-                            onChange={(e) => {
-                                this.setState({
-                                    metar: [{
-                                        drct: +e.target.value,
-                                        sknt: this.state.metar[0].sknt
-                                    }]
-                                })
-                            }}
-                        />
-                        <TextField
-                            id="standard-basic"
-                            label="Speed"
-                            type="number"
-                            value={this.state.metar[0].sknt}
-                            onChange={(e) => {
-                                this.setState({
-                                    metar: [{
-                                        sknt: +e.target.value,
-                                        drct: this.state.metar[0].drct
-                                    }]
-                                })
-                            }}
-                        />
-                    </> : null
+                    <div style={{ paddingLeft: "10px", display: isMobile ? "block" : "flex" }}>
+                        <div>
+                            <LabelValue label="Airport" value={airport} />
+
+                            <WindMetar
+                                onDrag={this.handleDrag}
+                                airport={airport}
+                                runways={runways}
+                                metar={metar}
+                                width={isMobile ? 350 : 500}
+                                height={isMobile ? 350 : 500} />
+                        </div>
+                        <div style={{ paddingTop: "10px" }}>
+                            <h3>Wind</h3>
+
+                            <TextField
+                                id="standard-basic"
+                                label="Magnetic Direction"
+                                type="number"
+                                inputProps={{ step: 10 }}
+                                value={this.state.metar[0].drct.toFixed(0)}
+                                onKeyPress={(e) => console.log(e.target.key)}
+                                onChange={(e) => {
+                                    this.setState({
+                                        metar: [{
+                                            drct: +e.target.value % 360,
+                                            sknt: this.state.metar[0].sknt
+                                        }]
+                                    })
+                                }}
+
+                            />
+                            <TextField
+                                id="standard-basic"
+                                label="Speed in Knots"
+                                type="number"
+                                value={this.state.metar[0].sknt.toFixed(0)}
+                                onChange={(e) => {
+                                    this.setState({
+                                        metar: [{
+                                            sknt: +e.target.value,
+                                            drct: this.state.metar[0].drct
+                                        }]
+                                    })
+                                }}
+                            />
+                            <h3>Runways</h3>
+                            {runways.map((rwy, i) => {
+                                return <RunwayViewer 
+                                metar={metar[0]} rwy={rwy} index={i} key={i} onChange={this.handleRunwayUpdate} />
+                            })}
+                            <h3>Example</h3>
+                            <img src={require("./try2.png")} width="250px" />
+                            <h3>Tips!</h3>
+                            <p style={{maxWidth: "300px"}}>
+                                Click on the runway heading text box and use the up/down arrow keys to change the value by 10.
+                            </p>
+                            <p style={{maxWidth: "300px"}}>
+                                Click on the diagram to set the wind/direction with your mouse.
+                            </p>
+                        </div>
+                    </div> : null
+
+
+
                 }
+
 
             </div >
         )

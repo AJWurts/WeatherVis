@@ -81,8 +81,10 @@ class Wind extends Component {
 
   // Given X and Y return dir and speed
   drawCursorArrow = (event) => {
-    let x = d3.event.x;
-    let y = d3.event.y - 298;
+    console.log(event._groups[0]);
+    event = event._groups[0][0];
+    let x = d3.event.x - 15;
+    let y = d3.event.y - (event.previousSibling.offsetTop + event.previousSibling.offsetHeight);
 
     let xDiff = x - 250;
     let yDiff = (y - 250);
@@ -354,7 +356,7 @@ class Wind extends Component {
     svg.append("text")
       .attr('x', 0)
       .attr('y', yCoord - 20)
-      .text("Runway Winds")
+      .text("Runway Winds in Knots")
       .attr('color', 'black')
     let alreadyDrawn = {}
     for (let i = 0; i < runways.length; i++) {
@@ -441,13 +443,13 @@ class Wind extends Component {
 
   render() {
     var { width, height } = this.props;
-    var { drct, sknt, gust } = this.props.metar[0];
+    var { drct, sknt} = this.props.metar[0];
+    console.log(drct, drct % 360, sknt);
+    let new_drct = drct + ""
     return (
       <div style={{ textAlign: 'start' }}>
         <div>
-          <LabelValue className='selectable metarwind' label={"Wind"} value={gust ?
-            `${drct === "VRB" ? "Variable" : this.pad(drct, 3)} at ${sknt} knots (${(sknt * 1.15077945).toFixed(0)}mph) gusting ${gust} knots (${(gust * 1.15077945).toFixed(0)}mph)`
-            : `${this.pad(drct, 3)} at ${sknt} knots (${(sknt * 1.15077945).toFixed(0)}mph)`} />
+          <LabelValue className='selectable metarwind' label={"Wind"} value={`${drct.toFixed(0)} at ${sknt.toFixed(0)} knots (${(sknt * 1.15077945).toFixed(0)}mph)`} />
         </div>
 
         <svg ref={node => this.node = node} onClick={(event) => console.log(event.clientX, event.clientY, event.pageX, event.pageY)} viewBox='0 0 500 500' width={width || 500} height={height || 500}>
