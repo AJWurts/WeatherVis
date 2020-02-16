@@ -64,15 +64,14 @@ function RunwayViewer(props) {
         props.onChange(props.index, +heading % 360);
     }
 
-    let svgref = React.useRef(null);
 
     React.useEffect(() => {
         let svg = d3.select("#windsvg" + props.index);
+        svg.selectAll('*').remove();
         drawRunwayWind(svg, props.rwy.direction, 0, 15);
         drawRunwayWind(svg, (props.rwy.direction + 180) % 360, 0, 30)
 
-        console.log(svg)
-    })
+    }, [props.rwy.direction, props.metar])
     return (
         <div>
             <TextField

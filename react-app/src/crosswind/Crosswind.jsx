@@ -13,14 +13,15 @@ class Crosswind extends React.Component {
         const { cookies } = props;
 
         this.state = {
-            metar: null,
+            metar: [{
+                drct: 290,
+                sknt: 5,
+            }],
             airport: cookies.get('airport') || "KBED",
             nearestAirports: null,
             isMobile: false,
             runways: null,
-            drct: 200,
-            knts: 10,
-            gust: 15
+            isLive: false
         }
     }
 
@@ -42,29 +43,42 @@ class Crosswind extends React.Component {
     }
 
     onSearch = (ident) => {
+        this.props.cookies.set("airport", ident);
+
         axios.get(`api/nearestAirports/${ident}`)
             .then(result => {
+
                 this.setState({
                     nearestAirports: result.data
                 })
             }).catch(error => {
                 console.error(error);
-
+                this.setState({ errorMessage: "Airport Not Found." })
             })
-        axios.get(`/api/recentMETARs/${ident}`)
+        axios.get(`/api/runway/${ident}`)
             .then(result => {
                 this.setState({
-                    metar: result.data.metars,
-                    airport: ident,
                     runways: result.data.runways,
+                    airport: ident
+                })
+            }).catch(error => {
+                console.error(error);
+            })
+        axios.get(`/api/recentMETARs/${ident}?noRunways=true`)
+            .then(result => {
+                this.setState({
+                    metar: result.data,
+                    isLive: true,
+                    airport: ident,
                     metarErrorMessage: ''
                 })
             }).catch(error => {
                 console.log(error);
                 console.log("Metar Failed");
                 this.setState({
-                    metar: null,
-                    metarErrorMessage: "Could not find airport. Try again"
+                    // metar: null,
+                    metarErrorMessage: "Could not find airport. Try again",
+                    isLive: false
                 })
             })
     }
@@ -90,7 +104,7 @@ class Crosswind extends React.Component {
     }
 
     render() {
-        let { airport, metar, runways, nearestAirports, isMobile } = this.state;
+        let { airport, metar, runways, nearestAirports, isMobile, isLive } = this.state;
         return (
             <div>
                 <SearchBox onClick={this.onSearch} value={airport} nearestAirports={nearestAirports} />
@@ -98,6 +112,8 @@ class Crosswind extends React.Component {
                     <div style={{ paddingLeft: "10px", display: isMobile ? "block" : "flex" }}>
                         <div>
                             <LabelValue label="Airport" value={airport} />
+                            <LabelValue label="Weather" color={isLive ? "green" : "red"} value={isLive ? "Showing Live Weather" : "No Live Weather Available"} />
+
 
                             <WindMetar
                                 onDrag={this.handleDrag}
@@ -107,6 +123,7 @@ class Crosswind extends React.Component {
                                 width={isMobile ? 350 : 500}
                                 height={isMobile ? 350 : 500} />
                         </div>
+
                         <div style={{ paddingTop: "10px" }}>
                             <h3>Wind</h3>
 
@@ -120,7 +137,7 @@ class Crosswind extends React.Component {
                                 onChange={(e) => {
                                     this.setState({
                                         metar: [{
-                                            drct: +e.target.value % 360,
+                                            drct: Math.max(0, +e.target.value % 361),
                                             sknt: this.state.metar[0].sknt
                                         }]
                                     })
@@ -135,24 +152,27 @@ class Crosswind extends React.Component {
                                 onChange={(e) => {
                                     this.setState({
                                         metar: [{
-                                            sknt: +e.target.value,
+                                            sknt: Math.max(0, +e.target.value),
                                             drct: this.state.metar[0].drct
                                         }]
                                     })
                                 }}
                             />
-                            <h3>Runways</h3>
-                            {runways.map((rwy, i) => {
-                                return <RunwayViewer 
-                                metar={metar[0]} rwy={rwy} index={i} key={i} onChange={this.handleRunwayUpdate} />
-                            })}
+                            {runways ? <>
+                                <h3>Runways</h3>
+                                {runways.map((rwy, i) => {
+                                    return <RunwayViewer
+                                        metar={metar[0]} rwy={rwy} index={i} key={i} onChange={this.handleRunwayUpdate} />
+                                })}
+                            </>
+                                : null}
                             <h3>Example</h3>
                             <img src={require("./try2.png")} width="250px" />
                             <h3>Tips!</h3>
-                            <p style={{maxWidth: "300px"}}>
+                            <p style={{ maxWidth: "300px" }}>
                                 Click on the runway heading text box and use the up/down arrow keys to change the value by 10.
                             </p>
-                            <p style={{maxWidth: "300px"}}>
+                            <p style={{ maxWidth: "300px" }}>
                                 Click on the diagram to set the wind/direction with your mouse.
                             </p>
                         </div>

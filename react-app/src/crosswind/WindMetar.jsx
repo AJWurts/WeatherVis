@@ -81,7 +81,6 @@ class Wind extends Component {
 
   // Given X and Y return dir and speed
   drawCursorArrow = (event) => {
-    console.log(event._groups[0]);
     event = event._groups[0][0];
     let x = d3.event.x - 15;
     let y = d3.event.y - (event.previousSibling.offsetTop + event.previousSibling.offsetHeight);
@@ -91,7 +90,6 @@ class Wind extends Component {
 
     let angle = (Math.atan((yDiff) / (xDiff)) * 180 / Math.PI + 360 + 90) % 360
     let dist = Math.sqrt((xDiff * xDiff) + (yDiff * yDiff));
-    console.log("Distance: ", dist);
     dist = Math.pow(dist / 20, 2);
     if (xDiff < 0) {
       angle += 180;
@@ -444,15 +442,13 @@ class Wind extends Component {
   render() {
     var { width, height } = this.props;
     var { drct, sknt} = this.props.metar[0];
-    console.log(drct, drct % 360, sknt);
-    let new_drct = drct + ""
     return (
       <div style={{ textAlign: 'start' }}>
         <div>
           <LabelValue className='selectable metarwind' label={"Wind"} value={`${drct.toFixed(0)} at ${sknt.toFixed(0)} knots (${(sknt * 1.15077945).toFixed(0)}mph)`} />
         </div>
 
-        <svg ref={node => this.node = node} onClick={(event) => console.log(event.clientX, event.clientY, event.pageX, event.pageY)} viewBox='0 0 500 500' width={width || 500} height={height || 500}>
+        <svg ref={node => this.node = node}  viewBox='0 0 500 500' width={width || 500} height={height || 500}>
         </svg>
       </div>
     );
