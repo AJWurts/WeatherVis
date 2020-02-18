@@ -1,4 +1,3 @@
-  
 cd ./client/build/static/js
 rm *.map
 cd ../css
