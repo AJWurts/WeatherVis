@@ -16,7 +16,7 @@ function LabelValue(props) {
             {props.value ? <div style={{
                 backgroundColor: '#EEEEEE', fontSize: 18,
                 textAlign: 'left', display: 'inline-block',
-                padding: '9px 8px 6px 8px', height: '100%'
+                padding: '9px 8px 6px 8px', height: '100%', color: props.color || "black"
             }}>
                 {props.value}
             </div> : null}

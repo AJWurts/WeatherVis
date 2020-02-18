@@ -23,10 +23,16 @@ app.get('/api/newestMetar/:ident', (req, res, next) => {
         .then(metar => {
             if (metar) {
                 metar = parsers.parseMETAR(metar);
-                runwayData.addRwysToMETAR(metar, airportLetters)
-                    .then(rwyMetar => {
-                        res.json(rwyMetar);
-                    });
+                // Include runways by default
+                if (req.query.noRunways) {
+                    res.json(metar);
+                } else {
+                    runwayData.addRwysToMETAR(metar, airportLetters)
+                        .then(rwyMetar => {
+                            res.json(rwyMetar);
+                        });
+                }
+
             } else {
                 res.status(404).send();
             }
@@ -39,20 +45,23 @@ app.get('/api/newestMetar/:ident', (req, res, next) => {
 app.get('/api/recentMETARs/:ident', (req, res, next) => {
     let airportLetters = airportData.resolveIdent(req.params.ident);
     let hours = req.query.hours || 5;
-
     addsClient.recentMetar(airportLetters, hours)
         .then(metar => {
             if (metar) {
                 metar = parsers.parseMultipleMETAR(metar)
-                runwayData.addRwysToMETAR({ metars: metar }, airportLetters)
-                    .then(rwyMetar => {
-                        res.json(rwyMetar);
-                    });
+                if (req.query.noRunways) {
+                    res.json(metar);
+                } else {
+                    runwayData.addRwysToMETAR({ metars: metar }, airportLetters)
+                        .then(rwyMetar => {
+                            res.json(rwyMetar);
+                        });
+                }
             } else {
                 res.status(404).send();
             }
         }).catch(error => {
-            console.error(error);
+            // console.error(error);
         });
 });
 
@@ -124,7 +133,19 @@ app.get('/api/nearestAirports/:ident/:radius(\\d+)?', (req, res, next) => {
                     res.json(onlyAirports)
                 })
         }).catch(error => {
-            console.log(error);
+            // console.log(error);
+            res.sendStatus(404);
+        })
+});
+
+app.get('/api/runway/:ident', (req, res, next) => {
+    let airportLetters = airportData.resolveIdent(req.params.ident);
+
+    runwayData.addRwysToMETAR({}, airportLetters)
+        .then(rwydata => {
+            res.json(rwydata)
+        }).catch(error => {
+            // console.log(error);
             res.sendStatus(404);
         })
 });
