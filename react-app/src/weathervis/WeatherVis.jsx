@@ -143,7 +143,7 @@ class WeatherVis extends Component {
     return (
       <div className='top-bar'>
         <SearchBox onClick={this.onSearch} value={this.state.airport} nearestAirports={nearestAirports} />
-        <div style={{ margin: '5px', overflow: 'visible' }}>
+        <div style={{  overflow: 'visible' }} className="App">
 
           {metar ?
             <SelectableMetar label="Selectable Metar" onHover={this.handleMouseOver} onMouseLeave={this.handleMouseLeave} metar={metar[0]} /> : null}
@@ -180,7 +180,7 @@ class WeatherVis extends Component {
             </div>}
           {!taf ? <div style={{ fontSize: 30 }}>{tafErrorMessage}</div> :
 
-            <MultiTAF tafs={taf} metar={metar ? metar[0] : null} />
+            <MultiTAF tafs={taf} isMobile metar={metar ? metar[0] : null} />
           }
         </div>
 

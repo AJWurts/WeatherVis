@@ -20,7 +20,7 @@ class MultiTAF extends Component {
 
     render() {
 
-        var { tafs, metar } = this.props;
+        var { tafs, metar, isMobilem } = this.props;
         return (
             <div>
                 <div>
@@ -54,7 +54,7 @@ class MultiTAF extends Component {
 
                             var tafAge = `${Math.floor(hours)}:${("" + minRound).padStart(2, "0")} hours ago`
                         }
-                        return <div key={index} width="1055px" style={{ overflow: 'scroll' }}>
+                        return <div key={index} style={{ overflowY: 'hidden' }}>
 
                             <div>
                                 <LabelValue
@@ -69,7 +69,7 @@ class MultiTAF extends Component {
                                 <LabelValue
                                     value="On mobile turn phone sideways for better quality." />
                             </div>
-                            <TimeLine data={taf} metar={metar} />
+                            <TimeLine data={taf} isMobile metar={metar} />
                         </div>
                     })
                     : null}
