@@ -38,6 +38,7 @@ function drawWeather(forecast, svg, xScale, maxX, maxY, timeFunc) {
             height += 2;
             return yScale(height % 5)
         })
+        .style('font-size', "25px")
         .attr('text-anchor', 'left')
         .attr('color', 'black')
 

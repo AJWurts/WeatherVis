@@ -73,6 +73,7 @@ function drawVis(forecast, svg, xScale, maxX, maxY, timeFunc) {
         .attr('y', d => yScale(d))
         .text(d => d + 'sm')
         .attr('color', 'black')
+        .style('font-size', "25px")
         .attr('text-anchor', 'start')
 
 

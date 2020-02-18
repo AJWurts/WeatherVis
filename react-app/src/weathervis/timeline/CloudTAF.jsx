@@ -121,13 +121,14 @@ function drawClouds(forecast, svg, xScale, maxX, maxY, timeFunc) {
 
     // Labels
     svg.selectAll('cloudLevelLabels')
-        .data([0, 10000, 20000, 30000])
+        .data([0, 10000, 20000])
         .enter()
         .append('text')
         .attr('x', 5)
         .attr('y', d => yScale(d))
-        .text(d => d + 'ft')
+        .text(d => d / 1000 + 'K ft')
         .attr('color', 'black')
+        .style('font-size', "25px")
         .attr('text-anchor', 'start')
 
 

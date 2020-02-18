@@ -67,6 +67,8 @@ function drawWind(forecast, svg, xScale, maxX, maxY, timeFunc) {
         .attr('y', d => yScale(d))
         .text(d => d + 'kts')
         .attr('color', 'black')
+        .style('font-size', "25px")
+
         .attr('text-anchor', 'start')
 }
 

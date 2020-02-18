@@ -167,13 +167,14 @@ class TimeLine extends Component {
         var bbox = outer.getBoundingClientRect()
 
         var width = bbox.width;
+        // console.log(bbox);
         let invtime = d3.scaleLinear()
             .range([0, this.maxTime])
             .domain([width * 0.06, width]);
 
 
 
-        var time = invtime(clientX);
+        var time = invtime(clientX - bbox.left);
         // console.log("In Mouse Move", width, clientX, time);
 
 
@@ -225,7 +226,7 @@ class TimeLine extends Component {
             .attr("text-anchor", this.maxTime - time < 10 && !this.props.isMobile ? 'end' : 'start')
 
         d3.select('.ttbox')
-            .attr('x', clientX)
+            .attr('x', clientX - bbox.left)
 
         var date = previous_data.start;
         var utcDate = new Date(Date.UTC(date.year, date.month - 1, date.day, date.hour, date.minute, date.second))

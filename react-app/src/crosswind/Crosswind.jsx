@@ -26,7 +26,8 @@ class Crosswind extends React.Component {
     }
 
     handleWindowResize = () => {
-        this.setState({ isMobile: window.innerWidth < 715 });
+        console.log("Resize", window.innerWidth < 715);
+        this.setState({ isMobile: window.innerWidth < 1000 });
     }
 
     componentDidMount() {
