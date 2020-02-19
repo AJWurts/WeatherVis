@@ -420,7 +420,9 @@ class Wind extends Component {
       this.drawRunwayWinds(svg, this.props.runways);
     }
 
-    
+    if (gust) {
+      this.drawArrow(svg, this.props.metar[0].drct, gust, max_speed, 'orange');
+    }
     this.drawArrow(svg, this.props.metar[0].drct, sknt, max_speed, '#61a8c6');
 
     // Wind Direction Label
@@ -441,11 +443,13 @@ class Wind extends Component {
 
   render() {
     var { width, height } = this.props;
-    var { drct, sknt} = this.props.metar[0];
+    var { drct, sknt, gust} = this.props.metar[0];
     return (
       <div style={{ textAlign: 'start' }}>
         <div>
-          <LabelValue className='selectable metarwind' label={"Wind"} value={`${drct.toFixed(0)} at ${sknt.toFixed(0)} knots (${(sknt * 1.15077945).toFixed(0)}mph)`} />
+          <LabelValue className='selectable metarwind' label={"Wind"} value={gust ?
+            `${drct === "VRB" ? "Variable" : drct.toFixed(0)} at ${sknt.toFixed(0)} knots gusting ${gust.toFixed(0)} knots`
+            : `${drct.toFixed(0)} at ${sknt.toFixed(0)} knots`} />
         </div>
 
         <svg ref={node => this.node = node}  viewBox='0 0 500 500' width={width || 500} height={height || 500}>
