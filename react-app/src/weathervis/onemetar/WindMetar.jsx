@@ -190,7 +190,10 @@ class Wind extends Component {
   }
 
   rotateAnimation = (inc, end) => {
-    if (Math.abs(this.state.angle - end) < 2) {
+    if (Math.abs(inc) < 0.5) {
+      inc = Math.sign(inc) * 0.5;
+    }
+    if (Math.abs(this.state.angle - end) < 1) {
       this.setState({
         angle: end
       }, this.createGraph);
