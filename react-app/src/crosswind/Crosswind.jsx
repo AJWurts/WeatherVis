@@ -58,11 +58,29 @@ class Crosswind extends React.Component {
             })
         axios.get(`/api/runway/${ident}`)
             .then(result => {
-                this.setState({
-                    runways: result.data.runways,
-                    airport: ident
-                })
+                console.log(result.data.runways);
+                if (!result.data.runways) {
+                    this.setState({
+                        airport: ident,
+                        runways: [{
+                            direction: 180,
+                            length: 5000
+                        },
+                        {
+                            direction: 90,
+                            length: 5000
+                        }]
+                    }, () => console.log(this.state));
+                } else {
+                    this.setState({
+                        runways: result.data.runways,
+                        airport: ident
+                    })
+                }
+
             }).catch(error => {
+
+
                 console.error(error);
             })
         axios.get(`/api/recentMETARs/${ident}?noRunways=true`)
