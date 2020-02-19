@@ -20,11 +20,14 @@ class WeatherVis extends Component {
   constructor(props) {
     super(props);
     const { cookies } = props;
-
+    let ident;
+    if (props.match && props.match.params && props.match.params.ident) {
+      ident = props.match.params.ident;
+    }
     this.state = {
       metar: null,
       taf: null,
-      airport: cookies.get('airport') || "KBED",
+      airport: ident ? ident : ( cookies.get('airport') || "KBED"),
       tafErrorMessage: 'Loading TAF...',
       metarErrorMessage: 'Loading METAR...',
       isMobile: false,

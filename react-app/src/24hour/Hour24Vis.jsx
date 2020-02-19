@@ -9,9 +9,12 @@ class TestPage extends Component {
     constructor(props) {
         super(props);
         const { cookies } = props;
-
+        let ident;
+        if (props.match && props.match.params && props.match.params.ident) {
+          ident = props.match.params.ident;
+        }
         this.state = {
-            airport: cookies.get('airport') || "KBED",
+            airport: ident ? ident :  (cookies.get('airport') || "KBED"),
             metars: null,
             metarErrorMessage: "Loading METAR...",
             width: 500,

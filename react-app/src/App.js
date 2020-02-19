@@ -35,8 +35,8 @@ class App extends Component {
                         <ButtonLink to='/pressure' text="Pressure Vis" />
                         <ButtonLink to='/24hour' text="24 Hour Data" />
                         <ButtonLink to='/code' text='Github Code Link' />
-                            <div style={{ borderRadius: "10px", backgroundColor: "white", color: "black", padding: "2px 20px", fontSize: "14px", width: "300px", display: "inline-block" , textAlign: "start"}}>
-                                If you have any feedback or suggestions email alex@alexwurts.com.
+                        <div style={{ borderRadius: "10px", backgroundColor: "white", color: "black", padding: "2px 20px", fontSize: "14px", width: "300px", display: "inline-block", textAlign: "start" }}>
+                            If you have any feedback or suggestions email alex@alexwurts.com.
 
                         </div>
                     </div>
@@ -48,22 +48,44 @@ class App extends Component {
                     <Route path='/code' component={() => {
                         window.location.href = 'https://github.com/ajwurts/WeatherVis'
                     }} />
-                    <Route path='/pressure'>
-                        <PressureVis />
+                    <Route path='/pressure'
+                        component={(props) => {
+                            return <PressureVis {...props} />
+                        }}>
                     </Route>
-                    <Route path='/24hour'>
-                        <TestPage />
+                    <Route path='/24hour/:ident'
+                        component={(props) => {
+                            return <TestPage {...props} />
+                        }}>
                     </Route>
-                    <Route path='/crosswind'>
-                        <Crosswind />
+                    <Route path='/24hour/'
+                        component={(props) => {
+                            return <TestPage {...props} />
+                        }}>
                     </Route>
-
-                    <Route path='/'>
-                        <WeatherVis />
+                    <Route path='/crosswind/:ident'
+                        component={(props) => {
+                            return <Crosswind {...props} />
+                        }}>
+                    </Route>
+                    <Route path='/crosswind/'
+                        component={(props) => {
+                            return <Crosswind {...props} />
+                        }}>
+                    </Route>
+                    <Route path='/:ident'
+                        component={(props) => {
+                            return <WeatherVis {...props} />
+                        }}>
+                    </Route>
+                    <Route path='/'
+                        component={(props) => {
+                            return <WeatherVis {...props} />
+                        }}>
                     </Route>
                 </Switch>
                 <div style={{ height: '100%' }} />
-            </Router>
+            </Router >
         );
     }
 }
