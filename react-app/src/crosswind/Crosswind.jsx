@@ -12,9 +12,10 @@ class Crosswind extends React.Component {
         super(props)
         const { cookies } = props;
         let ident;
-        if (props.match && props.match.params && props.match.params.ident) {
+        if (props.match && props.match.params && props.match.params.ident !== '') {
           ident = props.match.params.ident;
         }
+        console.log(ident);
         this.state = {
             metar: [{
                 drct: 290,
@@ -26,6 +27,8 @@ class Crosswind extends React.Component {
             runways: null,
             isLive: false
         }
+
+        console.log(this.state);
     }
 
     handleWindowResize = () => {
@@ -49,9 +52,9 @@ class Crosswind extends React.Component {
     onSearch = (ident) => {
         this.props.cookies.set("airport", ident);
 
-        axios.get(`api/nearestAirports/${ident}`)
+        axios.get(`/api/nearestAirports/${ident}`)
             .then(result => {
-
+                console.log(result.data);
                 this.setState({
                     nearestAirports: result.data
                 })
@@ -88,6 +91,7 @@ class Crosswind extends React.Component {
             })
         axios.get(`/api/recentMETARs/${ident}?noRunways=true`)
             .then(result => {
+
                 this.setState({
                     metar: result.data,
                     isLive: true,
