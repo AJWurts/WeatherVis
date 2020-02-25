@@ -9,6 +9,8 @@ class TestPage extends Component {
     constructor(props) {
         super(props);
         const { cookies } = props;
+
+        // If url has airport ident use instead of cookie.
         let ident;
         if (props.match && props.match.params && props.match.params.ident) {
           ident = props.match.params.ident;
@@ -17,8 +19,7 @@ class TestPage extends Component {
             airport: ident ? ident :  (cookies.get('airport') || "KBED"),
             metars: null,
             metarErrorMessage: "Loading METAR...",
-            width: 500,
-            showAirplane: false
+            width: 500
         }
 
     }
@@ -38,6 +39,7 @@ class TestPage extends Component {
     }
 
     UNSAFE_componentWillMount() {
+        // TODO: Remove and update component to React Function with useEffect.
         axios.get(`/api/recentMETARs/${this.state.airport}?hours=24`)
             .then(result => {
 
@@ -55,6 +57,7 @@ class TestPage extends Component {
 
 
     onSearch = (ident) => {
+        // Pull METAR Data for airport
         axios.get(`/api/recentMETARs/${ident}?hours=24`)
             .then(result => {
 
@@ -71,19 +74,6 @@ class TestPage extends Component {
                 })
             })
 
-        axios.get(`/api/newestTAFS/${ident}`)
-            .then(result => {
-                this.setState({
-                    taf: result.data,
-                    tafErrorMessage: ''
-                })
-            }).catch(err => {
-                console.log("Taf Failed")
-                this.setState({
-                    taf: null,
-                    tafErrorMessage: "No TAF available"
-                })
-            })
 
         const { cookies } = this.props;
         cookies.set('airport', ident, { path: '/', maxAge: 315360000 });
@@ -93,11 +83,14 @@ class TestPage extends Component {
 
     render() {
         return (
-            <div>
+            <div >
                 <SearchBox onClick={this.onSearch} value={ this.state.airport } />
+                <div style={{width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>
+
                 {this.state.metars ?
                     <Wind metars={this.state.metars} width={this.state.width} height={this.state.width} />
                     : null}
+                         </div>
             </div>
         )
     }
