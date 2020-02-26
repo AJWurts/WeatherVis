@@ -24,4 +24,5 @@ test('resolveIdent', () => {
   expect(AirportData.resolveIdent('ORD')).toEqual('KORD');
   expect(AirportData.resolveIdent('KORD')).toEqual('KORD');
   expect(AirportData.resolveIdent('EGLL')).toEqual('EGLL');
+  expect(AirportData.resolveIdent('7B2')).toEqual('K7B2');
 })

@@ -52,6 +52,7 @@ class Crosswind extends React.Component {
     onSearch = (ident) => {
         this.props.cookies.set("airport", ident);
 
+        // Pulls nearby airports
         axios.get(`/api/nearestAirports/${ident}`)
             .then(result => {
                 console.log(result.data);
@@ -62,10 +63,13 @@ class Crosswind extends React.Component {
                 console.error(error);
                 this.setState({ errorMessage: "Airport Not Found." })
             })
+
+        // Pulls only runways
         axios.get(`/api/runway/${ident}`)
             .then(result => {
                 console.log(result.data.runways);
                 if (!result.data.runways) {
+                    // If runway data does not exist create two runways 18/36 and 09/27.
                     this.setState({
                         airport: ident,
                         runways: [{
@@ -78,6 +82,7 @@ class Crosswind extends React.Component {
                         }]
                     }, () => console.log(this.state));
                 } else {
+                    // When runways exist update state
                     this.setState({
                         runways: result.data.runways,
                         airport: ident
@@ -85,13 +90,11 @@ class Crosswind extends React.Component {
                 }
 
             }).catch(error => {
-
-
                 console.error(error);
-            })
+            });
+
         axios.get(`/api/recentMETARs/${ident}?noRunways=true`)
             .then(result => {
-
                 this.setState({
                     metar: result.data,
                     isLive: true,
@@ -109,6 +112,7 @@ class Crosswind extends React.Component {
             })
     }
 
+    // Handles dragging wind header around. 
     handleDrag = (drct, spd) => {
         if (isNaN(drct) || isNaN(spd)) {
             return;
@@ -117,15 +121,18 @@ class Crosswind extends React.Component {
             metar: [{
                 sknt: spd,
                 drct: drct,
-            }]
+            }],
+            isLive: false
         })
     }
 
+    // Handles when runways change based on textbook input
     handleRunwayUpdate = (index, dir) => {
         let rwys = this.state.runways;
         rwys[index].direction = dir;
         this.setState({
-            runways: rwys
+            runways: rwys,
+            isLive: false
         })
     }
 
@@ -161,6 +168,7 @@ class Crosswind extends React.Component {
                                 value={this.state.metar[0].drct.toFixed(0)}
                                 onKeyPress={(e) => console.log(e.target.key)}
                                 onChange={(e) => {
+                                    // Update wind direction, but keep it within 0-360
                                     this.setState({
                                         metar: [{
                                             drct: Math.max(0, +e.target.value % 361),
@@ -176,6 +184,7 @@ class Crosswind extends React.Component {
                                 type="number"
                                 value={this.state.metar[0].sknt.toFixed(0)}
                                 onChange={(e) => {
+                                    // Update wind speed with minimum speed of 0
                                     this.setState({
                                         metar: [{
                                             sknt: Math.max(0, +e.target.value),
@@ -203,12 +212,7 @@ class Crosswind extends React.Component {
                             </p>
                         </div>
                     </div> : null
-
-
-
                 }
-
-
             </div >
         )
     }

@@ -45,6 +45,7 @@ class Pressure extends Component {
       .domain([this.props.metar.length, 0])
       .range(["#000000", "#FFFFFF"])
 
+    // Draws multiple needles to indicate a change in pressure
     svg.selectAll('pressureneedles')
       .data(this.props.metar.slice().reverse())
       .enter()
@@ -110,7 +111,7 @@ class Pressure extends Component {
           return this.calcX(baroScale(d), 85);
 
         } else if ((d - 0.5) % 1 === 0) {
-          // Lengths tick marks at half numbers
+          // Lengthens tick marks at half numbers
           return this.calcX(baroScale(d), 90);
         } else {
           // Leaves the rest of ticks shorter

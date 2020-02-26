@@ -8,10 +8,7 @@ const PLANE_ALT = 3000;
 
 class PressureGraph extends Component {
 
-
-
     UNSAFE_componentWillReceiveProps(props) {
-
         this.createGraph(props)
     }
 
@@ -80,9 +77,9 @@ class PressureGraph extends Component {
     }
 
     drawAirplane = () => {
-        let x = 375;
-        let y = this.presAltScale(PLANE_ALT) - 16;
-
+        let x = 375; // On the right side of the graphic
+        
+        let y = this.presAltScale(PLANE_ALT) - 16; // Offset half the icons height
         return <AirplaneIcon x={x} y={y} rotate={-90} />
     }
 
@@ -103,7 +100,6 @@ class PressureGraph extends Component {
 
         // Calculates Min and Max Altitude and creates linear scale between
         let minAlt = (29.92 - pressure) * 1000
-
         let minDAlt = (120 * (temperature - 15)) + minAlt
 
         // Scales for True Alt, Pres Alt, and Inverse of both
@@ -187,7 +183,6 @@ class PressureGraph extends Component {
                     style={{ touchAction: 'none' }}>
 
                     {this.props.isPlaneVisible && this.presAltScale ? this.drawAirplane() : null}
-
                 </svg>
             </div>
         );

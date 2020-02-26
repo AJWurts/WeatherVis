@@ -46,6 +46,8 @@ class PressureVis extends Component {
   }
 
   onChange = (key, value) => {
+    // Originally anticipated using more than one set of data, but ended up only needing one
+    // The additional complexity is due to that.
     let data = this.state[key[0]];
     data[key[1]] = value;
     this.setState({

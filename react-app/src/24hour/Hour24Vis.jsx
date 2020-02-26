@@ -67,7 +67,7 @@ class TestPage extends Component {
                     metarErrorMessage: ''
                 })
             }).catch(error => {
-                console.log("Metar Failed");
+                // If Fails set metar to null and display error message
                 this.setState({
                     metars: null,
                     metarErrorMessage: "Could not find airport. Try again"

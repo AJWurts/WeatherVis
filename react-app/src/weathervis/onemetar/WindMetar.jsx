@@ -378,10 +378,14 @@ class Wind extends Component {
     let alreadyDrawn = {}
     for (let i = 0; i < runways.length; i++) {
       if (!alreadyDrawn[runways[i].direction]) {
+        // Draws runway winds direction 1
         yCoord = this.drawRunwayWind(svg, runways[i].direction, 0, yCoord)
         let direction = (runways[i].direction + 180) % 360;
+
+        // Draws winds for runways two 180 
         yCoord = this.drawRunwayWind(svg, direction, 0, yCoord)
 
+        // Used for airports with multiple runways in the same direction to not repeat.
         alreadyDrawn[runways[i].direction] = true;
         alreadyDrawn[direction] = true;
       }
@@ -402,6 +406,7 @@ class Wind extends Component {
     var svg = d3.select(node);
     svg.selectAll('*').remove();
 
+    // Used for resetting animation so north is up
     svg.on('click', () => {
       if (this.interval) {
         clearInterval(this.interval)
@@ -426,8 +431,8 @@ class Wind extends Component {
       .text(d => d.label)
       .attr('font-size', 18)
 
-    // var runways = this.props.runways || hanscomRunways;
-    let max_speed = Math.max(60, sknt, gust) //Math.max(sknt, gust) + 5
+    // Sets max wind at max of 60, sknt, or gust
+    let max_speed = Math.max(60, sknt, gust)
     sknt = sknt + 0.01;
     gust = gust + 0.01;
     this.drawSpeedRings(svg, max_speed);
@@ -436,9 +441,6 @@ class Wind extends Component {
       this.drawRunways(svg, this.props.runways, 0);
       this.drawRunwayWinds(svg,  this.props.runways);
     }
-
-
-
 
     if (gust !== 0.01) {
       this.drawArrow(svg, this.props.metar[0].drct, gust, max_speed, 'orange');

@@ -15,8 +15,6 @@ class Temp extends Component {
 
   drawTemps = (svg, tempScale, x) => {
 
-    // console.log(this.props.metar.tmpf, dew)
-    // Dew Point)
 
     var dewCircle =
       svg.append('circle')
@@ -25,17 +23,13 @@ class Temp extends Component {
         .attr('r', 5)
         .attr('fill', '#0000FF')
 
-
-
-
     svg.append('circle')
-
       .attr('cx', x)
       .attr('cy', d => tempScale(this.props.metar[0].tmpf))
       .attr('r', 5)
       .attr('fill', '#FF0000')
 
-
+    // If temperature and dew point are same temperature increases stroke of dew circle to inclose temp circle
     if (this.props.metar[0].tmpf === this.props.metar[0].dwpf) {
       dewCircle.attr('stroke-width', 5)
         .attr('stroke', 'blue')
@@ -57,7 +51,6 @@ class Temp extends Component {
     const node = this.node;
     var svg = d3.select(node);
     svg.selectAll('*').remove();
-
 
 
     if (this.props.metar[0].tmpf === undefined) {

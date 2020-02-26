@@ -9,23 +9,39 @@ function RunwayViewer(props) {
         return degrees * (pi / 180);
     }
 
+    // ----- drawRunwayWind: Draws the green and red triangles -----
+    // svg: Canvas to draw on
+    // heading: heading of runway, 0-360
+    // variation: Variation added to heading if required
+    // yCoord: y coord on screen to display
     function drawRunwayWind(svg, heading, variation, yCoord) {
+    
         let X = 0;
         // Draw a single runway wind indicator in bottom left
         if (props.metar.drct === 'VRB') {
             return;
         }
 
+        // Pull dir (direction), and spd (speed in knots) from  metar
         let dir = props.metar.drct;
         let spd = props.metar.sknt;
+        
+        // Calculate angle of runway to wind and convert to radians
         let angle = rads(Math.abs((((heading + variation) + 360 - dir) % 361)))
-        let headwind = Math.round(Math.cos(angle) * spd);
+        
+
+        // Calculate headwidn/crosswind based on angle between wind and runway and wind speed.
+        let headwind = Math.round(Math.cos(angle) * spd); // Represents tailwind or headwind
         let crosswind = -Math.round(Math.sin(angle) * spd);
+
+        // Draw the Runway Heading
         svg.append("text")
             .attr('x', X)
             .attr('y', yCoord)
             .text(`${((heading + 360) % 361 / 10).toFixed()}: `)
             .attr('color', 'black')
+
+        // Depending on whether there is a tailwind (headwind < 0) or headwind (headwind > 0) changes the triangle drawn.
         if (headwind < 0) {
             svg.append('path')
                 .attr('d', `M${X + 30} ${yCoord - 4} l5-5 5 5z`) //M7 14l5-5 5 5z
@@ -37,12 +53,14 @@ function RunwayViewer(props) {
         }
 
 
+        // Draws the headwind amount on the canvas
         svg.append("text")
             .attr('x', X + 40)
             .attr('y', yCoord)
             .text(`${Math.abs(headwind)}`)
             .attr('color', 'black')
 
+        // Based on crosswind direction changes the arrow
         if (crosswind < 0) {
             svg.append('path')
                 .attr('d', `M${X + 65} ${yCoord} l0 -10 5 5z`)
@@ -52,6 +70,7 @@ function RunwayViewer(props) {
                 .attr('d', `M${X + 69} ${yCoord} l0 -10 -5 5z`)
                 .attr('fill', Math.abs(crosswind) < 10 ? 'green' : "red")
         }
+        // Draws crosswind amt on canvas
         svg.append("text")
             .attr('x', X + 75)
             .attr('y', yCoord)
@@ -66,8 +85,11 @@ function RunwayViewer(props) {
 
 
     React.useEffect(() => {
+        // Clears canvas for update
         let svg = d3.select("#windsvg" + props.index);
         svg.selectAll('*').remove();
+
+        // Draws runway wind for both runway directions
         drawRunwayWind(svg, props.rwy.direction, 0, 15);
         drawRunwayWind(svg, (props.rwy.direction + 180) % 360, 0, 30)
 

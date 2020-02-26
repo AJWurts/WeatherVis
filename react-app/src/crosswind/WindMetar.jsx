@@ -60,8 +60,12 @@ class Wind extends Component {
 
     this.state = {
       angle: 0,
-      moving: false
+      moving: false,
+      calibrated: false
     }
+    this.clickNum = 0
+    this.offsetX = 250
+    this.offsetY = 250
     this.maxSpeed = 60;
   }
 
@@ -81,12 +85,17 @@ class Wind extends Component {
 
   // Given X and Y return dir and speed
   drawCursorArrow = (event) => {
-    event = event._groups[0][0];
-    let x = d3.event.x - 15;
-    let y = d3.event.y - (event.previousSibling.offsetTop + event.previousSibling.offsetHeight);
+    if (!this.state.calibrated) {
+      this.offsetX = event.clientX;
+      this.offsetY = event.clientY;
+      this.setState({calibrated: true})
+    }
 
-    let xDiff = x - 250;
-    let yDiff = (y - 250);
+
+    let xDiff = event.clientX - this.offsetX;
+    let yDiff = (event.clientY - this.offsetY);
+    console.log(xDiff, yDiff)
+
 
     let angle = (Math.atan((yDiff) / (xDiff)) * 180 / Math.PI + 360 + 90) % 360
     let dist = Math.sqrt((xDiff * xDiff) + (yDiff * yDiff));
@@ -99,24 +108,28 @@ class Wind extends Component {
     this.props.onDrag(angle, dist);
   }
 
-  drawArrow2 = (svg, x1, y1, x2, y2, color, pointerHeight) => {
+  drawArrowFromPoints = (svg, x1, y1, x2, y2, color, pointerHeight) => {
     let pHeight = pointerHeight || 15;
     color = color || 'blue';
 
-    // Tip Triangle
+    // Calculate difference and angle.
     let xDiff = x2 - x1;
     let yDiff = y2 - y1;
     let angle = Math.atan((yDiff) / (xDiff));
     if (xDiff < 0) {
       angle += Math.PI;
     }
+
+    // Calculate distance of arrow.
     let dist = Math.sqrt((xDiff * xDiff) + (yDiff * yDiff));
 
+    // Calculate points needed to draw arrow.
     let xAltPtDelta = Math.cos(angle - Math.PI / 2) * 7; 
     let yAltPtDelta = Math.sin(angle - Math.PI / 2) * 7; //
     let radPtX = x1 + Math.cos(angle) * (dist - pHeight);
     let radPtY = y1 + Math.sin(angle) * (dist - pHeight);
     
+    // Draw ArrowLine
     svg.append('line')
       .attr('x1', x1)
       .attr('y1', y1)
@@ -125,6 +138,7 @@ class Wind extends Component {
       .attr('stroke', color)
       .attr('stroke-width', '5')
 
+    // Draw Arrowhead
     let path = d3.path()
     path.moveTo(radPtX, radPtY)
     path.lineTo(radPtX - xAltPtDelta, radPtY - yAltPtDelta)
@@ -133,35 +147,12 @@ class Wind extends Component {
     path.lineTo(radPtX, radPtY)
     path.closePath()
 
+    // Draw arrowhead as a path on the screen and fill.
     svg.append('path')
       .attr('d', path.toString())
       .attr('id', 'arrowhead')
       .attr('fill', color)
 
-    svg.append('circle')
-      .attr('cx', x2)
-      .attr('cy', y2)
-      .attr('r', 20)
-      .attr('opacity', 0)
-      .on('mouseover', d => {
-        d3.select('#arrowhead')
-          .attr('fill', d => {
-            return color + "A0";
-          })
-          .style("cursor", "pointer")
-      }).on('mouseout', d => {
-        d3.select('#arrowhead')
-          .attr('fill', color)
-          .style('cursor', 'default')
-      }).on('mousedown', d => {
-        this.setState({ moving: true })
-      }).on('mousemove', d => {
-        if (this.state.moving) {
-          this.drawCursorArrow(svg);
-        }
-      }).on('mouseup', d => {
-        this.setState({ moving: false });
-      })
   }
 
   // Draw an Arrow
@@ -177,10 +168,11 @@ class Wind extends Component {
       dir = (dir + 180) % 361;
     }
     
+    // Scales data from wind speed to pixels
+    // Log scale to emphasize lower speesd
     var speedScale = (val) => {
       return  Math.sqrt(val) / 8 * 160
     }
-
 
     let halfWidth = 250;
     let halfHeight = 250;
@@ -191,7 +183,7 @@ class Wind extends Component {
     let tipX = halfWidth + this.calcX(dir, length);
     let tipY = halfHeight + this.calcY(dir, length);
 
-    this.drawArrow2(svg, halfWidth, halfHeight, tipX, tipY, color);
+    this.drawArrowFromPoints(svg, halfWidth, halfHeight, tipX, tipY, color);
   }
 
 
@@ -214,6 +206,7 @@ class Wind extends Component {
   }
  
   drawRunways = (svg, runways, variation) => {
+    // Draws a runway through the center of the window
     const maxRwyLen = d3.max(runways, x => x.length)
     var data = [];
     for (let i = 0; i < runways.length; i++) {
@@ -382,14 +375,7 @@ class Wind extends Component {
     const node = this.node;
     var svg = d3.select(node);
     svg.selectAll('*').remove();
-
-    svg.on('click', () => {
-
-
-      this.drawCursorArrow(svg);
-
-    });
-
+  
     
     var { sknt, gust } = this.props.metar[0];
 
@@ -452,7 +438,8 @@ class Wind extends Component {
             : `${drct.toFixed(0)} at ${sknt.toFixed(0)} knots`} />
         </div>
 
-        <svg ref={node => this.node = node}  viewBox='0 0 500 500' width={width || 500} height={height || 500}>
+      
+        <svg ref={node => this.node = node} onClick={this.drawCursorArrow}viewBox='0 0 500 500' width={width || 500} height={height || 500}>
         </svg>
       </div>
     );

@@ -1,6 +1,9 @@
 # Weather Visualization using METARs and TAFs
 By Alexander Wurts
 
+## An open source live weather visualization software aimed at Pilots.
+Pilot's can search for any airport in the US with a METAR and instantly pull up live data. The data is visualized in various methods with an emphasis on comprehension and helping new pilots understand the language of METARs and TAFs.
+
 ## If you like this project please consider sponsoring me, so I can add more cool features. 
 [Sponsor Link](https://github.com/sponsors/AJWurts) - It's only a few bucks a month.
 

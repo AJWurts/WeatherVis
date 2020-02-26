@@ -29,13 +29,9 @@ class Visibility extends Component {
     var width = 500;
     var height = 40
 
-
-
     var xScale = d3.scaleLinear()
       .domain([0, 10])
       .range([width * 0.05, width * 0.92])
-
-
 
 
     // Axis bottom
@@ -46,8 +42,6 @@ class Visibility extends Component {
       .attr('y2', height - 20)
       .attr('stroke', 'black')
       .attr('stroke-width', 1)
-
-
 
     // Axis Labels
     svg.selectAll('label')
@@ -82,7 +76,6 @@ class Visibility extends Component {
       .attr('fill', '#616161')
 
     // Blue Sky
-    // Slightly transparent to see underlying ticks
     svg.append('rect')
       .attr('x', xScale(0))
       .attr('y', 0)
