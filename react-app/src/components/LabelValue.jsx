@@ -5,15 +5,15 @@ function LabelValue(props) {
 
 
     return (
-        <div  >
+        <div id="labelvalue" >
             {/* Label */}
             {props.label ?
-                <div className={props.className + ' normal'} >
+                <div id="labelvalue-label" className={props.className + ' normal'} >
                     {props.label}
                 </div> : null}
 
             {/* Value */}
-            {props.value ? <div style={{
+            {props.value ? <div id="labelvalue-value"style={{
                 backgroundColor: '#EEEEEE', fontSize: 18,
                 textAlign: 'left', display: 'inline-block',
                 padding: '9px 8px 6px 8px', height: '100%', color: props.color || "black"
