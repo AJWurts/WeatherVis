@@ -3,7 +3,7 @@ const axios = require('axios');
 function RunwayData() {
 
   this.getRunways = function (airportID) {
-    return axios.get(`https://api.aeronautical.info/dev/?airport=${airportID}&include=runways`)
+    return axios.get(`https://api.aeronautical.info/dev/?appid=WeatherVis&airport=${airportID}&include=runways`)
       .then(result => {
         let airdata = result.data;
         if (airdata.runways) {
@@ -13,7 +13,7 @@ function RunwayData() {
         }
       }).catch(err => {
         // If request fails try without K for airports without ICAO
-        return axios.get(`https://api.aeronautical.info/dev/?airport=${airportID.slice(1, airportID.length)}&include=runways`)
+        return axios.get(`https://api.aeronautical.info/dev/?appid=WeatherVis&airport=${airportID.slice(1, airportID.length)}&include=runways`)
           .then(result => {
             let airdata = result.data;
             if (airdata.runways) {
