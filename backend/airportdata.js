@@ -12,7 +12,7 @@ const AirportData = {
   },
 
   getCoordinates(airportId) {
-    return axios.get(`https://api.aeronautical.info/dev/?airport=${airportId}&include=geographic`)
+    return axios.get(`https://api.aeronautical.info/dev/?appid=WeatherVis&airport=${airportId}&include=geographic`)
       .then(result => {
         let airdata = result.data;
 
